@@ -810,8 +810,14 @@ function NightPanel({
       ? candidates.filter((p) => p.id !== actor.id)
       : candidates.filter((p) => p.team === "WEREWOLVES" && p.id !== actor.id);
 
-  if (step.roleId === "salvateur")
-    candidates = candidates.filter((p) => p.id !== state.round.previousProtectedId);
+  if (step.roleId === "salvateur") {
+    // Rotation cyclique : un joueur déjà protégé dans le cycle est indisponible,
+    // le Salvateur peut se protéger lui-même, et le cycle repart quand tout le
+    // monde a été protégé une fois.
+    const history = actor.protectedHistory ?? [];
+    const remaining = candidates.filter((p) => !history.includes(p.id));
+    if (remaining.length > 0) candidates = remaining;
+  }
   if (
     ["voyante", "cupidon", "mime", "enfant-sauvage", "general", "voleur", "maniaque"].includes(
       step.roleId,
