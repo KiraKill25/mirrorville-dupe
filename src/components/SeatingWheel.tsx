@@ -15,6 +15,7 @@ export function SeatingWheel({
   direction,
   captainId,
   onNodeClick,
+  onNodeLongPress,
   badge,
   center,
 }: {
@@ -23,6 +24,8 @@ export function SeatingWheel({
   direction?: RotationDirection;
   captainId?: string;
   onNodeClick?: (id: string) => void;
+  /** Appui long (ou clic droit) sur un nœud. */
+  onNodeLongPress?: (id: string) => void;
   /** Contenu additionnel affiché sur le nœud (compteur de voix, avatars…). */
   badge?: (p: Player) => ReactNode;
   center: ReactNode;
