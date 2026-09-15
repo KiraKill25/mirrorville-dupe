@@ -30,7 +30,15 @@ export const LANGS: { code: Lang; label: string; name: string }[] = [
   { code: "de", label: "DE", name: "Deutsch" },
 ];
 
-const DICTS: Record<Lang, Dictionary> = { fr, en, ar, es, zh, pt, ru, de };
+/** Les traductions non-françaises peuvent être partielles : `fr` sert de repli. */
+type PartialDictionary = {
+  ui: Partial<Dictionary["ui"]>;
+  prompts?: Dictionary["prompts"];
+  teams?: Dictionary["teams"];
+  roles?: Dictionary["roles"];
+};
+
+const DICTS: Record<Lang, PartialDictionary> = { fr, en, ar, es, zh, pt, ru, de };
 
 export type TranslationKey = UiKey;
 
