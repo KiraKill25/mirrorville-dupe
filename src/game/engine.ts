@@ -79,6 +79,8 @@ export interface Player {
   mutedForDay?: boolean;
   /** Salvateur : Bouclier Ultime consommé (protection définitivement perdue). */
   ultimateShieldUsed?: boolean;
+  /** Pouvoir définitivement perdu : le joueur agit comme un simple villageois. */
+  hasLostPower?: boolean;
   /** Salvateur : Historique des joueurs protégés pour la boucle de réinitialisation. */
   protectedHistory?: string[];
   /** Marionnettiste : Le joueur désigné porte la marionnette cette nuit. */
@@ -732,19 +734,26 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
         rep(s, nk("repVillageShield"));
         actor.ultimateShieldUsed = true;
         actor.powersDisabled = true;
+        actor.hasLostPower = true;
+        actor.protectedHistory = [];
         s.reveal = nk("shieldUltimate");
         s.log.push(nk("logShieldUltimate", { n: s.night, name: actor.name }));
         break;
       }
       if (target) {
-        const otherLiving = s.players.filter((p) => p.alive && p.id !== actor.id);
+        // Le Salvateur peut se protéger lui-même : tous les vivants sont éligibles.
+        const living = s.players.filter((p) => p.alive);
         let history = actor.protectedHistory ?? [];
-        const availableTargets = otherLiving.filter((p) => !history.includes(p.id));
+        let availableTargets = living.filter((p) => !history.includes(p.id));
 
+        // Cycle terminé (ou plus aucune cible libre) → on repart de zéro.
         if (availableTargets.length === 0) {
           history = [];
-        } else if (!availableTargets.some((p) => p.id === target.id)) {
-          s.reveal = "Tu dois protéger d'autres joueurs avant de pouvoir ré-sélectionner ce joueur.";
+          availableTargets = living;
+        }
+
+        if (!availableTargets.some((p) => p.id === target.id)) {
+          s.reveal = nk("protectAlreadyDone", { name: target.name });
           return state;
         }
 
