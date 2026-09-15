@@ -301,7 +301,6 @@ export const en = {
     undoDoneToast: "Action undone",
 
     // Vote announcement
-    proceedToVote: "Proceed to Vote",
     skipVoteDay1: "Day 1: skip vote",
     voteAnnounceTitle: "The debate is over",
     voteAnnounceDesc: "The village must now decide. Each player will designate who they wish to eliminate.",
