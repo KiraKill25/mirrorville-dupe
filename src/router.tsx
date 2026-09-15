@@ -10,7 +10,9 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    history: createHashHistory(),
+    // Hash routing (comme dans l'app d'origine / build Capacitor) : uniquement
+    // côté navigateur, l'historique hash n'existe pas côté serveur.
+    ...(typeof window !== "undefined" ? { history: createHashHistory() } : {}),
   });
 
   return router;
