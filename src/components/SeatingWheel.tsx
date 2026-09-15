@@ -76,8 +76,33 @@ export function SeatingWheel({
           <button
             key={p.id}
             type="button"
-            disabled={!onNodeClick}
+            disabled={!onNodeClick && !onNodeLongPress}
             onClick={() => onNodeClick?.(p.id)}
+            onContextMenu={
+              onNodeLongPress
+                ? (e) => {
+                    e.preventDefault();
+                    onNodeLongPress(p.id);
+                  }
+                : undefined
+            }
+            onPointerDown={
+              onNodeLongPress
+                ? (e) => {
+                    const target = e.currentTarget;
+                    const timer = window.setTimeout(() => onNodeLongPress(p.id), 550);
+                    const clear = () => {
+                      window.clearTimeout(timer);
+                      target.removeEventListener("pointerup", clear);
+                      target.removeEventListener("pointerleave", clear);
+                      target.removeEventListener("pointercancel", clear);
+                    };
+                    target.addEventListener("pointerup", clear);
+                    target.addEventListener("pointerleave", clear);
+                    target.addEventListener("pointercancel", clear);
+                  }
+                : undefined
+            }
             style={{ left: `${x}%`, top: `${y}%` }}
             aria-label={t("seatingNodeLabel", { n: i + 1, name: p.name })}
             aria-current={active || undefined}
