@@ -41,6 +41,8 @@ export function VoteWheel({
   onVoteRecord,
   onUndo,
   canUndo,
+  onPenalty,
+  onRemovePenalty,
 }: {
   state: GameState;
   direction: RotationDirection;
@@ -50,6 +52,10 @@ export function VoteWheel({
   onVoteRecord?: (r: VoteRecord) => void;
   onUndo?: () => void;
   canUndo?: boolean;
+  /** Ajoute une voix de pénalité au joueur (clic sur son nœud hors tour de vote). */
+  onPenalty?: (id: string) => void;
+  /** Retire une voix de pénalité (appui long sur le nœud). */
+  onRemovePenalty?: (id: string) => void;
 }) {
   const { t } = useI18n();
   const alive = state.players.filter((p) => p.alive);
