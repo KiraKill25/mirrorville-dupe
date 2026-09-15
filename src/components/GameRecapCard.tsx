@@ -60,7 +60,6 @@ const CAUSE_KEY: Record<DeathCause, TranslationKey> = {
   HUNTER_SHOT: "causeHunter",
   HEARTBREAK: "causeHeartbreak",
   VILLAGE_VOTE: "causeVote",
-  JAILER_EXECUTION: "causeJailer",
   SPY_DETECTED: "causeSpy",
   TALKATIVE_WOLF: "causeTalkative",
   GENERAL_STRIKE: "causeGeneralStrike",

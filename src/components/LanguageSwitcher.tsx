@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { LANGS, useI18n } from "@/lib/i18n";
+import { LANGS, useI18n, type Lang } from "@/lib/i18n";
 
 /** Sélecteur de langue compact : badge de la langue active + menu déroulant. */
 export function LanguageSwitcher() {
@@ -9,7 +9,7 @@ export function LanguageSwitcher() {
   const [open, setOpen] = useState(false);
   const active = LANGS.find((l) => l.code === lang) ?? LANGS[0];
 
-  const handleSelectLanguage = (code: string) => {
+  const handleSelectLanguage = (code: Lang) => {
     setLang(code);
     setOpen(false);
   };
