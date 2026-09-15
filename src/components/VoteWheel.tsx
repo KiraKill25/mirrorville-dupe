@@ -399,8 +399,9 @@ export function VoteWheel({
                 if (!candidates.some((c) => c.id === id)) return;
                 cast(id);
               }
-            : undefined
+            : onPenalty
         }
+        onNodeLongPress={onRemovePenalty}
         badge={(p) =>
           (counts[p.id] ?? 0) > 0 ? (
             <span className="mt-0.5 inline-block rounded-full bg-primary px-1.5 text-[9px] font-black text-primary-foreground tabular-nums">
