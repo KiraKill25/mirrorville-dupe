@@ -18,7 +18,8 @@ workflows:
       - name: Generate native Android icons from public folder
         script: |
           mkdir -p assets
-          find public -maxdepth 1 -name "*.png" -exec cp {} assets/icon.png \;
+          cp public/icon.png assets/logo.png
+          cp public/icon.png assets/icon-only.png
           npm install -D @capacitor/assets
           npx @capacitor/assets generate --android
 
