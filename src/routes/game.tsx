@@ -1653,7 +1653,7 @@ function DawnPanel({
         <div className="space-y-4">
           <DebateWheel
             seating={state.players.filter((p) => p.alive)}
-            seconds={60}
+            seconds={settings?.debateTimePerPlayer ?? 60}
             armed
             direction={direction}
             captainId={state.villageCaptainId}
