@@ -587,14 +587,16 @@ function SuicideModal({
         <PlayerPicker
           players={alive}
           selected={sel}
-          onToggle={(id) => setSel((s) => (s[0] === id ? [] : [id]))}
+          onToggle={(id) =>
+            setSel((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
+          }
           accent="crimson"
         />
       </div>
       <div className="flex flex-col gap-2">
         <button
-          disabled={sel.length !== 1}
-          onClick={() => onConfirm(sel[0])}
+          disabled={sel.length === 0}
+          onClick={() => onConfirm(sel)}
           className="w-full rounded-full bg-destructive py-3 text-sm font-bold text-destructive-foreground transition active:scale-95 disabled:opacity-40"
         >
           {t("suicideConfirm")}
