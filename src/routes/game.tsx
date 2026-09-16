@@ -331,11 +331,13 @@ function GamePage() {
         <SuicideModal
           state={state}
           onClose={() => setSuicideOpen(false)}
-          onConfirm={(id) => {
-            const name = state.players.find((p) => p.id === id)?.name ?? "";
+          onConfirm={(ids) => {
+            const names = ids
+              .map((id) => state.players.find((p) => p.id === id)?.name ?? "")
+              .filter(Boolean);
             setSuicideOpen(false);
-            updateState(suicideReveal(state, id));
-            toast.error(t("suicideDone", { name }));
+            updateState(suicideRevealMany(state, ids));
+            names.forEach((name) => toast.error(t("suicideDone", { name })));
           }}
         />
       )}
@@ -569,7 +571,7 @@ function SuicideModal({
 }: {
   state: GameState;
   onClose: () => void;
-  onConfirm: (id: string) => void;
+  onConfirm: (ids: string[]) => void;
 }) {
   const { t } = useI18n();
   const [sel, setSel] = useState<string[]>([]);
