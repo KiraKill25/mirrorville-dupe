@@ -17,9 +17,10 @@ workflows:
 
       - name: Generate native Android icons from public folder
         script: |
+          mkdir -p assets
+          find public -maxdepth 1 -name "*.png" -exec cp {} assets/icon.png \;
           npm install -D @capacitor/assets
-          # Replace 'logo.png' with your exact icon file name inside the public/ directory (e.g., icon.png, logo.png)
-          npx @capacitor/assets generate --android --iconSource public/logo.png
+          npx @capacitor/assets generate --android
 
       - name: Sync Capacitor Android project
         script: npx cap sync android
