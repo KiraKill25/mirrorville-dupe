@@ -25,15 +25,9 @@ workflows:
         script: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleRelease --no-daemon
-          # Unsigned release APK. To get a signed APK, upload a keystore in
-          # Codemagic (Teams > Code signing identities) and add here:
-          #   android_signing:
-          #     - <your_keystore_reference>
-          # under this workflow's `environment:` section.
+          ./gradlew assembleDebug --no-daemon
     artifacts:
-      - android/app/build/outputs/**/*.apk
-      - android/app/build/outputs/**/mapping.txt
+      - android/app/build/outputs/apk/**/*.apk
     publishing:
       email:
         recipients:
