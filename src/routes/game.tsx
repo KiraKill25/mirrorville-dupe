@@ -78,7 +78,7 @@ import {
   resolveHunter,
   skipVote,
   submitStep,
-  suicideReveal,
+  suicideRevealMany,
   type GameState,
   type Player,
 } from "@/game/engine";
