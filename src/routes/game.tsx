@@ -78,7 +78,7 @@ import {
   resolveHunter,
   skipVote,
   submitStep,
-  suicideReveal,
+  suicideRevealMany,
   type GameState,
   type Player,
 } from "@/game/engine";
@@ -331,11 +331,13 @@ function GamePage() {
         <SuicideModal
           state={state}
           onClose={() => setSuicideOpen(false)}
-          onConfirm={(id) => {
-            const name = state.players.find((p) => p.id === id)?.name ?? "";
+          onConfirm={(ids) => {
+            const names = ids
+              .map((id) => state.players.find((p) => p.id === id)?.name ?? "")
+              .filter(Boolean);
             setSuicideOpen(false);
-            updateState(suicideReveal(state, id));
-            toast.error(t("suicideDone", { name }));
+            updateState(suicideRevealMany(state, ids));
+            names.forEach((name) => toast.error(t("suicideDone", { name })));
           }}
         />
       )}
@@ -569,7 +571,7 @@ function SuicideModal({
 }: {
   state: GameState;
   onClose: () => void;
-  onConfirm: (id: string) => void;
+  onConfirm: (ids: string[]) => void;
 }) {
   const { t } = useI18n();
   const [sel, setSel] = useState<string[]>([]);
@@ -585,14 +587,16 @@ function SuicideModal({
         <PlayerPicker
           players={alive}
           selected={sel}
-          onToggle={(id) => setSel((s) => (s[0] === id ? [] : [id]))}
+          onToggle={(id) =>
+            setSel((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
+          }
           accent="crimson"
         />
       </div>
       <div className="flex flex-col gap-2">
         <button
-          disabled={sel.length !== 1}
-          onClick={() => onConfirm(sel[0])}
+          disabled={sel.length === 0}
+          onClick={() => onConfirm(sel)}
           className="w-full rounded-full bg-destructive py-3 text-sm font-bold text-destructive-foreground transition active:scale-95 disabled:opacity-40"
         >
           {t("suicideConfirm")}

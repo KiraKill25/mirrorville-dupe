@@ -1313,13 +1313,22 @@ export function goToVote(state: GameState): GameState {
 }
 
 export function suicideReveal(state: GameState, targetId: string): GameState {
+  return suicideRevealMany(state, [targetId]);
+}
+
+/** Élimination manuelle (Suicide / Révélation) d'un ou plusieurs joueurs en une seule fois. */
+export function suicideRevealMany(state: GameState, targetIds: string[]): GameState {
   let s = clone(state);
-  const target = s.players.find((p) => p.id === targetId);
-  if (!target || !target.alive) return state;
+  const targets = targetIds
+    .map((id) => s.players.find((p) => p.id === id))
+    .filter((p): p is Player => !!p && p.alive);
+  if (targets.length === 0) return state;
   s.dawnSummary = [];
   s.lastEliminated = [];
-  killPlayer(s, targetId, "SUICIDE_REVEAL");
-  s.log.push(nk("logSuicideReveal", { name: target.name }));
+  for (const target of targets) {
+    killPlayer(s, target.id, "SUICIDE_REVEAL");
+    s.log.push(nk("logSuicideReveal", { name: target.name }));
+  }
   s.hunterPending = undefined;
   s.captainSuccessionPending = undefined;
   s = checkVictory(s);
