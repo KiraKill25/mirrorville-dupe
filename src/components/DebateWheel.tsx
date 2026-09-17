@@ -46,7 +46,7 @@ function ModalShell({ children }: { children: React.ReactNode }) {
   useScrollLock();
   return (
     <div className="fixed inset-0 z-50 flex w-screen max-w-full items-center justify-center overflow-x-hidden overflow-y-auto bg-black/85 p-4 backdrop-blur-md">
-      <div className="surface-card animate-rise-in neon-ring mx-auto my-auto box-border max-h-[85vh] w-full max-w-sm shrink-0 space-y-4 overflow-y-auto overscroll-contain rounded-3xl p-6 text-center shadow-2xl sm:max-w-md">
+      <div className="surface-card animate-rise-in mx-auto my-auto box-border max-h-[85vh] w-full max-w-sm shrink-0 space-y-4 overflow-y-auto overscroll-contain rounded-3xl p-6 text-center shadow-2xl sm:max-w-md">
         {children}
       </div>
     </div>
@@ -148,7 +148,7 @@ export function DebateSetupModal({
       <button
         type="button"
         onClick={() => onConfirm(debateDirection)}
-        className="neon-ring w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
+        className="w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
       >
         {t("confirmCaptainSetup")}
       </button>
@@ -214,7 +214,7 @@ export function VoteSetupModal({
       <button
         type="button"
         onClick={() => onConfirm({ voteDirection, captainVotesFirst })}
-        className="neon-ring w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
+        className="w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
       >
         {t("confirmVoteSetup")}
       </button>
@@ -270,23 +270,20 @@ export function DebateWheel({
   }, [i, total]);
 
   useEffect(() => {
-    if (!running || !armed || left <= 0) return;
+    if (!running || !armed) return;
     const id = setInterval(() => {
-      setLeft((v) => {
-        if (v <= 1) {
-          setRunning(false);
-          return 0;
-        }
-        return v - 1;
-      });
+      setLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(id);
-  }, [running, armed, left]);
+  }, [running, armed]);
 
   useEffect(() => {
-    if (left === 0 && !alerted.current) {
-      alerted.current = true;
-      playTimeUpAlert();
+    if (left === 0) {
+      setRunning(false);
+      if (!alerted.current) {
+        alerted.current = true;
+        playTimeUpAlert();
+      }
     }
   }, [left]);
 
@@ -458,7 +455,7 @@ export function DebateWheel({
                   ))}
                 </div>
                 <p
-                  className={`text-2xl font-black tabular-nums ${left === 0 ? "animate-danger-pulse text-destructive" : "text-foreground"}`}
+                  className={`text-2xl font-black tabular-nums ${left === 0 ? "text-destructive" : "text-foreground"}`}
                 >
                   {String(Math.floor(left / 60)).padStart(2, "0")}:
                   {String(left % 60).padStart(2, "0")}
