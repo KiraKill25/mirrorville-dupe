@@ -9,6 +9,7 @@ import {
   loadSettings,
   saveNames,
   saveSettings,
+  sanitizeDebateSeconds,
   type GameSettings,
 } from "@/lib/session";
 import { preloadRoleMedia } from "@/lib/preload-media";
