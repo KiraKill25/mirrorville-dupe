@@ -137,16 +137,17 @@ function SetupPage() {
               </span>
               <input
                 type="number"
-                min={10}
+                inputMode="numeric"
+                min={5}
                 max={600}
                 aria-label={t("custom")}
-                value={settings.debateTimePerPlayer}
-                onChange={(e) =>
-                  setSettings((s) => ({
-                    ...s,
-                    debateTimePerPlayer: Math.max(5, Math.min(600, Number(e.target.value) || 0)),
-                  }))
-                }
+                value={customTime}
+                onChange={(e) => setCustomTime(e.target.value)}
+                onBlur={() => {
+                  const safe = sanitizeDebateSeconds(customTime);
+                  setCustomTime(String(safe));
+                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
+                }}
                 className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
