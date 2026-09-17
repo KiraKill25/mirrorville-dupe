@@ -23,12 +23,13 @@ const MJ = "mvno-mj";
 export const saveGameMaster = (name: string) => localStorage.setItem(MJ, name);
 export const loadGameMaster = (): string | null => localStorage.getItem(MJ);
 
-/** Garantit une durée de débat valide (jamais NaN, null, 0 ou négative). */
 export const sanitizeDebateSeconds = (v: unknown): number => {
   if (v === null || v === undefined || v === "") return DEFAULT_SETTINGS.debateTimePerPlayer;
-  const n = Math.floor(Number(v));
-  if (!Number.isFinite(n) || n <= 0) return DEFAULT_SETTINGS.debateTimePerPlayer;
-  return Math.max(5, Math.min(600, n));
+  const parsed = typeof v === "number" ? v : parseInt(String(v), 10);
+  if (isNaN(parsed) || !isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_SETTINGS.debateTimePerPlayer;
+  }
+  return Math.max(5, Math.min(600, parsed));
 };
 
 export const saveSettings = (s: GameSettings) =>
