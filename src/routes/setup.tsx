@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { useI18n } from "@/lib/i18n";
@@ -47,15 +47,37 @@ function SetupPage() {
     preloadRoleMedia();
   }, []);
 
-  const update = (i: number, v: string) => setNames((n) => n.map((x, k) => (k === i ? v : x)));
+  const updateName = useCallback((i: number, v: string) => {
+    setNames((prev) => {
+      const next = [...prev];
+      next[i] = v;
+      return next;
+    });
+  }, []);
 
-  const filled = names.map((n, i) => n.trim() || `${t("defaultPlayer")} ${i + 1}`);
+  const removePlayer = useCallback((i: number) => {
+    setNames((prev) => prev.filter((_, k) => k !== i));
+  }, []);
+
+  const addPlayer = useCallback(() => {
+    setNames((prev) => [...prev, ""]);
+  }, []);
+
+  const handleCustomTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomTime(e.target.value);
+  };
+
+  const handleCustomTimeBlur = () => {
+    const safe = sanitizeDebateSeconds(customTime);
+    setCustomTime(String(safe));
+    setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
+  };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-28">
+    <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-32">
       <TopBar
         left={
-          <button onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground">
+          <button type="button" onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground">
             {t("back")}
           </button>
         }
@@ -69,14 +91,16 @@ function SetupPage() {
               {i + 1}
             </span>
             <input
+              type="text"
               value={n}
-              onChange={(e) => update(i, e.target.value)}
+              onChange={(e) => updateName(i, e.target.value)}
               placeholder={t("playerNamePlaceholder")}
-              className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary touch-manipulation"
             />
             <button
+              type="button"
               aria-label={t("remove")}
-              onClick={() => setNames((s) => s.filter((_, k) => k !== i))}
+              onClick={() => removePlayer(i)}
               className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground"
             >
               <X className="size-4" />
@@ -86,7 +110,8 @@ function SetupPage() {
       </div>
 
       <button
-        onClick={() => setNames((s) => [...s, ""])}
+        type="button"
+        onClick={addPlayer}
         className="mt-4 w-full rounded-full border border-dashed border-border py-3 text-sm text-muted-foreground"
       >
         {t("addPlayer")}
@@ -109,7 +134,7 @@ function SetupPage() {
                 isDebateTimerEnabled: !s.isDebateTimerEnabled,
               }))
             }
-            className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+            className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
               settings.isDebateTimerEnabled ? "neon-ring bg-primary" : "bg-input"
             }`}
           >
@@ -122,7 +147,7 @@ function SetupPage() {
         </div>
 
         {settings.isDebateTimerEnabled && (
-          <div className="animate-rise-in space-y-3">
+          <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
               {[30, 60, 90, 120].map((v) => (
                 <button
@@ -151,18 +176,9 @@ function SetupPage() {
                 max={600}
                 aria-label={t("custom")}
                 value={customTime}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setCustomTime(val);
-                  const safe = sanitizeDebateSeconds(val);
-                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
-                }}
-                onBlur={() => {
-                  const safe = sanitizeDebateSeconds(customTime);
-                  setCustomTime(String(safe));
-                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
-                }}
-                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"
+                onChange={handleCustomTimeChange}
+                onBlur={handleCustomTimeBlur}
+                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary touch-manipulation"
               />
             </div>
             <p className="text-xs text-muted-foreground">
@@ -172,8 +188,9 @@ function SetupPage() {
         )}
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 bg-gradient-to-t from-background to-transparent p-4">
+      <div className="sticky bottom-4 mt-6 bg-background/80 backdrop-blur-md p-2 rounded-full">
         <button
+          type="button"
           disabled={names.length < 4}
           onClick={() => {
             const safeSeconds = sanitizeDebateSeconds(customTime);
@@ -181,6 +198,7 @@ function SetupPage() {
               ...settings,
               debateTimePerPlayer: safeSeconds,
             };
+            const filled = names.map((n, i) => n.trim() || `${t("defaultPlayer")} ${i + 1}`);
             saveNames(filled);
             saveSettings(finalSettings);
             navigate({ to: "/gamemaster" });
