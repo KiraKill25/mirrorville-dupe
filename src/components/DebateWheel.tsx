@@ -74,7 +74,6 @@ function PenaltyBadge({
     [],
   );
 
-
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
