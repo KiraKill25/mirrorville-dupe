@@ -126,7 +126,10 @@ function SetupPage() {
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
-                  onClick={() => setSettings((s) => ({ ...s, debateTimePerPlayer: v }))}
+                  onClick={() => {
+                    setSettings((s) => ({ ...s, debateTimePerPlayer: v }));
+                    setCustomTime(String(v));
+                  }}
                   className={`rounded-full px-4 py-2 text-xs font-bold transition ${
                     settings.debateTimePerPlayer === v
                       ? "bg-primary text-primary-foreground"
