@@ -36,9 +36,7 @@ function reportRoleId(line: string): string | null {
   if (key in REPORT_ROLE_MAP) return REPORT_ROLE_MAP[key];
 
   // Jetons avec variable de rôle imbriquée (repSeerCheck, repDied, repSavedBy…)
-  const roleMatch = line.match(
-    new RegExp(`${OPEN}@role${CLOSE}\\{"id":"([^"]+)"\\}`),
-  );
+  const roleMatch = line.match(new RegExp(`${OPEN}@role${CLOSE}\\{"id":"([^"]+)"\\}`));
   if (roleMatch) return roleMatch[1];
 
   return null;
@@ -50,13 +48,7 @@ function reportRoleId(line: string): string | null {
  * musique de fond tant que la carte est affichée.
  * Chaque ligne est illustrée par la petite image du rôle concerné.
  */
-export function NightReportCard({
-  state,
-  onClose,
-}: {
-  state: GameState;
-  onClose: () => void;
-}) {
+export function NightReportCard({ state, onClose }: { state: GameState; onClose: () => void }) {
   const { t } = useI18n();
   const narrate = useNarrate();
   const lines = state?.nightReport ?? [];
@@ -76,9 +68,7 @@ export function NightReportCard({
       <div className="surface-card animate-rise-in neon-ring mx-auto box-border max-h-[85vh] w-full max-w-sm shrink-0 space-y-4 overflow-x-hidden overflow-y-auto overscroll-contain rounded-3xl p-6 shadow-2xl sm:max-w-md">
         <div className="flex items-center gap-2 text-primary">
           <ScrollText className="size-5" />
-          <h2 className="text-lg font-black">
-            {t("nightReportTitle", { n: state.night })}
-          </h2>
+          <h2 className="text-lg font-black">{t("nightReportTitle", { n: state.night })}</h2>
         </div>
         <p className="text-xs text-muted-foreground">{t("nightReportSubtitle")}</p>
         <p className="text-[11px] tracking-widest text-muted-foreground uppercase">

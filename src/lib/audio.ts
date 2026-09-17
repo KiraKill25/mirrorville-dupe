@@ -62,10 +62,8 @@ function applyMasterMute() {
 
 /** Écrit la propriété `muted` en contournant le setter patché. */
 function forceMuted(el: HTMLMediaElement, value: boolean) {
-  const desc = Object.getOwnPropertyDescriptor(
-    HTMLMediaElement.prototype,
-    "muted",
-  ) as (PropertyDescriptor & { __orig?: PropertyDescriptor }) | undefined;
+  const desc = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "muted") as
+    (PropertyDescriptor & { __orig?: PropertyDescriptor }) | undefined;
   const setter = desc?.__orig?.set ?? desc?.set;
   if (setter) setter.call(el, value);
   else el.muted = value;
@@ -148,7 +146,6 @@ export function toggleMuted() {
   setMuted(!muted);
 }
 
-
 // ─────────────────────────────────────────────────────────────────────
 //  BGM — HTML5 Audio with 1.5 s crossfade
 // ─────────────────────────────────────────────────────────────────────
@@ -173,12 +170,7 @@ interface AEF extends HTMLAudioElement {
   __fadeId?: ReturnType<typeof setInterval>;
 }
 
-function fadeTo(
-  el: HTMLAudioElement,
-  to: number,
-  ms: number,
-  onDone?: () => void,
-) {
+function fadeTo(el: HTMLAudioElement, to: number, ms: number, onDone?: () => void) {
   const e = el as AEF;
   if (e.__fadeId !== undefined) {
     clearInterval(e.__fadeId);
@@ -273,8 +265,7 @@ function audioCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   const Ctor =
     window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext })
-      .webkitAudioContext;
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!Ctor) return null;
   ctx = ctx ?? new Ctor();
   if (ctx.state === "suspended") void ctx.resume().catch(() => {});
@@ -325,8 +316,7 @@ function tone(
 function noise(c: AudioContext, start: number, dur: number, gain = 0.2) {
   const buffer = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate);
   const data = buffer.getChannelData(0);
-  for (let i = 0; i < data.length; i++)
-    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
   const src = c.createBufferSource();
   src.buffer = buffer;
   const filter = c.createBiquadFilter();

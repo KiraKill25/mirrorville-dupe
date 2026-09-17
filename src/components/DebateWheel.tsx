@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Plus, RotateCcw, SkipForward } from "lucide-react";
 import { playTimeUpAlert } from "@/lib/audio";
 import { useI18n } from "@/lib/i18n";
-import {
-  SeatingWheel,
-  buildDebateQueue,
-  type RotationDirection,
-} from "@/components/SeatingWheel";
+import { SeatingWheel, buildDebateQueue, type RotationDirection } from "@/components/SeatingWheel";
 import type { Player } from "@/game/engine";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { NarratorCard } from "@/components/NarratorCard";
@@ -123,18 +119,13 @@ export function DebateSetupModal({
   onConfirm: (d: RotationDirection) => void;
 }) {
   const { t } = useI18n();
-  const [debateDirection, setDebateDirection] =
-    useState<RotationDirection>("clockwise");
+  const [debateDirection, setDebateDirection] = useState<RotationDirection>("clockwise");
 
   return (
     <ModalShell>
-      <p className="text-[11px] tracking-widest text-primary uppercase">
-        {t("captainDirTitle")}
-      </p>
+      <p className="text-[11px] tracking-widest text-primary uppercase">{t("captainDirTitle")}</p>
       <p className="text-sm font-semibold">
-        {captainName
-          ? t("captainDirText", { name: captainName })
-          : t("noCaptainDir")}
+        {captainName ? t("captainDirText", { name: captainName }) : t("noCaptainDir")}
       </p>
 
       {captainMuted && (
@@ -172,19 +163,14 @@ export function VoteSetupModal({
   onConfirm: (s: { voteDirection: RotationDirection; captainVotesFirst: boolean }) => void;
 }) {
   const { t } = useI18n();
-  const [voteDirection, setVoteDirection] =
-    useState<RotationDirection>("clockwise");
+  const [voteDirection, setVoteDirection] = useState<RotationDirection>("clockwise");
   const [captainVotesFirst, setCaptainVotesFirst] = useState(true);
 
   return (
     <ModalShell>
-      <p className="text-[11px] tracking-widest text-primary uppercase">
-        {t("voteSetupTitle")}
-      </p>
+      <p className="text-[11px] tracking-widest text-primary uppercase">{t("voteSetupTitle")}</p>
       <p className="text-sm font-semibold">
-        {captainName
-          ? t("voteSetupText", { name: captainName })
-          : t("noCaptainDir")}
+        {captainName ? t("voteSetupText", { name: captainName }) : t("noCaptainDir")}
       </p>
 
       {captainMuted && (
@@ -333,112 +319,108 @@ export function DebateWheel({
   const C = 2 * Math.PI * R;
 
   return (
-    <NarratorCard
-      title={t("debateTitle", { n: day })}
-      text={t("debateText")}
-    >
+    <NarratorCard title={t("debateTitle", { n: day })} text={t("debateText")}>
       <p className="text-center text-[11px] tracking-[0.3em] text-muted-foreground uppercase">
         {t("speaker", { i: i + 1, n: queue.length })}
         {current.role !== "normal" && (
           <span className="ms-2 text-primary">
-            {current.role === "opening"
-              ? t("captainOpening")
-              : t("captainClosing")}
+            {current.role === "opening" ? t("captainOpening") : t("captainClosing")}
           </span>
         )}
       </p>
 
       <div className="relative">
-      <SeatingWheel
-        players={seating}
-        activeId={current.player.id}
-        direction={direction}
-        captainId={captainId}
-        onNodeClick={(id) => onPenalty?.(id)}
-        onNodeLongPress={(id) => onRemovePenalty?.(id)}
-        badge={(p) =>
-          (p.penaltyVotes ?? 0) > 0 ? (
-            <PenaltyBadge
-              count={p.penaltyVotes!}
-              onAdd={() => onPenalty?.(p.id)}
-              onRemove={() => onRemovePenalty?.(p.id)}
-            />
-          ) : null
-        }
-        center={
-          <div className="relative flex size-full items-center justify-center">
-            <svg viewBox="0 0 100 100" className="absolute size-full -rotate-90 z-0 pointer-events-none">
-              <circle
-                cx="50"
-                cy="50"
-                r={R}
-                fill="none"
-                strokeWidth="6"
-                className="stroke-input"
+        <SeatingWheel
+          players={seating}
+          activeId={current.player.id}
+          direction={direction}
+          captainId={captainId}
+          onNodeClick={(id) => onPenalty?.(id)}
+          onNodeLongPress={(id) => onRemovePenalty?.(id)}
+          badge={(p) =>
+            (p.penaltyVotes ?? 0) > 0 ? (
+              <PenaltyBadge
+                count={p.penaltyVotes!}
+                onAdd={() => onPenalty?.(p.id)}
+                onRemove={() => onRemovePenalty?.(p.id)}
               />
-              <circle
-                cx="50"
-                cy="50"
-                r={R}
-                fill="none"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray={C}
-                strokeDashoffset={C * (1 - pct)}
-                className={
-                  left === 0 ? "stroke-destructive" : "stroke-primary"
-                }
-                style={{ transition: "stroke-dashoffset 1s linear" }}
-              />
-            </svg>
-            <div className="relative z-10 px-2 text-center">
-              <div className="relative">
-                <button
-                  type="button"
-                  aria-label={t("starAward", { name: current.player.name })}
-                  onPointerDown={pressStart}
-                  onPointerUp={pressEnd}
-                  onPointerLeave={pressCancel}
-                  onTouchStart={(e) => e.preventDefault()}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className={`relative z-20 cursor-pointer pointer-events-auto touch-manipulation touch-callout-none select-none max-w-full truncate text-[10px] font-bold tracking-widest text-primary uppercase transition-transform duration-200 ${
-                    namePulse ? "scale-110" : "scale-100"
-                  }`}
-                >
-                  {current.player.name}
-                </button>
-                {pops.map((p) => (
-                  <span
-                    key={p.id}
-                    className={`pointer-events-none absolute left-1/2 -translate-x-1/2 text-[11px] font-black whitespace-nowrap ${
-                      p.delta > 0
-                        ? "animate-star-float text-gold"
-                        : "animate-star-drop text-destructive"
+            ) : null
+          }
+          center={
+            <div className="relative flex size-full items-center justify-center">
+              <svg
+                viewBox="0 0 100 100"
+                className="absolute size-full -rotate-90 z-0 pointer-events-none"
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={R}
+                  fill="none"
+                  strokeWidth="6"
+                  className="stroke-input"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={R}
+                  fill="none"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray={C}
+                  strokeDashoffset={C * (1 - pct)}
+                  className={left === 0 ? "stroke-destructive" : "stroke-primary"}
+                  style={{ transition: "stroke-dashoffset 1s linear" }}
+                />
+              </svg>
+              <div className="relative z-10 px-2 text-center">
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label={t("starAward", { name: current.player.name })}
+                    onPointerDown={pressStart}
+                    onPointerUp={pressEnd}
+                    onPointerLeave={pressCancel}
+                    onTouchStart={(e) => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
+                    className={`relative z-20 cursor-pointer pointer-events-auto touch-manipulation touch-callout-none select-none max-w-full truncate text-[10px] font-bold tracking-widest text-primary uppercase transition-transform duration-200 ${
+                      namePulse ? "scale-110" : "scale-100"
                     }`}
                   >
-                    ⭐ {p.delta > 0 ? "+1" : "-1"}
-                  </span>
-                ))}
+                    {current.player.name}
+                  </button>
+                  {pops.map((p) => (
+                    <span
+                      key={p.id}
+                      className={`pointer-events-none absolute left-1/2 -translate-x-1/2 text-[11px] font-black whitespace-nowrap ${
+                        p.delta > 0
+                          ? "animate-star-float text-gold"
+                          : "animate-star-drop text-destructive"
+                      }`}
+                    >
+                      ⭐ {p.delta > 0 ? "+1" : "-1"}
+                    </span>
+                  ))}
+                </div>
+                <p
+                  className={`text-2xl font-black tabular-nums ${left === 0 ? "animate-danger-pulse text-destructive" : "text-foreground"}`}
+                >
+                  {String(Math.floor(left / 60)).padStart(2, "0")}:
+                  {String(left % 60).padStart(2, "0")}
+                </p>
+                <p
+                  key={`stars-${currentStars}`}
+                  className="animate-counter-pop text-[11px] font-bold text-gold"
+                >
+                  ⭐ {currentStars}
+                </p>
+                <p className="text-[9px] tracking-widest text-muted-foreground uppercase">
+                  {t("currentSpeaker")}
+                </p>
               </div>
-              <p
-                className={`text-2xl font-black tabular-nums ${left === 0 ? "animate-danger-pulse text-destructive" : "text-foreground"}`}
-              >
-                {String(Math.floor(left / 60)).padStart(2, "0")}:
-                {String(left % 60).padStart(2, "0")}
-              </p>
-              <p
-                key={`stars-${currentStars}`}
-                className="animate-counter-pop text-[11px] font-bold text-gold"
-              >
-                ⭐ {currentStars}
-              </p>
-              <p className="text-[9px] tracking-widest text-muted-foreground uppercase">
-                {t("currentSpeaker")}
-              </p>
             </div>
-          </div>
-        }
-      />
+          }
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-2">

@@ -34,28 +34,16 @@ import { ROLE_BY_ID, roleImage } from "@/data/roles";
 import { NarratorCard } from "@/components/NarratorCard";
 import { PhaseTransition } from "@/components/PhaseTransition";
 import { SpeakButton } from "@/components/SpeakButton";
-import {
-  DebateSetupModal,
-  DebateWheel,
-  VoteSetupModal,
-} from "@/components/DebateWheel";
+import { DebateSetupModal, DebateWheel, VoteSetupModal } from "@/components/DebateWheel";
 import { VoteWheel } from "@/components/VoteWheel";
 import type { RotationDirection } from "@/components/SeatingWheel";
 import { EliminationReveal } from "@/components/EliminationReveal";
-import {
-  GameRecapCard,
-  type VoteRecord,
-} from "@/components/GameRecapCard";
+import { GameRecapCard, type VoteRecord } from "@/components/GameRecapCard";
 import { useI18n } from "@/lib/i18n";
 import { useNarrate } from "@/hooks/use-narrate";
 import { nk } from "@/lib/narration";
 import { NightReportCard } from "@/components/NightReportCard";
-import {
-  clearBgm,
-  playCheer,
-  playWolfHowl,
-  startBgm,
-} from "@/lib/audio";
+import { clearBgm, playCheer, playWolfHowl, startBgm } from "@/lib/audio";
 import {
   clearGame,
   loadGame,
@@ -108,13 +96,12 @@ function GamePage() {
   const [state, setState] = useState<GameState | null>(null);
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [transition, setTransition] = useState<"NIGHT" | "DAY" | null>("NIGHT");
-  const [victims, setVictims] = useState<
-    { id: string; name: string; roleId: string }[] | null
-  >(null);
+  const [victims, setVictims] = useState<{ id: string; name: string; roleId: string }[] | null>(
+    null,
+  );
   const [debateDoneDay, setDebateDoneDay] = useState(0);
   const [direction, setDirection] = useState<RotationDirection>("clockwise");
-  const [voteDirection, setVoteDirection] =
-    useState<RotationDirection>("clockwise");
+  const [voteDirection, setVoteDirection] = useState<RotationDirection>("clockwise");
   const [captainVotesFirst, setCaptainVotesFirst] = useState(true);
   const [directionDay, setDirectionDay] = useState(0);
   const [voteSetupDay, setVoteSetupDay] = useState(0);
@@ -142,9 +129,7 @@ function GamePage() {
       updateState({
         ...state,
         players: state.players.map((x) =>
-          x.id === playerId
-            ? { ...x, penaltyVotes: Math.max(0, (x.penaltyVotes ?? 0) - 1) }
-            : x
+          x.id === playerId ? { ...x, penaltyVotes: Math.max(0, (x.penaltyVotes ?? 0) - 1) } : x,
         ),
       });
       toast.info(t("penaltyRemovedToast", { name: p.name }));
@@ -172,8 +157,7 @@ function GamePage() {
       return;
     }
     const setup = loadSetup();
-    if (setup?.players?.length)
-      setState(createGame(setup.players, setup.villageCaptainId));
+    if (setup?.players?.length) setState(createGame(setup.players, setup.villageCaptainId));
     else navigate({ to: "/setup" });
   }, [navigate]);
 
@@ -200,22 +184,30 @@ function GamePage() {
 
   useEffect(() => {
     if (!state) return;
-    if (state.phase === "FIN") { clearBgm(); return; }
+    if (state.phase === "FIN") {
+      clearBgm();
+      return;
+    }
     startBgm(state.phase.startsWith("NUIT") ? "NIGHT" : "DAY");
   }, [state?.phase]);
 
   useEffect(() => () => clearBgm(), []);
 
-  if (!state)
-    return <main className="p-8 text-muted-foreground">{t("loading")}</main>;
+  if (!state) return <main className="p-8 text-muted-foreground">{t("loading")}</main>;
 
   if (state.phase === "FIN")
     return (
       <GameRecapCard
         state={state}
         voteHistory={voteHistory}
-        onRestart={() => { clearGame(); navigate({ to: "/" }); }}
-        onPlayAgain={() => { clearGame(); navigate({ to: "/composition" }); }}
+        onRestart={() => {
+          clearGame();
+          navigate({ to: "/" });
+        }}
+        onPlayAgain={() => {
+          clearGame();
+          navigate({ to: "/composition" });
+        }}
       />
     );
 
@@ -236,13 +228,8 @@ function GamePage() {
     directionDay !== state.day &&
     overlayFree;
   const needsVoteSetup =
-    !isNight &&
-    state.phase === "JOUR_VOTE" &&
-    voteSetupDay !== state.day &&
-    overlayFree;
-  const phaseLabel = isNight
-    ? t("nightN", { n: state.night })
-    : t("dayN", { n: state.day });
+    !isNight && state.phase === "JOUR_VOTE" && voteSetupDay !== state.day && overlayFree;
+  const phaseLabel = isNight ? t("nightN", { n: state.night }) : t("dayN", { n: state.day });
 
   const mutedPlayers = state.players.filter((p) => p.alive && p.mutedForDay);
   const aliveCount = state.players.filter((p) => p.alive).length;
@@ -294,7 +281,10 @@ function GamePage() {
           <LanguageSwitcher />
           <MuteButton />
           <button
-            onClick={() => { clearGame(); navigate({ to: "/" }); }}
+            onClick={() => {
+              clearGame();
+              navigate({ to: "/" });
+            }}
             className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-primary"
           >
             {t("quit")}
@@ -342,13 +332,9 @@ function GamePage() {
         />
       )}
 
-      {guideModalOpen && (
-        <GuideModal onClose={() => setGuideModalOpen(false)} />
-      )}
+      {guideModalOpen && <GuideModal onClose={() => setGuideModalOpen(false)} />}
 
-      {victims && (
-        <EliminationReveal victims={victims} onClose={() => setVictims(null)} />
-      )}
+      {victims && <EliminationReveal victims={victims} onClose={() => setVictims(null)} />}
 
       {state.reveal && (
         <Overlay onClose={() => setState({ ...state, reveal: undefined })}>
@@ -362,13 +348,8 @@ function GamePage() {
 
       {needsDebateSetup && (
         <DebateSetupModal
-          captainName={
-            state.players.find((p) => p.id === state.villageCaptainId)?.name
-          }
-          captainMuted={
-            !!state.players.find((p) => p.id === state.villageCaptainId)
-              ?.mutedForDay
-          }
+          captainName={state.players.find((p) => p.id === state.villageCaptainId)?.name}
+          captainMuted={!!state.players.find((p) => p.id === state.villageCaptainId)?.mutedForDay}
           onConfirm={(d) => {
             setDirection(d);
             setDirectionDay(state.day);
@@ -378,13 +359,8 @@ function GamePage() {
 
       {needsVoteSetup && (
         <VoteSetupModal
-          captainName={
-            state.players.find((p) => p.id === state.villageCaptainId)?.name
-          }
-          captainMuted={
-            !!state.players.find((p) => p.id === state.villageCaptainId)
-              ?.mutedForDay
-          }
+          captainName={state.players.find((p) => p.id === state.villageCaptainId)?.name}
+          captainMuted={!!state.players.find((p) => p.id === state.villageCaptainId)?.mutedForDay}
           onConfirm={(setup) => {
             setVoteDirection(setup.voteDirection);
             setCaptainVotesFirst(setup.captainVotesFirst);
@@ -535,9 +511,7 @@ function VoteAnnounceCard({
             {t("voteAnnounceTitle")}
           </h2>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {t("voteAnnounceDesc")}
-        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{t("voteAnnounceDesc")}</p>
         {!isFirstDay && (
           <p className="text-[11px] tracking-widest text-amber-400 uppercase">
             {t("voteAnnounceMandatory")}
@@ -619,16 +593,20 @@ function GuideModal({ onClose }: { onClose: () => void }) {
       <div className="space-y-4 text-left max-h-[60vh] overflow-y-auto pr-1">
         <h3 className="text-sm font-bold text-primary">{t("guideRulesTitle")}</h3>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          - <strong>{t("guideRulesNight").split(":")[0]}:</strong> {t("guideRulesNight").split(":").slice(1).join(":").trim()}
+          - <strong>{t("guideRulesNight").split(":")[0]}:</strong>{" "}
+          {t("guideRulesNight").split(":").slice(1).join(":").trim()}
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          - <strong>{t("guideRulesDawn").split(":")[0]}:</strong> {t("guideRulesDawn").split(":").slice(1).join(":").trim()}
+          - <strong>{t("guideRulesDawn").split(":")[0]}:</strong>{" "}
+          {t("guideRulesDawn").split(":").slice(1).join(":").trim()}
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          - <strong>{t("guideRulesVote").split(":")[0]}:</strong> {t("guideRulesVote").split(":").slice(1).join(":").trim()}
+          - <strong>{t("guideRulesVote").split(":")[0]}:</strong>{" "}
+          {t("guideRulesVote").split(":").slice(1).join(":").trim()}
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          - <strong>{t("guideRulesUndo").split(":")[0]}:</strong> {t("guideRulesUndo").split(":").slice(1).join(":").trim()}
+          - <strong>{t("guideRulesUndo").split(":")[0]}:</strong>{" "}
+          {t("guideRulesUndo").split(":").slice(1).join(":").trim()}
         </p>
       </div>
       <button
@@ -641,13 +619,7 @@ function GuideModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-function RoleList({
-  players,
-  revealAll,
-}: {
-  players: Player[];
-  revealAll?: boolean;
-}) {
+function RoleList({ players, revealAll }: { players: Player[]; revealAll?: boolean }) {
   const { t, roleName } = useI18n();
   return (
     <ul className="grid grid-cols-2 gap-2 text-sm">
@@ -689,7 +661,8 @@ function RoleList({
 
 const PICKER_ACCENT = {
   arcane: "border-primary bg-primary/15 text-primary shadow-[0_0_18px_rgba(99,102,241,0.45)]",
-  poison: "border-emerald-400 bg-emerald-400/15 text-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.45)]",
+  poison:
+    "border-emerald-400 bg-emerald-400/15 text-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.45)]",
   crimson:
     "border-destructive bg-destructive/15 text-destructive shadow-[0_0_18px_rgba(236,72,153,0.5)]",
 } as const;
@@ -722,9 +695,7 @@ function PlayerPicker({
             disabled={off}
             onClick={() => onToggle(p.id)}
             className={`relative rounded-xl border px-3 py-3 text-sm transition duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 ${
-              selected.includes(p.id) && !off
-                ? PICKER_ACCENT[accent]
-                : "border-border"
+              selected.includes(p.id) && !off ? PICKER_ACCENT[accent] : "border-border"
             }`}
           >
             {p.isCaptain && (
@@ -769,9 +740,9 @@ function NightPanel({
   const [editingWord, setEditingWord] = useState(false);
   const [shieldConfirm, setShieldConfirm] = useState(false);
   const [wordDraft, setWordDraft] = useState("");
-  const [facePower, setFacePower] = useState<
-    "protect" | "life" | "poison" | "inspect" | null
-  >(null);
+  const [facePower, setFacePower] = useState<"protect" | "life" | "poison" | "inspect" | null>(
+    null,
+  );
   const [spyChoice, setSpyChoice] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -838,24 +809,16 @@ function NightPanel({
           : [id],
     );
 
-  const STANDARD_WOLF_KILLERS = [
-    "loup-garou",
-    "loup-noir",
-    "loup-bavard",
-    "loup-matriarche",
-  ];
+  const STANDARD_WOLF_KILLERS = ["loup-garou", "loup-noir", "loup-bavard", "loup-matriarche"];
   const forbiddenWolfIds = STANDARD_WOLF_KILLERS.includes(step.roleId)
-    ? state.players
-        .filter((p) => p.alive && p.team === "WEREWOLVES")
-        .map((p) => p.id)
+    ? state.players.filter((p) => p.alive && p.team === "WEREWOLVES").map((p) => p.id)
     : [];
   const toggleTarget = (id: string) => {
     if (forbiddenWolfIds.includes(id)) return;
     toggle(id);
   };
 
-  const send = (payload: Parameters<typeof submitStep>[1]) =>
-    onChange(submitStep(state, payload));
+  const send = (payload: Parameters<typeof submitStep>[1]) => onChange(submitStep(state, payload));
 
   const matriarch = state.players.find(
     (p) =>
@@ -916,9 +879,7 @@ function NightPanel({
           className="animate-slow-zoom h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-        <p className="absolute bottom-3 left-4 text-lg font-black text-primary">
-          {stepTitle}
-        </p>
+        <p className="absolute bottom-3 left-4 text-lg font-black text-primary">{stepTitle}</p>
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
           <SpeakButton text={stepTitle} />
         </div>
@@ -960,7 +921,10 @@ function NightPanel({
                     onChange={(e) => setWordDraft(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && wordDraft.trim()) {
-                        onChange({ ...state, round: { ...state.round, requiredWord: wordDraft.trim() } });
+                        onChange({
+                          ...state,
+                          round: { ...state.round, requiredWord: wordDraft.trim() },
+                        });
                         setEditingWord(false);
                       }
                       if (e.key === "Escape") setEditingWord(false);
@@ -971,7 +935,10 @@ function NightPanel({
                   <button
                     onClick={() => {
                       if (wordDraft.trim())
-                        onChange({ ...state, round: { ...state.round, requiredWord: wordDraft.trim() } });
+                        onChange({
+                          ...state,
+                          round: { ...state.round, requiredWord: wordDraft.trim() },
+                        });
                       setEditingWord(false);
                     }}
                     className="shrink-0 rounded-full bg-primary px-4 py-3 text-sm font-bold text-primary-foreground"
@@ -1043,11 +1010,7 @@ function NightPanel({
             const infectLocked = !!actor.abilityUsed;
             const muteLocked = state.night < 2;
             const tab =
-              bwTab === "attack" && !step.soloKill
-                ? infectLocked
-                  ? "mute"
-                  : "infect"
-                : bwTab;
+              bwTab === "attack" && !step.soloKill ? (infectLocked ? "mute" : "infect") : bwTab;
             const marks: Record<string, React.ReactNode> = {};
             if (victimId)
               marks[victimId] = infect ? (
@@ -1211,13 +1174,17 @@ function NightPanel({
           })()
         ) : step.mode === "threefaces" ? (
           <div className="space-y-3">
-            <p className="text-xs tracking-widest text-primary uppercase">{t("facesChoosePower")}</p>
+            <p className="text-xs tracking-widest text-primary uppercase">
+              {t("facesChoosePower")}
+            </p>
             <div className="grid grid-cols-3 gap-2">
               <button
                 disabled={actor.facesUsed?.includes("protect")}
                 onClick={() => setFacePower("protect")}
                 className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-xs font-bold ${
-                  facePower === "protect" ? "border-primary bg-primary/20 text-primary" : "border-border"
+                  facePower === "protect"
+                    ? "border-primary bg-primary/20 text-primary"
+                    : "border-border"
                 } disabled:opacity-30`}
               >
                 <Shield className="size-4" />
@@ -1239,7 +1206,9 @@ function NightPanel({
                 disabled={actor.facesUsed?.includes("inspect")}
                 onClick={() => setFacePower("inspect")}
                 className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-xs font-bold ${
-                  facePower === "inspect" ? "border-amber-400 bg-amber-400/20 text-amber-300" : "border-border"
+                  facePower === "inspect"
+                    ? "border-amber-400 bg-amber-400/20 text-amber-300"
+                    : "border-border"
                 } disabled:opacity-30`}
               >
                 <Eye className="size-4" />
@@ -1313,7 +1282,9 @@ function NightPanel({
         ) : step.mode === "witch" ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="text-xs tracking-widest text-primary uppercase">{t("witchLifePotion")}</p>
+              <p className="text-xs tracking-widest text-primary uppercase">
+                {t("witchLifePotion")}
+              </p>
               {actor.hasUsedLifePotion || actor.healUsed ? (
                 <p className="text-xs text-muted-foreground">{t("witchLifeUsed")}</p>
               ) : attackedPlayerName && canWitchHeal(state) ? (
@@ -1509,7 +1480,9 @@ function NightPanel({
               <button
                 disabled={!shieldConfirm && sel.length !== (step.mode === "two" ? 2 : 1)}
                 onClick={() =>
-                  send(shieldConfirm ? { ultimateShield: true } : { targetId: sel[0], targetIds: sel })
+                  send(
+                    shieldConfirm ? { ultimateShield: true } : { targetId: sel[0], targetIds: sel },
+                  )
                 }
                 className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground disabled:opacity-40"
               >
@@ -1531,13 +1504,7 @@ function NightPanel({
   );
 }
 
-function HunterPanel({
-  state,
-  onDone,
-}: {
-  state: GameState;
-  onDone: (s: GameState) => void;
-}) {
+function HunterPanel({ state, onDone }: { state: GameState; onDone: (s: GameState) => void }) {
   const { t } = useI18n();
   const [targetId, setTargetId] = useState<string | null>(null);
   const hunter = state.players.find((p) => p.id === state.hunterPending);
@@ -1580,9 +1547,7 @@ function CaptainSuccessionPanel({
 }) {
   const { t } = useI18n();
   const [targetId, setTargetId] = useState<string | null>(null);
-  const formerCaptain = state.players.find(
-    (p) => p.id === state.captainSuccessionPending,
-  );
+  const formerCaptain = state.players.find((p) => p.id === state.captainSuccessionPending);
   const aliveCandidates = state.players.filter((p) => p.alive);
 
   return (
@@ -1640,9 +1605,7 @@ function DawnPanel({
 }) {
   const { t } = useI18n();
 
-  const mutedNames = state.players
-    .filter((p) => p.alive && p.mutedForDay)
-    .map((p) => p.name);
+  const mutedNames = state.players.filter((p) => p.alive && p.mutedForDay).map((p) => p.name);
   const jailedPlayer = state.round.jailedId
     ? state.players.find((p) => p.id === state.round.jailedId)
     : null;
@@ -1663,9 +1626,7 @@ function DawnPanel({
               onChange({
                 ...state,
                 players: state.players.map((p) =>
-                  p.id === playerId
-                    ? { ...p, stars: Math.max(0, p.stars + delta) }
-                    : p
+                  p.id === playerId ? { ...p, stars: Math.max(0, p.stars + delta) } : p,
                 ),
               })
             }
@@ -1701,7 +1662,9 @@ function DawnPanel({
                   <button
                     onClick={() => {
                       onChange(foxReveal(state, fox.id));
-                      toast.error(t("foxRevealDoneToast", { name: fox.name, confidant: confidant.name }));
+                      toast.error(
+                        t("foxRevealDoneToast", { name: fox.name, confidant: confidant.name }),
+                      );
                     }}
                     className="flex-1 rounded-full border border-amber-500/60 py-2.5 text-xs font-bold text-amber-400 transition active:scale-95"
                   >
@@ -1710,7 +1673,9 @@ function DawnPanel({
                   <button
                     onClick={() => {
                       onChange(confidantReveal(state, confidant.id));
-                      toast.error(t("confidantRevealDoneToast", { name: confidant.name, fox: fox.name }));
+                      toast.error(
+                        t("confidantRevealDoneToast", { name: confidant.name, fox: fox.name }),
+                      );
                     }}
                     className="flex-1 rounded-full border border-amber-500/60 py-2.5 text-xs font-bold text-amber-400 transition active:scale-95"
                   >
@@ -1720,7 +1685,6 @@ function DawnPanel({
               </div>
             );
           })()}
-
         </div>
       )}
     </div>

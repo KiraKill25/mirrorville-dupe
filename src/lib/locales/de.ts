@@ -2,7 +2,8 @@
 export const de = {
   ui: {
     seatingTitle: "Sitzordnung",
-    seatingHint: "Ziehe einen Spieler auf einen anderen, um ihre Plätze zu tauschen. Die Sitzordnung bestimmt die Nachbarn.",
+    seatingHint:
+      "Ziehe einen Spieler auf einen anderen, um ihre Plätze zu tauschen. Die Sitzordnung bestimmt die Nachbarn.",
     seatingTable: "Tisch",
     seatingCount: "{n} Spieler",
     seatingNodeLabel: "Platz {n} — {name}",
@@ -74,7 +75,8 @@ export const de = {
     // Distribution
     distributing: "Rollen werden verteilt…",
     playerXofY: "Spieler {i} / {n}",
-    passPhoneTo: "Gib das Telefon an {name} weiter. Enthülle dann die Karte, ohne sie den anderen zu zeigen.",
+    passPhoneTo:
+      "Gib das Telefon an {name} weiter. Enthülle dann die Karte, ohne sie den anderen zu zeigen.",
     discoverRole: "Meine Rolle entdecken",
     memorized: "Ich kenne meine Rolle",
     handoverTitle: "Gib das Telefon dem Spielleiter",
@@ -129,7 +131,8 @@ export const de = {
     debateTitle: "Diskussion — Tag {n}",
     debateText:
       "Der Hauptmann eröffnet die Diskussion, jeder Spieler spricht, dann schließt der Hauptmann.",
-    captainMutedHint: "Der Hauptmann ist verstummt: Er erhält keine Sprechzeit (weder Eröffnung noch Abschluss), behält aber alle seine Entscheidungen — Diskussionsrichtung, Abstimmungsrichtung und Timing seiner Stimme.",
+    captainMutedHint:
+      "Der Hauptmann ist verstummt: Er erhält keine Sprechzeit (weder Eröffnung noch Abschluss), behält aber alle seine Entscheidungen — Diskussionsrichtung, Abstimmungsrichtung und Timing seiner Stimme.",
     mutedBy: "Vom Schwarzen Wolf zum Schweigen gebracht: {names}",
     dawnTitle: "Morgengrauen — Tag {n}",
     bavardWordOfDay: "Plapperwolf, dein Tageswort lautet:",
@@ -177,7 +180,8 @@ export const de = {
     auditSplitLine: "{voter} ➔ Geteilt: {target} + {target2}",
     auditDoubleLine: "{voter} ➔ {target} ×2",
     revoteTiedExcluded: "Spieler im Gleichstand stimmen bei dieser Stichwahl nicht ab.",
-    doubleElimAnnounce: "Zweiter Gleichstand in Folge: Beide unentschiedenen Spieler werden eliminiert.",
+    doubleElimAnnounce:
+      "Zweiter Gleichstand in Folge: Beide unentschiedenen Spieler werden eliminiert.",
     evalTitle: "Spielauswertung",
     evalMvp: "MVP — Bester Spieler",
     evalLvp: "LVP — Schwächster Spieler",
@@ -222,7 +226,8 @@ export const de = {
     revoteSuffix: " (Stichwahl)",
     voteText:
       "Das Dorf muss den Verurteilten bestimmen. Zähle die Stimmen: Mindestens ein Spieler sollte eliminiert werden.",
-    logRavenTarget: "Der Rabe visiert {name} an. Dieser Spieler startet die Abstimmung mit {count} Stimme(n) gegen sich.",
+    logRavenTarget:
+      "Der Rabe visiert {name} an. Dieser Spieler startet die Abstimmung mit {count} Stimme(n) gegen sich.",
     voteTotal: "Vergebene Stimmen: {c} / {t}",
     voteTotalHint:
       "Mögliche Gesamtstimmen entsprechen Anzahl der Lebenden + 1 (doppelte Hauptmannsstimme).",
@@ -252,7 +257,8 @@ export const de = {
     causeSuicide: "Selbstmord / Enthüllung",
     gmSuicide: "Selbstmord / Enthüllung",
     suicideTitle: "Selbstmord / Enthüllung",
-    suicideDesc: "Wähle den Spieler aus, der gegen die Regeln verstoßen oder seine Rolle enthüllt hat. Er wird sofort eliminiert und die Nacht bricht an.",
+    suicideDesc:
+      "Wähle den Spieler aus, der gegen die Regeln verstoßen oder seine Rolle enthüllt hat. Er wird sofort eliminiert und die Nacht bricht an.",
     suicideConfirm: "💀 Elimination bestätigen",
     suicideDone: "{name} wurde eliminiert: Selbstmord / Enthüllung.",
     // Undo
@@ -377,11 +383,13 @@ export const de = {
     causeGeneralFailed: "General ist gescheitert",
     causeManiac: "Vom Maniac ermordet",
     causeThreeFacesPoison: "Durch Drei Gesichter vergiftet",
-    causePuppetProtection: "Tödlicher Abfangschutz — Die Puppe fing den Schaden anstelle des Puppenspielers ab",
+    causePuppetProtection:
+      "Tödlicher Abfangschutz — Die Puppe fing den Schaden anstelle des Puppenspielers ab",
 
     // Night Report
     nightReportTitle: "Nachtbericht {n}",
-    nightReportSubtitle: "Vollständige Aktionsübersicht — Stummer Bildschirm, nur für den Spielleiter.",
+    nightReportSubtitle:
+      "Vollständige Aktionsübersicht — Stummer Bildschirm, nur für den Spielleiter.",
     nightReportActions: "Nachtaktionen",
     nightReportOutcomes: "Nachtergebnisse",
     nightReportEmpty: "Keine Nachtaktionen aufgezeichnet.",
@@ -406,8 +414,10 @@ export const de = {
     marionnetteTag: " (Puppe)",
 
     ultimateShield: "Ultimatives Schild",
-    ultimateShieldDesc: "Schützt das gesamte Dorf in dieser Nacht vor Wölfen und Infektion. Einmalig nutzbar.",
-    ultimateShieldWarn: "Achtung: Nach der Aktivierung verliert der Beschützer dauerhaft alle Schutzfähigkeiten.",
+    ultimateShieldDesc:
+      "Schützt das gesamte Dorf in dieser Nacht vor Wölfen und Infektion. Einmalig nutzbar.",
+    ultimateShieldWarn:
+      "Achtung: Nach der Aktivierung verliert der Beschützer dauerhaft alle Schutzfähigkeiten.",
     ultimateShieldActivate: "Ultimatives Schild aktivieren",
     ultimateShieldConfirm: "Ja, aktivieren und Kräfte verlieren",
     voteRanking: "Stimmen-Rangliste — Von den meisten bis zu den wenigsten Stimmen",
@@ -420,7 +430,8 @@ export const de = {
     starAward: "Stern an {name} vergeben",
     starRemove: "Stern von {name} entfernen",
     starsLabel: "Sterne",
-    starsHint: "Klicke auf ⭐ auf der Karte eines Spielers, um scharfsinniges Kombinieren zu belohnen. Gedrückt halten zum Entfernen.",
+    starsHint:
+      "Klicke auf ⭐ auf der Karte eines Spielers, um scharfsinniges Kombinieren zu belohnen. Gedrückt halten zum Entfernen.",
     starsEarned: "{n} ⭐",
     badgeStarTown: "Meisterdetektiv",
     badgeStarTownDesc: "Der Dorfbewohner mit den meisten Sternen vom Spielleiter.",
@@ -436,10 +447,12 @@ export const de = {
 
     // Fox & Confidant — Joker mechanics
     foxReveal: "🦊 Fuchs-Enthüllung",
-    foxRevealDesc: "Der Fuchs verrät die nächtlichen Ereignisse öffentlich: sofortiger Selbstmord. Der Vertraute wird zum Joker.",
+    foxRevealDesc:
+      "Der Fuchs verrät die nächtlichen Ereignisse öffentlich: sofortiger Selbstmord. Der Vertraute wird zum Joker.",
     foxRevealConfirm: "Fuchs-Enthüllung bestätigen",
     confidantReveal: "📜 Vertrauten-Enthüllung",
-    confidantRevealDesc: "Der Vertraute verrät die Geheimnisse des Fuchses: sofortiger Selbstmord. Der Fuchs wird zum Joker.",
+    confidantRevealDesc:
+      "Der Vertraute verrät die Geheimnisse des Fuchses: sofortiger Selbstmord. Der Fuchs wird zum Joker.",
     confidantRevealConfirm: "Vertrauten-Enthüllung bestätigen",
     jokerAssignedToast: "{name} ist jetzt der Joker!",
     foxRevealDoneToast: "{name} (Fuchs) eliminiert: Selbstmord. {confidant} wird zum Joker.",
@@ -453,10 +466,14 @@ export const de = {
 
     // Guide modal — rules
     guideRulesTitle: "Regeln & Spielleiter-Tipps",
-    guideRulesNight: "Nacht: Folgt den Bildschirm-Aufrufen in der Reihenfolge. Jede Rolle führt ihre Aktion heimlich aus.",
-    guideRulesDawn: "Morgendämmerung: Enthüllt den Nachtbericht und startet das Debattrad. Die Spieler sprechen reihum.",
-    guideRulesVote: "Abstimmung: Folgt der Richtung des Rads, um die Wahl jedes Dorfbewohners fair zu sammeln.",
-    guideRulesUndo: "Rückgängig-Button: Wenn ihr einen Eingabefehler macht, könnt ihr zurückkehren.",
+    guideRulesNight:
+      "Nacht: Folgt den Bildschirm-Aufrufen in der Reihenfolge. Jede Rolle führt ihre Aktion heimlich aus.",
+    guideRulesDawn:
+      "Morgendämmerung: Enthüllt den Nachtbericht und startet das Debattrad. Die Spieler sprechen reihum.",
+    guideRulesVote:
+      "Abstimmung: Folgt der Richtung des Rads, um die Wahl jedes Dorfbewohners fair zu sammeln.",
+    guideRulesUndo:
+      "Rückgängig-Button: Wenn ihr einen Eingabefehler macht, könnt ihr zurückkehren.",
     guideCloseBtn: "Schließen",
 
     // Defense timer
@@ -542,8 +559,7 @@ export const de = {
     voyante: "Welchen Spieler möchtest du durchschauen?",
     salvateur: "Wen beschützt du diese Nacht? (Nicht dieselbe Person zweimal hintereinander)",
     "petite-fille": "Du blinzelst kurz… Hast du das Rudel ausspioniert?",
-    "loup-garou":
-      "Das Rudel bestimmt sein Opfer. Bei Uneinigkeit entscheidet der Urwolf alleine.",
+    "loup-garou": "Das Rudel bestimmt sein Opfer. Bei Uneinigkeit entscheidet der Urwolf alleine.",
     "loup-noir":
       "Infiziere das Opfer (einmal pro Spiel) und/oder bringe einen Spieler zum Schweigen.",
     "loup-blanc": "Möchtest du diese Nacht einen Werwolf fressen?",
@@ -553,12 +569,14 @@ export const de = {
     "joueur-de-flute": "Bezaubere zwei Spieler.",
     corbeau: "Auf wen legst du die schwarze Feder?",
     tavernier: "Wem gibst du einen aus?",
-    general: "Bestimme den Spieler, auf den du schießen willst. Wenn er kein Wolf ist, verlierst du dein Leben.",
+    general:
+      "Bestimme den Spieler, auf den du schießen willst. Wenn er kein Wolf ist, verlierst du dein Leben.",
     "montreur-dours": "Der Bär schnüffelt an seinen direkten Nachbarn…",
     "trois-faces": "Wähle eines deiner drei Gesichter: Schutz, Trank oder Inspektion.",
     voleur: "Stiehl die Rolle eines Spielers: Er wird zu einem einfachen Dorfbewohner.",
     maniaque: "Bestimme das Opfer, das von keinem Schutz gerettet werden kann.",
-    marionnettiste: "Bestimme deine Puppe. Wenn du angegriffen wirst, erleidet deine Puppe den Schaden an deiner Stelle und du verstummst während der Diskussion.",
+    marionnettiste:
+      "Bestimme deine Puppe. Wenn du angegriffen wirst, erleidet deine Puppe den Schaden an deiner Stelle und du verstummst während der Diskussion.",
     renard: "Du erhältst einen vagen Bericht über die Ereignisse der Nacht.",
   } as Record<string, string>,
   teams: {
@@ -571,14 +589,18 @@ export const de = {
   roles: {
     marionnettiste: {
       name: "Puppenspieler",
-      description: "Du bindest dein Schicksal an eine Puppe. Wenn du nachts angegriffen wirst, erleidet deine Puppe den Schaden an deiner Stelle und du verstummst während der Morgendiskussion.",
-      power: "Wähle eine Puppe. Wirst du angegriffen, fängt die Puppe den Schlag an deiner Stelle ab und du verstummst."
+      description:
+        "Du bindest dein Schicksal an eine Puppe. Wenn du nachts angegriffen wirst, erleidet deine Puppe den Schaden an deiner Stelle und du verstummst während der Morgendiskussion.",
+      power:
+        "Wähle eine Puppe. Wirst du angegriffen, fängt die Puppe den Schlag an deiner Stelle ab und du verstummst.",
     },
     renard: {
       name: "Fuchs",
-      description: "Der streifende Fuchs des Dorfes. Jede Nacht erhält er einen vagen Nachtbericht vom Spielleiter. In seiner letzten Nacht muss er einen Vertrauten wählen, um seine Geheimnisse zu teilen.",
-      power: "Jede Nacht informiert der Spielleiter den Fuchs kurz über die Ereignisse. In seiner letzten Nacht ernennt er einen Vertrauten. Wenn einer die Informationen öffentlich preisgibt, wird er eliminiert und der andere wird zum JOKER."
-    }
+      description:
+        "Der streifende Fuchs des Dorfes. Jede Nacht erhält er einen vagen Nachtbericht vom Spielleiter. In seiner letzten Nacht muss er einen Vertrauten wählen, um seine Geheimnisse zu teilen.",
+      power:
+        "Jede Nacht informiert der Spielleiter den Fuchs kurz über die Ereignisse. In seiner letzten Nacht ernennt er einen Vertrauten. Wenn einer die Informationen öffentlich preisgibt, wird er eliminiert und der andere wird zum JOKER.",
+    },
   } as Record<string, { name: string; description: string; power: string }>,
 };
 

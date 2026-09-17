@@ -26,19 +26,12 @@ export function LanguageSwitcher() {
       >
         {active.label}
         <ChevronDown
-          className={`size-3.5 transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`size-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {/* Invisible backdrop to safely dismiss menu on tap outside */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-transparent"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      {open && <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setOpen(false)} />}
 
       <AnimatePresence>
         {open && (

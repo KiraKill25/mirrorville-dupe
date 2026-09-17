@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Crown, Heart, Moon, Share2, Shield, Skull, Sun, Trophy, Users, Zap } from "lucide-react";
 import { ROLE_BY_ID } from "@/data/roles";
@@ -121,6 +121,13 @@ export function GameRecapCard({
   const { t, roleName, team: teamLabel } = useI18n();
   const narrate = useNarrate();
   const [copied, setCopied] = useState(false);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+    },
+    [],
+  );
 
   const wolves = state.winnerTeam === "WOLVES";
   const survivors = state.players.filter((p) => p.alive).length;
@@ -207,11 +214,11 @@ export function GameRecapCard({
         />
         <div className="relative space-y-3">
           <RecapWolfEmblem />
-          <h1 className={`neon-text text-2xl font-black text-gold`}>
-            {t(victoryKey)}
-          </h1>
+          <h1 className={`neon-text text-2xl font-black text-gold`}>{t(victoryKey)}</h1>
 
-          <p className="text-sm text-muted-foreground">{state.winner ? narrate(state.winner) : t("gameOverFallback")}</p>
+          <p className="text-sm text-muted-foreground">
+            {state.winner ? narrate(state.winner) : t("gameOverFallback")}
+          </p>
           <div className="flex flex-wrap justify-center gap-3 pt-1 text-xs text-muted-foreground">
             <span>{t("bilanDuration", { d: duration })}</span>
             <span>·</span>

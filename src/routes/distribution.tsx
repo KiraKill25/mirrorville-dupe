@@ -51,9 +51,7 @@ function DistributionPage() {
       return;
     }
     const roles = shuffle(s.players.map((p) => p.roleId));
-    const players = shuffle(
-      s.players.map((p, i) => ({ name: p.name, roleId: roles[i] })),
-    );
+    const players = shuffle(s.players.map((p, i) => ({ name: p.name, roleId: roles[i] })));
     const next = { players };
     saveSetup(next);
     clearGame();
@@ -61,14 +59,9 @@ function DistributionPage() {
   }, [navigate]);
 
   const player = setup?.players[index];
-  const role = useMemo(
-    () => (player ? ROLE_BY_ID[player.roleId] : undefined),
-    [player],
-  );
+  const role = useMemo(() => (player ? ROLE_BY_ID[player.roleId] : undefined), [player]);
   const done = !!setup && index >= setup.players.length;
-  const captainCandidates = (setup?.players ?? []).filter(
-    (p) => p.roleId !== "general",
-  );
+  const captainCandidates = (setup?.players ?? []).filter((p) => p.roleId !== "general");
 
   // Reset animation key when a new role is revealed
   const handleReveal = () => {
@@ -76,28 +69,20 @@ function DistributionPage() {
     setRevealKey((k) => k + 1);
   };
 
-  if (!setup)
-    return <main className="p-8 text-muted-foreground">{t("distributing")}</main>;
+  if (!setup) return <main className="p-8 text-muted-foreground">{t("distributing")}</main>;
 
   if (done)
     return (
       <main className="mx-auto min-h-screen w-full max-w-lg space-y-5 box-border overflow-x-hidden overflow-y-auto px-4 py-8">
         <TopBar />
-        <h1 className="neon-text text-center text-2xl font-black">
-          {t("handoverTitle")}
-        </h1>
+        <h1 className="neon-text text-center text-2xl font-black">{t("handoverTitle")}</h1>
         <div className="animate-float-soft">
-          <NarratorCard
-            title={t("narratorTitle")}
-            text={t("handoverText")}
-          >
+          <NarratorCard title={t("narratorTitle")} text={t("handoverText")}>
             <div className="space-y-3 rounded-2xl border border-border p-4 text-left">
               <p className="text-xs tracking-[0.3em] text-primary uppercase">
                 {t("captainElection")}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {t("captainElectionDesc")}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("captainElectionDesc")}</p>
               <div className="grid grid-cols-2 gap-2">
                 {captainCandidates.map((p) => (
                   <button
@@ -117,9 +102,7 @@ function DistributionPage() {
                 onClick={() =>
                   setCaptain(
                     captainCandidates.length
-                      ? captainCandidates[
-                          Math.floor(Math.random() * captainCandidates.length)
-                        ].name
+                      ? captainCandidates[Math.floor(Math.random() * captainCandidates.length)].name
                       : undefined,
                   )
                 }
@@ -211,9 +194,7 @@ function DistributionPage() {
 
           <div className="space-y-3 p-5">
             <h2 className="text-xl font-black">{tr(role!.id).name}</h2>
-            <p className="text-[11px] tracking-widest text-primary uppercase">
-              {team(role!.team)}
-            </p>
+            <p className="text-[11px] tracking-widest text-primary uppercase">{team(role!.team)}</p>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {tr(role!.id).description}
             </p>

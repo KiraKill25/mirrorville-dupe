@@ -1,11 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createRootRouteWithContext,
-  Outlet,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet, HeadContent, Scripts } from "@tanstack/react-router";
 import { SplashScreen } from "@/components/SplashScreen";
 
 import appCss from "../styles.css?url";

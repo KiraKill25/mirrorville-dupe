@@ -43,7 +43,6 @@ export interface Scorecard {
   score: number;
 }
 
-
 const isWolf = (p: Player) => p.team === "WEREWOLVES" || !!p.isConvertedToWolf;
 
 /**
@@ -143,7 +142,6 @@ export function buildScorecards(state: GameState, voteHistory: VoteRecord[]): Sc
     })
     .sort((a, b) => b.score - a.score);
 }
-
 
 /** Note de camp : moyenne des scores individuels du camp. */
 function factionRating(cards: Scorecard[], pick: (p: Player) => boolean) {

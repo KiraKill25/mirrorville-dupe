@@ -311,13 +311,24 @@ export function buildNightSteps(s: GameState): Step[] {
     push("enfant-sauvage", "Enfant Sauvage", "Choisis ton modèle.", "one");
   }
 
-  if (!first) push("geolier", "Geôlier", "Qui séquestres-tu cette nuit ? (désactive son droit de vote demain)", "one");
+  if (!first)
+    push(
+      "geolier",
+      "Geôlier",
+      "Qui séquestres-tu cette nuit ? (désactive son droit de vote demain)",
+      "one",
+    );
   if (!first) push("voyante", "Voyante", "Quel joueur veux-tu sonder ?", "one");
 
   {
     const puppeteer = hasRole(s, "marionnettiste");
     if (puppeteer && s.night === 2 && !puppeteer.abilityUsed && !puppeteer.powersDisabled) {
-      push("marionnettiste", "Le Marionnettiste", "Sur qui places-tu ta marionnette cette nuit ?", "one");
+      push(
+        "marionnettiste",
+        "Le Marionnettiste",
+        "Sur qui places-tu ta marionnette cette nuit ?",
+        "one",
+      );
     }
   }
 
@@ -434,11 +445,7 @@ export function buildNightSteps(s: GameState): Step[] {
   // Loup infecté : si tous les loups originaux sont éliminés, l'infecté obtient un kill
   if (!packStepExists && !killerRoleId) {
     const infected = s.players.find(
-      (p) =>
-        p.alive &&
-        p.isConvertedToWolf &&
-        !p.powersDisabled &&
-        !p.disabledNightAbility,
+      (p) => p.alive && p.isConvertedToWolf && !p.powersDisabled && !p.disabledNightAbility,
     );
     if (infected) {
       s.log.push(nk("infectedFallback", { n: s.night }));
@@ -474,8 +481,7 @@ export function buildNightSteps(s: GameState): Step[] {
   push("maniaque", "Le Maniaque", "Désigne la victime que rien ne peut protéger.", "one", true);
 
   const piperMode = (s.initialPlayerCount ?? s.players.length) <= 10 ? "one" : "two";
-  const piperPrompt =
-    piperMode === "one" ? "Enchante un joueur." : "Enchante deux joueurs.";
+  const piperPrompt = piperMode === "one" ? "Enchante un joueur." : "Enchante deux joueurs.";
   push("joueur-de-flute", "Joueur de Flûte", piperPrompt, piperMode, true);
 
   if (!first) push("corbeau", "Corbeau", "Sur qui déposes-tu la plume noire ?", "one", true);
@@ -506,7 +512,8 @@ export function buildNightSteps(s: GameState): Step[] {
           key: `${s.night}-renard-final`,
           roleId: "renard",
           title: "Renard — Dernière nuit",
-          prompt: "Tu reçois ton dernier rapport. Choisis ton confident pour lui transmettre tes secrets.",
+          prompt:
+            "Tu reçois ton dernier rapport. Choisis ton confident pour lui transmettre tes secrets.",
           mode: "renard",
           actorId: renard.id,
         });
@@ -515,7 +522,8 @@ export function buildNightSteps(s: GameState): Step[] {
           key: `${s.night}-renard`,
           roleId: "renard",
           title: "Renard",
-          prompt: "Tu reçois un rapport vague des événements de la nuit. Tu peux aussi choisir ton confident maintenant (cela arrêtera tes rapports).",
+          prompt:
+            "Tu reçois un rapport vague des événements de la nuit. Tu peux aussi choisir ton confident maintenant (cela arrêtera tes rapports).",
           mode: "renard",
           optional: true,
           actorId: renard.id,
@@ -1146,9 +1154,7 @@ function resolveNight(state: GameState): GameState {
   if (s.round.villageShield) {
     if (s.round.attackedId || s.round.whiteWolfKillId) {
       s.dawnSummary.push(nk("villageShieldSaved"));
-      const saved = s.players.find(
-        (p) => p.id === (s.round.attackedId ?? s.round.whiteWolfKillId),
-      );
+      const saved = s.players.find((p) => p.id === (s.round.attackedId ?? s.round.whiteWolfKillId));
       if (saved)
         pushEvent(s, {
           round: s.night,
@@ -1186,8 +1192,7 @@ function resolveNight(state: GameState): GameState {
         puppetPlayer.hasPuppetShield = false;
         attackedPlayer.abilityUsed = true;
 
-        const isPuppetProtected =
-          s.round.protectedId === puppetPlayer.id || s.round.villageShield;
+        const isPuppetProtected = s.round.protectedId === puppetPlayer.id || s.round.villageShield;
 
         if (isPuppetProtected) {
           s.round.attackedId = undefined;

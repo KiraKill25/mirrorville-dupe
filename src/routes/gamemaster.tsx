@@ -6,8 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { TopBar } from "@/components/TopBar";
 
 const TITLE = "Maître du Jeu — Nightfall Oracle";
-const DESC =
-  "Désigne le Maître du Jeu qui guidera la partie avant de choisir les rôles.";
+const DESC = "Désigne le Maître du Jeu qui guidera la partie avant de choisir les rôles.";
 
 export const Route = createFileRoute("/gamemaster")({
   head: () => ({
@@ -39,8 +38,7 @@ function GameMasterPage() {
     setMj(loadGameMaster());
   }, [navigate]);
 
-  const random = () =>
-    setMj(names.length ? names[Math.floor(Math.random() * names.length)] : null);
+  const random = () => setMj(names.length ? names[Math.floor(Math.random() * names.length)] : null);
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-28">

@@ -23,21 +23,17 @@ const MJ = "mvno-mj";
 export const saveGameMaster = (name: string) => localStorage.setItem(MJ, name);
 export const loadGameMaster = (): string | null => localStorage.getItem(MJ);
 
-export const saveSettings = (s: GameSettings) =>
-  localStorage.setItem(SETTINGS, JSON.stringify(s));
+export const saveSettings = (s: GameSettings) => localStorage.setItem(SETTINGS, JSON.stringify(s));
 export const loadSettings = (): GameSettings => {
   try {
     const raw = localStorage.getItem(SETTINGS);
-    return raw
-      ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) }
-      : DEFAULT_SETTINGS;
+    return raw ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) } : DEFAULT_SETTINGS;
   } catch {
     return DEFAULT_SETTINGS;
   }
 };
 
-export const saveNames = (names: string[]) =>
-  localStorage.setItem(NAMES, JSON.stringify(names));
+export const saveNames = (names: string[]) => localStorage.setItem(NAMES, JSON.stringify(names));
 export const loadNames = (): string[] => {
   try {
     return JSON.parse(localStorage.getItem(NAMES) ?? "[]");
@@ -45,8 +41,7 @@ export const loadNames = (): string[] => {
     return [];
   }
 };
-export const saveSetup = (data: SetupData) =>
-  localStorage.setItem(KEY, JSON.stringify(data));
+export const saveSetup = (data: SetupData) => localStorage.setItem(KEY, JSON.stringify(data));
 export const loadSetup = (): SetupData | null => {
   try {
     const raw = localStorage.getItem(KEY);
@@ -55,9 +50,8 @@ export const loadSetup = (): SetupData | null => {
     return null;
   }
 };
-export const saveGame = (g: unknown) =>
-  localStorage.setItem(GAME, JSON.stringify(g));
-export const loadGame = <T,>(): T | null => {
+export const saveGame = (g: unknown) => localStorage.setItem(GAME, JSON.stringify(g));
+export const loadGame = <T>(): T | null => {
   try {
     const raw = localStorage.getItem(GAME);
     return raw ? (JSON.parse(raw) as T) : null;

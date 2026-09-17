@@ -2,7 +2,8 @@
 export const en = {
   ui: {
     seatingTitle: "Seating Arrangement",
-    seatingHint: "Drag a player over another to swap positions. The seating order determines neighbors.",
+    seatingHint:
+      "Drag a player over another to swap positions. The seating order determines neighbors.",
     seatingTable: "Table",
     seatingCount: "{n} players",
     seatingNodeLabel: "Seat {n} — {name}",
@@ -37,8 +38,7 @@ export const en = {
 
     // Grimoire
     grimoireTitle: "Role Grimoire",
-    grimoireHint:
-      "Tap the info icon on a card to display its description and power.",
+    grimoireHint: "Tap the info icon on a card to display its description and power.",
     narratorTitle: "The Narrator (Game Master)",
     narratorIntro:
       "I am the Game Master. I awaken spirits, tally votes, and announce the dead. Follow my instructions: only one night stands between the village and fangs.",
@@ -156,7 +156,8 @@ export const en = {
 
     // Death / Succession / Dawn
     hunterShotTitle: "Hunter's Revenge",
-    hunterShotDesc: "{name} was eliminated! They can choose one last victim to take down with them.",
+    hunterShotDesc:
+      "{name} was eliminated! They can choose one last victim to take down with them.",
     hunterFireConfirm: "Shoot Selected Target",
     captainSuccessionTitle: "Captain Succession",
     captainSuccessionDesc: "{name} has fallen and must choose the new Captain.",
@@ -168,9 +169,9 @@ export const en = {
 
     // Dawn & debate
     debateTitle: "Debate — Day {n}",
-    debateText:
-      "Captain opens debate, each player speaks, then Captain closes.",
-    captainMutedHint: "Captain is silenced: gets no speaking time (neither opening nor closing), but keeps all choices — debate direction, vote direction, and vote timing.",
+    debateText: "Captain opens debate, each player speaks, then Captain closes.",
+    captainMutedHint:
+      "Captain is silenced: gets no speaking time (neither opening nor closing), but keeps all choices — debate direction, vote direction, and vote timing.",
     mutedBy: "Silenced by Black Wolf: {names}",
     dawnTitle: "Dawn — Day {n}",
     bavardWordOfDay: "Talkative Wolf, your daily word:",
@@ -263,22 +264,20 @@ export const en = {
     revoteSuffix: " (Revote)",
     voteText:
       "Village must pick the condemned. Tally votes: at least 1 player should be eliminated.",
-    logRavenTarget: "The Raven targets {name}. This player starts the vote with {count} vote(s) against them.",
+    logRavenTarget:
+      "The Raven targets {name}. This player starts the vote with {count} vote(s) against them.",
     voteTotal: "Allocated: {c} / {t} votes",
-    voteTotalHint:
-      "Total possible votes equal count of living + 1 (Captain's double vote).",
+    voteTotalHint: "Total possible votes equal count of living + 1 (Captain's double vote).",
     addVote: "Add vote for {name}",
     removeVote: "Remove vote from {name}",
     bavardCheck: "Verification — Talkative Wolf",
     bavardAsk: "Did they say their word '{word}'?",
     bavardInactiveDay1: "Talkative Wolf was inactive Night 1 — no verification.",
-    tieJudge:
-      "Tie: Judge decides. Picks 1 or more tied players for elimination or orders revote.",
+    tieJudge: "Tie: Judge decides. Picks 1 or more tied players for elimination or orders revote.",
     judgeExecute: "Execute Judge Verdict",
     orderRevote: "Order Revote",
     tieBreakOnly: "Tie-break — only {n} tied players listed",
-    tieNote:
-      "If a 2nd tie occurs after revote, all tied players are eliminated.",
+    tieNote: "If a 2nd tie occurs after revote, all tied players are eliminated.",
     validateExec: "Confirm Execution",
     bavardPreVoteTitle: "Talkative Wolf — Pre-vote",
     bavardPreVoteAsk: "Did they say their word '{word}'?",
@@ -293,7 +292,8 @@ export const en = {
     causeSuicide: "Suicide / Revelation",
     gmSuicide: "Suicide / Reveal",
     suicideTitle: "Suicide / Revelation",
-    suicideDesc: "Select player who broke rules or revealed role. They are eliminated immediately and night falls.",
+    suicideDesc:
+      "Select player who broke rules or revealed role. They are eliminated immediately and night falls.",
     suicideConfirm: "💀 Confirm Elimination",
     suicideDone: "{name} was eliminated: Suicide / Revelation.",
     // Undo
@@ -303,7 +303,8 @@ export const en = {
     // Vote announcement
     skipVoteDay1: "Day 1: skip vote",
     voteAnnounceTitle: "The debate is over",
-    voteAnnounceDesc: "The village must now decide. Each player will designate who they wish to eliminate.",
+    voteAnnounceDesc:
+      "The village must now decide. Each player will designate who they wish to eliminate.",
     voteAnnounceContinue: "Launch the vote",
     voteAnnounceSkip: "Skip announcement",
     voteAnnounceMandatory: "The vote announcement is mandatory.",
@@ -470,7 +471,8 @@ export const en = {
 
     ultimateShield: "Ultimate Shield",
     ultimateShieldDesc: "Protects entire village from wolves and infection tonight. Single use.",
-    ultimateShieldWarn: "Warning: Once activated, Guardian permanently loses all protection powers.",
+    ultimateShieldWarn:
+      "Warning: Once activated, Guardian permanently loses all protection powers.",
     ultimateShieldActivate: "Activate Ultimate Shield",
     ultimateShieldConfirm: "Yes, activate and lose powers",
     voteRanking: "Vote Ranking — Most to least voted",
@@ -499,10 +501,12 @@ export const en = {
 
     // Fox & Confidant — Joker mechanics
     foxReveal: "🦊 Fox Reveal",
-    foxRevealDesc: "The Fox reveals the night's events publicly: immediate suicide. The confidant becomes the Joker.",
+    foxRevealDesc:
+      "The Fox reveals the night's events publicly: immediate suicide. The confidant becomes the Joker.",
     foxRevealConfirm: "Confirm Fox Reveal",
     confidantReveal: "📜 Confidant Reveal",
-    confidantRevealDesc: "The confidant reveals the Fox's secrets: immediate suicide. The Fox becomes the Joker.",
+    confidantRevealDesc:
+      "The confidant reveals the Fox's secrets: immediate suicide. The Fox becomes the Joker.",
     confidantRevealConfirm: "Confirm Confidant Reveal",
     jokerAssignedToast: "{name} is now the Joker!",
     foxRevealDoneToast: "{name} (Fox) eliminated: suicide. {confidant} becomes the Joker.",
@@ -516,8 +520,10 @@ export const en = {
 
     // Guide modal — rules
     guideRulesTitle: "Rules & GM Tips",
-    guideRulesNight: "Night: Follow the on-screen calls in order. Each role performs their action secretly.",
-    guideRulesDawn: "Dawn: Reveal the night report and launch the debate wheel. Players speak in turn.",
+    guideRulesNight:
+      "Night: Follow the on-screen calls in order. Each role performs their action secretly.",
+    guideRulesDawn:
+      "Dawn: Reveal the night report and launch the debate wheel. Players speak in turn.",
     guideRulesVote: "Vote: Follow the wheel direction to collect each villager's choice fairly.",
     guideRulesUndo: "Undo Button: If you make a mistake during the night or vote, you can go back.",
     guideCloseBtn: "Close",
@@ -574,13 +580,10 @@ export const en = {
     voyante: "Which player do you wish to inspect?",
     salvateur: "Who do you protect tonight? (Cannot repeat same person twice in a row)",
     "petite-fille": "You peek slightly… Did you spy on the pack?",
-    "loup-garou":
-      "Pack designates victim. In case of disagreement, Matriarch decides alone.",
-    "loup-noir":
-      "Infect victim (once per game) and/or enforce silence on a player.",
+    "loup-garou": "Pack designates victim. In case of disagreement, Matriarch decides alone.",
+    "loup-noir": "Infect victim (once per game) and/or enforce silence on a player.",
     "loup-blanc": "Do you want to devour a werewolf tonight?",
-    "loup-bavard":
-      "GM reveals secret word: must be spoken during morning debate.",
+    "loup-bavard": "GM reveals secret word: must be spoken during morning debate.",
     sorciere: "Use your potions.",
     "joueur-de-flute": "Enchant two players.",
     corbeau: "Who receives the black feather?",
@@ -590,7 +593,8 @@ export const en = {
     "trois-faces": "Pick one of three faces: protection, potion, or inspection.",
     voleur: "Steal role from player: they become simple villager.",
     maniaque: "Designate victim that no protection can stop.",
-    marionnettiste: "Select your puppet. If you are attacked, your puppet takes the damage instead of you and you become muted during the debate.",
+    marionnettiste:
+      "Select your puppet. If you are attacked, your puppet takes the damage instead of you and you become muted during the debate.",
     renard: "You receive a vague report of the night's events.",
   } as Record<string, string>,
   teams: {
@@ -603,14 +607,18 @@ export const en = {
   roles: {
     marionnettiste: {
       name: "Puppeteer",
-      description: "You bind your fate to a puppet. If you are attacked at night, your puppet takes the damage in your place and you become muted during the morning debate.",
-      power: "Choose a puppet. If you are attacked, the puppet takes the hit instead of you and you become muted."
+      description:
+        "You bind your fate to a puppet. If you are attacked at night, your puppet takes the damage in your place and you become muted during the morning debate.",
+      power:
+        "Choose a puppet. If you are attacked, the puppet takes the hit instead of you and you become muted.",
     },
     renard: {
       name: "Fox",
-      description: "The prowling fox of the village. Each night, they receive a vague night report from the Game Master. On their final night of information, they must choose a confidant to share their secrets with.",
-      power: "Each night, the Game Master briefly informs the Fox of events. On their final night, they designate a confidant. If either reveals this information publicly, they are eliminated and the other becomes the JOKER."
-    }
+      description:
+        "The prowling fox of the village. Each night, they receive a vague night report from the Game Master. On their final night of information, they must choose a confidant to share their secrets with.",
+      power:
+        "Each night, the Game Master briefly informs the Fox of events. On their final night, they designate a confidant. If either reveals this information publicly, they are eliminated and the other becomes the JOKER.",
+    },
   } as Record<string, { name: string; description: string; power: string }>,
 };
 
