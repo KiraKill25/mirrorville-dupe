@@ -99,6 +99,7 @@ function SetupPage() {
             <p className="text-xs text-muted-foreground">{t("debateTimerDesc")}</p>
           </div>
           <button
+            type="button"
             role="switch"
             aria-checked={settings.isDebateTimerEnabled}
             aria-label={t("debateTimerToggle")}
@@ -126,6 +127,7 @@ function SetupPage() {
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
+                  type="button"
                   onClick={() => {
                     setSettings((s) => ({ ...s, debateTimePerPlayer: v }));
                     setCustomTime(String(v));
@@ -149,7 +151,12 @@ function SetupPage() {
                 max={600}
                 aria-label={t("custom")}
                 value={customTime}
-                onChange={(e) => setCustomTime(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCustomTime(val);
+                  const safe = sanitizeDebateSeconds(val);
+                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
+                }}
                 onBlur={() => {
                   const safe = sanitizeDebateSeconds(customTime);
                   setCustomTime(String(safe));
@@ -169,8 +176,13 @@ function SetupPage() {
         <button
           disabled={names.length < 4}
           onClick={() => {
+            const safeSeconds = sanitizeDebateSeconds(customTime);
+            const finalSettings: GameSettings = {
+              ...settings,
+              debateTimePerPlayer: safeSeconds,
+            };
             saveNames(filled);
-            saveSettings(settings);
+            saveSettings(finalSettings);
             navigate({ to: "/gamemaster" });
           }}
           className="neon-ring mx-auto block w-full max-w-lg rounded-full bg-primary py-4 font-bold text-primary-foreground disabled:opacity-40"
