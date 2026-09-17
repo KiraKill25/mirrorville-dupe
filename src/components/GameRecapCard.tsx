@@ -181,7 +181,8 @@ export function GameRecapCard({
     try {
       await navigator.clipboard.writeText(lines.join("\n"));
       setCopied(true);
-      setTimeout(() => setCopied(false), 2200);
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setCopied(false), 2200);
     } catch {
       /* clipboard indisponible */
     }
