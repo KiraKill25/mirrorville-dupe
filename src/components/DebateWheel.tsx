@@ -7,7 +7,6 @@ import type { Player } from "@/game/engine";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { NarratorCard } from "@/components/NarratorCard";
 
-/** Choix du capitaine en début de journée : sens du débat, sens du vote, ordre de son vote. */
 export interface CaptainSetup {
   debateDirection: RotationDirection;
   voteDirection: RotationDirection;
@@ -27,6 +26,7 @@ function DirRow({
       {(["clockwise", "counter-clockwise"] as const).map((d) => (
         <button
           key={d}
+          type="button"
           onClick={() => onChange(d)}
           className={`w-full rounded-full py-2.5 text-xs font-bold ${
             value === d
@@ -53,7 +53,6 @@ function ModalShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Interactive penalty badge that adds on tap and removes on hold (long press) */
 function PenaltyBadge({
   count,
   onAdd,
@@ -75,7 +74,6 @@ function PenaltyBadge({
   );
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
     e.stopPropagation();
     isLongPress.current = false;
 
@@ -86,7 +84,6 @@ function PenaltyBadge({
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    e.preventDefault();
     e.stopPropagation();
     if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -115,7 +112,6 @@ function PenaltyBadge({
   );
 }
 
-/** Étape 1 — début de journée : le capitaine choisit UNIQUEMENT le sens du débat. */
 export function DebateSetupModal({
   captainName,
   captainMuted,
@@ -150,6 +146,7 @@ export function DebateSetupModal({
 
       <p className="text-[10px] text-muted-foreground">{t("timerLockedHint")}</p>
       <button
+        type="button"
         onClick={() => onConfirm(debateDirection)}
         className="neon-ring w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
       >
@@ -159,7 +156,6 @@ export function DebateSetupModal({
   );
 }
 
-/** Étape 2 — fin du débat : le capitaine règle le sens du vote et son moment. */
 export function VoteSetupModal({
   captainName,
   captainMuted,
@@ -201,6 +197,7 @@ export function VoteSetupModal({
           {[true, false].map((first) => (
             <button
               key={String(first)}
+              type="button"
               onClick={() => setCaptainVotesFirst(first)}
               className={`rounded-full py-2.5 text-xs font-bold ${
                 captainVotesFirst === first
@@ -215,6 +212,7 @@ export function VoteSetupModal({
       </div>
 
       <button
+        type="button"
         onClick={() => onConfirm({ voteDirection, captainVotesFirst })}
         className="neon-ring w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
       >
@@ -224,7 +222,6 @@ export function VoteSetupModal({
   );
 }
 
-/** Roue de débat : anneau des joueurs + timer central + barre de contrôle MJ. */
 export function DebateWheel({
   seating,
   seconds,
@@ -252,10 +249,12 @@ export function DebateWheel({
   const queue = buildDebateQueue(seating, captainId, direction).filter(
     (s) => !s.player.mutedForDay,
   );
+
   const total = (() => {
     const n = Math.floor(Number(seconds));
     return Number.isFinite(n) && n > 0 ? Math.min(600, Math.max(5, n)) : 60;
   })();
+
   const [i, setI] = useState(0);
   const [left, setLeft] = useState(total);
   const [running, setRunning] = useState(false);
@@ -272,9 +271,17 @@ export function DebateWheel({
 
   useEffect(() => {
     if (!running || !armed || left <= 0) return;
-    const id = setInterval(() => setLeft((v) => (v > 0 ? v - 1 : 0)), 1000);
+    const id = setInterval(() => {
+      setLeft((v) => {
+        if (v <= 1) {
+          setRunning(false);
+          return 0;
+        }
+        return v - 1;
+      });
+    }, 1000);
     return () => clearInterval(id);
-  }, [running, armed, left > 0]);
+  }, [running, armed, left]);
 
   useEffect(() => {
     if (left === 0 && !alerted.current) {
@@ -313,11 +320,13 @@ export function DebateWheel({
     setNamePulse(true);
     track(() => setNamePulse(false), 220);
   };
+
   const pop = (delta: number) => {
     const id = Date.now() + Math.random();
     setPops((p) => [...p, { id, delta }]);
     track(() => setPops((p) => p.filter((x) => x.id !== id)), 900);
   };
+
   const award = (delta: number) => {
     if (!current) return;
     if (delta < 0 && currentStars <= 0) return;
@@ -325,6 +334,7 @@ export function DebateWheel({
     pulse();
     pop(delta);
   };
+
   const pressStart = () => {
     longPressed.current = false;
     holdTimer.current = setTimeout(() => {
@@ -332,17 +342,35 @@ export function DebateWheel({
       award(-1);
     }, 500);
   };
+
   const pressCancel = () => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
   };
+
   const pressEnd = () => {
     pressCancel();
     if (longPressed.current) return;
     award(1);
   };
 
-  if (!current) return null;
-  const pct = Math.max(0, Math.min(1, left / Math.max(1, seconds)));
+  if (!current) {
+    return (
+      <NarratorCard title={t("debateTitle", { n: day })} text={t("debateText")}>
+        <div className="p-4 text-center">
+          <p className="text-xs text-muted-foreground">{t("endDebate")}</p>
+          <button
+            type="button"
+            onClick={onFinish}
+            className="mt-4 rounded-full bg-primary px-6 py-2 text-xs font-bold text-primary-foreground"
+          >
+            {t("next")}
+          </button>
+        </div>
+      </NarratorCard>
+    );
+  }
+
+  const pct = Math.max(0, Math.min(1, left / Math.max(1, total)));
   const R = 42;
   const C = 2 * Math.PI * R;
 
@@ -409,9 +437,8 @@ export function DebateWheel({
                     onPointerDown={pressStart}
                     onPointerUp={pressEnd}
                     onPointerLeave={pressCancel}
-                    onTouchStart={(e) => e.preventDefault()}
                     onContextMenu={(e) => e.preventDefault()}
-                    className={`relative z-20 cursor-pointer pointer-events-auto touch-manipulation touch-callout-none select-none max-w-full truncate text-[10px] font-bold tracking-widest text-primary uppercase transition-transform duration-200 ${
+                    className={`relative z-20 cursor-pointer pointer-events-auto select-none touch-none max-w-full truncate text-[10px] font-bold tracking-widest text-primary uppercase transition-transform duration-200 ${
                       namePulse ? "scale-110" : "scale-100"
                     }`}
                   >
@@ -453,6 +480,7 @@ export function DebateWheel({
 
       <div className="grid grid-cols-2 gap-2">
         <button
+          type="button"
           disabled={!armed}
           onClick={() => setRunning((r) => !r)}
           className="flex items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold disabled:opacity-40"
@@ -461,8 +489,9 @@ export function DebateWheel({
           {running ? t("pauseTimer") : t("startTimer")}
         </button>
         <button
+          type="button"
           onClick={() => {
-            setLeft(seconds);
+            setLeft(total);
             alerted.current = false;
           }}
           className="flex items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold"
@@ -471,6 +500,7 @@ export function DebateWheel({
           {t("resetTimer")}
         </button>
         <button
+          type="button"
           onClick={() => setLeft((v) => v + 10)}
           className="flex items-center justify-center gap-1 rounded-full border border-primary/60 py-3 text-sm font-bold text-primary"
         >
@@ -478,6 +508,7 @@ export function DebateWheel({
           {t("plus10")}
         </button>
         <button
+          type="button"
           onClick={() => (i + 1 < queue.length ? setI(i + 1) : onFinish())}
           className="flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-xs font-bold text-primary-foreground"
         >
