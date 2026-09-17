@@ -252,26 +252,29 @@ export function DebateWheel({
   const queue = buildDebateQueue(seating, captainId, direction).filter(
     (s) => !s.player.mutedForDay,
   );
+  const total = (() => {
+    const n = Math.floor(Number(seconds));
+    return Number.isFinite(n) && n > 0 ? Math.min(600, Math.max(5, n)) : 60;
+  })();
   const [i, setI] = useState(0);
-  const [left, setLeft] = useState(seconds);
+  const [left, setLeft] = useState(total);
   const [running, setRunning] = useState(false);
   const alerted = useRef(false);
 
   useEffect(() => {
-    if (armed) setRunning(true);
-    else setRunning(false);
+    setRunning(!!armed);
   }, [armed]);
 
   useEffect(() => {
-    setLeft(seconds);
+    setLeft(total);
     alerted.current = false;
-  }, [i, seconds]);
+  }, [i, total]);
 
   useEffect(() => {
-    if (!running || !armed) return;
+    if (!running || !armed || left <= 0) return;
     const id = setInterval(() => setLeft((v) => (v > 0 ? v - 1 : 0)), 1000);
     return () => clearInterval(id);
-  }, [running, armed, i]);
+  }, [running, armed, left > 0]);
 
   useEffect(() => {
     if (left === 0 && !alerted.current) {

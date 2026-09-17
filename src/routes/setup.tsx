@@ -9,6 +9,7 @@ import {
   loadSettings,
   saveNames,
   saveSettings,
+  sanitizeDebateSeconds,
   type GameSettings,
 } from "@/lib/session";
 import { preloadRoleMedia } from "@/lib/preload-media";
@@ -35,11 +36,14 @@ function SetupPage() {
   const { t } = useI18n();
   const [names, setNames] = useState<string[]>(Array(8).fill(""));
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
+  const [customTime, setCustomTime] = useState(String(DEFAULT_SETTINGS.debateTimePerPlayer));
 
   useEffect(() => {
     const saved = loadNames();
     if (saved.length) setNames(saved);
-    setSettings(loadSettings());
+    const s = loadSettings();
+    setSettings(s);
+    setCustomTime(String(s.debateTimePerPlayer));
     preloadRoleMedia();
   }, []);
 
@@ -122,7 +126,10 @@ function SetupPage() {
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
-                  onClick={() => setSettings((s) => ({ ...s, debateTimePerPlayer: v }))}
+                  onClick={() => {
+                    setSettings((s) => ({ ...s, debateTimePerPlayer: v }));
+                    setCustomTime(String(v));
+                  }}
                   className={`rounded-full px-4 py-2 text-xs font-bold transition ${
                     settings.debateTimePerPlayer === v
                       ? "bg-primary text-primary-foreground"
@@ -137,16 +144,17 @@ function SetupPage() {
               </span>
               <input
                 type="number"
-                min={10}
+                inputMode="numeric"
+                min={5}
                 max={600}
                 aria-label={t("custom")}
-                value={settings.debateTimePerPlayer}
-                onChange={(e) =>
-                  setSettings((s) => ({
-                    ...s,
-                    debateTimePerPlayer: Math.max(5, Math.min(600, Number(e.target.value) || 0)),
-                  }))
-                }
+                value={customTime}
+                onChange={(e) => setCustomTime(e.target.value)}
+                onBlur={() => {
+                  const safe = sanitizeDebateSeconds(customTime);
+                  setCustomTime(String(safe));
+                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
+                }}
                 className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
