@@ -285,18 +285,36 @@ export function DebateWheel({
   const [namePulse, setNamePulse] = useState(false);
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressed = useRef(false);
+  const fxTimers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  useEffect(
+    () => () => {
+      if (holdTimer.current) clearTimeout(holdTimer.current);
+      fxTimers.current.forEach((id) => clearTimeout(id));
+      fxTimers.current.clear();
+    },
+    [],
+  );
+
+  const track = (fn: () => void, ms: number) => {
+    const id = setTimeout(() => {
+      fxTimers.current.delete(id);
+      fn();
+    }, ms);
+    fxTimers.current.add(id);
+  };
 
   const current = queue[i];
   const currentStars = current?.player.stars ?? 0;
 
   const pulse = () => {
     setNamePulse(true);
-    setTimeout(() => setNamePulse(false), 220);
+    track(() => setNamePulse(false), 220);
   };
   const pop = (delta: number) => {
     const id = Date.now() + Math.random();
     setPops((p) => [...p, { id, delta }]);
-    setTimeout(() => setPops((p) => p.filter((x) => x.id !== id)), 900);
+    track(() => setPops((p) => p.filter((x) => x.id !== id)), 900);
   };
   const award = (delta: number) => {
     if (!current) return;
