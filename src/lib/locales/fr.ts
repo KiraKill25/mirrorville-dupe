@@ -2,7 +2,8 @@
 export const fr = {
   ui: {
     seatingTitle: "Disposition du cercle",
-    seatingHint: "Glissez un joueur sur un autre pour échanger leurs places. L'ordre du cercle détermine les voisins.",
+    seatingHint:
+      "Glissez un joueur sur un autre pour échanger leurs places. L'ordre du cercle détermine les voisins.",
     seatingTable: "La Table",
     seatingCount: "{n} joueurs",
     seatingNodeLabel: "Siège {n} — {name}",
@@ -127,9 +128,9 @@ export const fr = {
 
     // Dawn & debate
     debateTitle: "Débat — Jour {n}",
-    debateText:
-      "Le Capitaine ouvre le débat, chaque joueur s'exprime, puis le Capitaine conclut.",
-    captainMutedHint: "Capitaine rendu muet : ne prend pas la parole (ni ouverture ni conclusion), mais conserve tous ses choix (sens du débat, ordre du vote, moment où il vote).",
+    debateText: "Le Capitaine ouvre le débat, chaque joueur s'exprime, puis le Capitaine conclut.",
+    captainMutedHint:
+      "Capitaine rendu muet : ne prend pas la parole (ni ouverture ni conclusion), mais conserve tous ses choix (sens du débat, ordre du vote, moment où il vote).",
     mutedBy: "Médiatement rendus muets par le Loup Noir : {names}",
     dawnTitle: "Aube — Jour {n}",
     bavardWordOfDay: "Loup Bavard, ton mot du jour :",
@@ -236,8 +237,7 @@ export const fr = {
     judgeExecute: "Exécuter le jugement du Juge",
     orderRevote: "Ordonner un revote",
     tieBreakOnly: "Départage d'égalité — seuls les {n} ex æquo apparaissent",
-    tieNote:
-      "En cas d'égalité persistante après un revote, tous les ex æquo sont éliminés.",
+    tieNote: "En cas d'égalité persistante après un revote, tous les ex æquo sont éliminés.",
     validateExec: "Confirmer l'exécution",
     bavardPreVoteTitle: "Loup Bavard — Avant le vote",
     bavardPreVoteAsk: "A-t-il prononcé son mot secret {word} ?",
@@ -253,7 +253,8 @@ export const fr = {
     causeSuicide: "Suicide / Révélation",
     gmSuicide: "Suicide / Révélation",
     suicideTitle: "Suicide / Révélation",
-    suicideDesc: "Désignez un joueur ayant enfreint les règles ou révélé son rôle. Il est immédiatement éliminé et la nuit tombe.",
+    suicideDesc:
+      "Désignez un joueur ayant enfreint les règles ou révélé son rôle. Il est immédiatement éliminé et la nuit tombe.",
     suicideConfirm: "💀 Confirmer l'élimination",
     suicideDone: "{name} a été éliminé : Suicide / Révélation.",
 
@@ -265,7 +266,8 @@ export const fr = {
     proceedToVote: "Passer au vote",
     skipVoteDay1: "Jour 1 : passer le vote",
     voteAnnounceTitle: "Le débat est terminé",
-    voteAnnounceDesc: "Le village doit maintenant se proncer. Chaque joueur va désigner celui qu'il souhaite éliminer.",
+    voteAnnounceDesc:
+      "Le village doit maintenant se proncer. Chaque joueur va désigner celui qu'il souhaite éliminer.",
     voteAnnounceContinue: "Lancer le vote",
     voteAnnounceSkip: "Passer l'annonce",
     voteAnnounceMandatory: "L'annonce du vote est obligatoire.",
@@ -404,7 +406,8 @@ export const fr = {
     causeGeneralFailed: "Échec du Général",
     causeManiac: "Assassiné par le Maniaque",
     causeThreeFacesPoison: "Empoisonné par les 3 faces",
-    causePuppetProtection: "Impact fatal — La marionnette a encaissé la coup à la place du Marionnettiste",
+    causePuppetProtection:
+      "Impact fatal — La marionnette a encaissé la coup à la place du Marionnettiste",
 
     // Night Report
     nightReportTitle: "Rapport de la Nuit {n}",
@@ -433,8 +436,10 @@ export const fr = {
     marionnetteTag: " (Marionnette)",
 
     ultimateShield: "Bouclier Suprême",
-    ultimateShieldDesc: "Protège tout le village contre les loups et l'infection pour cette nuit. Usage unique.",
-    ultimateShieldWarn: "Attention : une fois activé, le Salvateur perd définitivement tous ses pouvoirs de protection.",
+    ultimateShieldDesc:
+      "Protège tout le village contre les loups et l'infection pour cette nuit. Usage unique.",
+    ultimateShieldWarn:
+      "Attention : une fois activé, le Salvateur perd définitivement tous ses pouvoirs de protection.",
     ultimateShieldActivate: "Activer le Bouclier Suprême",
     ultimateShieldConfirm: "Oui, activer et perdre mes pouvoirs",
     voteRanking: "Classement des votes — Du plus voté au moins voté",
@@ -447,7 +452,8 @@ export const fr = {
     starAward: "Accorder une étoile à {name}",
     starRemove: "Retirer une étoile à {name}",
     starsLabel: "Étoiles",
-    starsHint: "Appuyez sur ⭐ sur la fiche d'un joueur pour récompenser une bonne déduction. Appui long pour retirer une étoile.",
+    starsHint:
+      "Appuyez sur ⭐ sur la fiche d'un joueur pour récompenser une bonne déduction. Appui long pour retirer une étoile.",
     starsEarned: "{n} ⭐",
     badgeStarTown: "Détective d'Élite",
     badgeStarTownDesc: "Villageois ayant obtenu le plus d'étoiles du Meneur.",
@@ -463,10 +469,12 @@ export const fr = {
 
     // Fox & Confidant — Joker mechanics
     foxReveal: "🦊 Révélation du Renard",
-    foxRevealDesc: "Le Renard révèle publiquement les événements nocturnes : suicide immédiat. Le confident devient le Joker.",
+    foxRevealDesc:
+      "Le Renard révèle publiquement les événements nocturnes : suicide immédiat. Le confident devient le Joker.",
     foxRevealConfirm: "Confirmer la révélation du Renard",
     confidantReveal: "📜 Révélation du Confident",
-    confidantRevealDesc: "Le confident révèle les secrets du Renard : suicide immédiat. Le Renard devient le Joker.",
+    confidantRevealDesc:
+      "Le confident révèle les secrets du Renard : suicide immédiat. Le Renard devient le Joker.",
     confidantRevealConfirm: "Confirmer la révélation du Confident",
     jokerAssignedToast: "{name} est maintenant le Joker !",
     foxRevealDoneToast: "{name} (Renard) a été éliminé : suicide. {confidant} devient le Joker.",
@@ -480,10 +488,14 @@ export const fr = {
 
     // Guide modal — rules
     guideRulesTitle: "Règles & Astuces de Gestion",
-    guideRulesNight: "Nuit : Suivez les appels de l'écran dans l'ordre. Chaque rôle effectue son action secrètement.",
-    guideRulesDawn: "Aube : Révélez le rapport de la nuit et lancez la roue de débat. Les joueurs s'expriment à tour de rôle.",
-    guideRulesVote: "Vote : Suivez le sens de la roue pour recueillir les choix de chaque villageois en toute équité.",
-    guideRulesUndo: "Bouton Annuler : Si vous faites une erreur de saisie pendant la nuit ou le vote, vous pouvez revenir en arrière.",
+    guideRulesNight:
+      "Nuit : Suivez les appels de l'écran dans l'ordre. Chaque rôle effectue son action secrètement.",
+    guideRulesDawn:
+      "Aube : Révélez le rapport de la nuit et lancez la roue de débat. Les joueurs s'expriment à tour de rôle.",
+    guideRulesVote:
+      "Vote : Suivez le sens de la roue pour recueillir les choix de chaque villageois en toute équité.",
+    guideRulesUndo:
+      "Bouton Annuler : Si vous faites une erreur de saisie pendant la nuit ou le vote, vous pouvez revenir en arrière.",
     guideCloseBtn: "Fermer",
 
     // Defense timer
@@ -573,7 +585,8 @@ export const fr = {
     "loup-garou": "La meute désigne sa victime. En cas de désaccord, la Matriarche tranche seule.",
     "loup-noir": "Contamine la victime (une fois par partie) et/ou impose le silence à un joueur.",
     "loup-blanc": "Veux-tu dévorer un loup cette nuit ?",
-    "loup-bavard": "Le Maître du Jeu montre le mot secret : il devra être prononcé pendant le débat du matin.",
+    "loup-bavard":
+      "Le Maître du Jeu montre le mot secret : il devra être prononcé pendant le débat du matin.",
     sorciere: "Utilise tes potions.",
     "joueur-de-flute": "Enchante des joueurs.",
     corbeau: "Sur qui déposes-tu la plume noire ?",
@@ -596,14 +609,18 @@ export const fr = {
   roles: {
     marionnettiste: {
       name: "Le Marionnettiste",
-      description: "Artisan des ombres, il fabrique une marionnette bouclier lors de la 2ème nuit pour encaisser une attaque mortelle de loups-garous à sa place.",
-      power: "Il s'éveille uniquement à la Nuit 2 pour équiper sa marionnette. S'il est attaqué par les loups, sa poupée absorbe le coup : il survit, mais le choc le rend définitivement muet."
+      description:
+        "Artisan des ombres, il fabrique une marionnette bouclier lors de la 2ème nuit pour encaisser une attaque mortelle de loups-garous à sa place.",
+      power:
+        "Il s'éveille uniquement à la Nuit 2 pour équiper sa marionnette. S'il est attaqué par les loups, sa poupée absorbe le coup : il survit, mais le choc le rend définitivement muet.",
     },
     renard: {
       name: "Renard",
-      description: "Le renard rôdeur du village. Chaque nuit, il reçoit un rapport nocturne vague du Maître du Jeu. Lors de sa dernière nuit d'information, il doit choisir un confident à qui transmettre ses secrets.",
-      power: "Chaque nuit, le Maître du Jeu informe sommairement le Renard des événements survenus. Lors de sa dernière nuit, il désigne un confident. Si l'un des deux révèle publiquement ces informations, il est éliminé et l'autre devient le JOKER."
-    }
+      description:
+        "Le renard rôdeur du village. Chaque nuit, il reçoit un rapport nocturne vague du Maître du Jeu. Lors de sa dernière nuit d'information, il doit choisir un confident à qui transmettre ses secrets.",
+      power:
+        "Chaque nuit, le Maître du Jeu informe sommairement le Renard des événements survenus. Lors de sa dernière nuit, il désigne un confident. Si l'un des deux révèle publiquement ces informations, il est éliminé et l'autre devient le JOKER.",
+    },
   } as Record<string, { name: string; description: string; power: string }>,
 };
 

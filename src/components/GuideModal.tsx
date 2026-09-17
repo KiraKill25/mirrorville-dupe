@@ -1,16 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Gavel,
-  Moon,
-  Star,
-  Sun,
-  Trophy,
-  Users,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Gavel, Moon, Star, Sun, Trophy, Users, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 import type { TranslationKey } from "@/lib/i18n";
@@ -46,9 +36,7 @@ export function GuideModal({ onClose }: { onClose: () => void }) {
           <X className="size-4" />
         </button>
 
-        <p className="text-[11px] tracking-[0.3em] text-primary uppercase">
-          {t("guideTitle")}
-        </p>
+        <p className="text-[11px] tracking-[0.3em] text-primary uppercase">{t("guideTitle")}</p>
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -69,9 +57,7 @@ export function GuideModal({ onClose }: { onClose: () => void }) {
               {t(key("Kicker"))}
             </p>
             <h2 className="text-lg font-black">{t(key("Title"))}</h2>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {t(key("Body"))}
-            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{t(key("Body"))}</p>
           </motion.div>
         </AnimatePresence>
 

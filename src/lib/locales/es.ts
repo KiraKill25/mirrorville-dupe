@@ -2,7 +2,8 @@
 export const es = {
   ui: {
     seatingTitle: "Disposición del círculo",
-    seatingHint: "Arrastra a un jugador sobre otro para intercambiar sus asientos. El orden del círculo determina los vecinos.",
+    seatingHint:
+      "Arrastra a un jugador sobre otro para intercambiar sus asientos. El orden del círculo determina los vecinos.",
     seatingTable: "La Mesa",
     seatingCount: "{n} jugadores",
     seatingNodeLabel: "Asiento {n} — {name}",
@@ -36,8 +37,7 @@ export const es = {
 
     // Grimoire
     grimoireTitle: "Grimorio de roles",
-    grimoireHint:
-      "Toca el ícono de información de una carta para ver su descripción y poder.",
+    grimoireHint: "Toca el ícono de información de una carta para ver su descripción y poder.",
     narratorTitle: "El Narrador (Director de Juego)",
     narratorIntro:
       "Soy el Director de Juego. Despierto a los espíritus, cuento los votos y anuncio a los muertos. Sigue mis instrucciones: solo una noche separa a la aldea de los colmillos.",
@@ -127,9 +127,9 @@ export const es = {
 
     // Dawn & debate
     debateTitle: "El Debate — Día {n}",
-    debateText:
-      "El Capitán abre el debate, cada jugador habla, y el Capitán concluye.",
-    captainMutedHint: "El Capitán ha sido silenciado: no tiene tiempo de palabra (ni apertura ni conclusión), pero conserva todas sus decisiones: sentido del debate, sentido del voto y momento de su voto.",
+    debateText: "El Capitán abre el debate, cada jugador habla, y el Capitán concluye.",
+    captainMutedHint:
+      "El Capitán ha sido silenciado: no tiene tiempo de palabra (ni apertura ni conclusión), pero conserva todas sus decisiones: sentido del debate, sentido del voto y momento de su voto.",
     mutedBy: "Silenciados por el Lobo Negro: {names}",
     dawnTitle: "Amanecer — Día {n}",
     bavardWordOfDay: "Lobo Hablador, tu palabra del día es:",
@@ -222,7 +222,8 @@ export const es = {
     revoteSuffix: " (Desempate)",
     voteText:
       "La aldea debe designar al condenado. Cuenta los votos: al menos un jugador debe ser eliminado.",
-    logRavenTarget: "El Cuervo apunta a {name}. Este jugador comienza la votación con {count} voto(s) en su contra.",
+    logRavenTarget:
+      "El Cuervo apunta a {name}. Este jugador comienza la votación con {count} voto(s) en su contra.",
     voteTotal: "Votos asignados: {c} / {t}",
     voteTotalHint:
       "El total de votos posibles equivale al número de vivos + 1 (voto doble del Capitán).",
@@ -252,7 +253,8 @@ export const es = {
     causeSuicide: "Suicidio / Revelación",
     gmSuicide: "Suicidio / Revelación",
     suicideTitle: "Suicidio / Revelación",
-    suicideDesc: "Selecciona al jugador que rompió las reglas o reveló su rol. Será eliminado inmediatamente y caerá la noche.",
+    suicideDesc:
+      "Selecciona al jugador que rompió las reglas o reveló su rol. Será eliminado inmediatamente y caerá la noche.",
     suicideConfirm: "💀 Confirmar eliminación",
     suicideDone: "{name} ha sido eliminado: Suicidio / Revelación.",
     // Undo
@@ -406,8 +408,10 @@ export const es = {
     marionnetteTag: " (Títere)",
 
     ultimateShield: "Escudo Definitivo",
-    ultimateShieldDesc: "Protege a toda la aldea contra los lobos y la infección esta noche. Un solo uso.",
-    ultimateShieldWarn: "Atención: Una vez activado, el Guardián pierde permanentemente todos sus poderes de protección.",
+    ultimateShieldDesc:
+      "Protege a toda la aldea contra los lobos y la infección esta noche. Un solo uso.",
+    ultimateShieldWarn:
+      "Atención: Una vez activado, el Guardián pierde permanentemente todos sus poderes de protección.",
     ultimateShieldActivate: "Activar Escudo Definitivo",
     ultimateShieldConfirm: "Sí, activar y perder poderes",
     voteRanking: "Clasificación de votos — De más votado a menos votado",
@@ -420,7 +424,8 @@ export const es = {
     starAward: "Otorgar estrella a {name}",
     starRemove: "Quitar estrella a {name}",
     starsLabel: "Estrellas",
-    starsHint: "Toca ⭐ en la tarjeta de un jugador para premiar una deducción brillante. Mantén presionado para quitar.",
+    starsHint:
+      "Toca ⭐ en la tarjeta de un jugador para premiar una deducción brillante. Mantén presionado para quitar.",
     starsEarned: "{n} ⭐",
     badgeStarTown: "Investigador de Élite",
     badgeStarTownDesc: "El aldeano con más estrellas del DJ.",
@@ -436,14 +441,18 @@ export const es = {
 
     // Fox & Confidant — Joker mechanics
     foxReveal: "🦊 Revelación del Zorro",
-    foxRevealDesc: "El Zorro revela públicamente los eventos nocturnos: suicidio inmediato. El confidente se convierte en el Comodín.",
+    foxRevealDesc:
+      "El Zorro revela públicamente los eventos nocturnos: suicidio inmediato. El confidente se convierte en el Comodín.",
     foxRevealConfirm: "Confirmar revelación del Zorro",
     confidantReveal: "📜 Revelación del Confidente",
-    confidantRevealDesc: "El confidente revela los secretos del Zorro: suicidio inmediato. El Zorro se convierte en el Comodín.",
+    confidantRevealDesc:
+      "El confidente revela los secretos del Zorro: suicidio inmediato. El Zorro se convierte en el Comodín.",
     confidantRevealConfirm: "Confirmar revelación del Confidente",
     jokerAssignedToast: "¡{name} es ahora el Comodín!",
-    foxRevealDoneToast: "{name} (Zorro) eliminado: suicidio. {confidant} se convierte en el Comodín.",
-    confidantRevealDoneToast: "{name} (Confidente) eliminado: suicidio. {fox} se convierte en el Comodín.",
+    foxRevealDoneToast:
+      "{name} (Zorro) eliminado: suicidio. {confidant} se convierte en el Comodín.",
+    confidantRevealDoneToast:
+      "{name} (Confidente) eliminado: suicidio. {fox} se convierte en el Comodín.",
 
     // GM Notes
     gmNotesTitle: "Notas del Director",
@@ -453,10 +462,14 @@ export const es = {
 
     // Guide modal — rules
     guideRulesTitle: "Reglas y Consejos de Dirección",
-    guideRulesNight: "Noche: Sigue las llamadas de la pantalla en orden. Cada rol realiza su acción en secreto.",
-    guideRulesDawn: "Amanecer: Revela el informe nocturno y lanza la rueda de debate. Los jugadores hablan por turnos.",
-    guideRulesVote: "Votación: Sigue la dirección de la rueda para recoger la elección de cada aldeano con equidad.",
-    guideRulesUndo: "Botón Deshacer: Si cometes un error durante la noche o la votación, puedes retroceder.",
+    guideRulesNight:
+      "Noche: Sigue las llamadas de la pantalla en orden. Cada rol realiza su acción en secreto.",
+    guideRulesDawn:
+      "Amanecer: Revela el informe nocturno y lanza la rueda de debate. Los jugadores hablan por turnos.",
+    guideRulesVote:
+      "Votación: Sigue la dirección de la rueda para recoger la elección de cada aldeano con equidad.",
+    guideRulesUndo:
+      "Botón Deshacer: Si cometes un error durante la noche o la votación, puedes retroceder.",
     guideCloseBtn: "Cerrar",
 
     // Defense timer
@@ -541,7 +554,8 @@ export const es = {
     "enfant-sauvage": "Selecciona a tu modelo a seguir.",
     geolier: "¿A quién encarcelas esta noche?",
     voyante: "¿A qué jugador deseas inspeccionar?",
-    salvateur: "¿A quién proteges esta noche? (No puedes repetir la misma persona dos veces seguidas)",
+    salvateur:
+      "¿A quién proteges esta noche? (No puedes repetir la misma persona dos veces seguidas)",
     "petite-fille": "Entreabres los ojos… ¿Espiaste a la manada?",
     "loup-garou":
       "La manada designa a su víctima. En caso de desacuerdo, la Matriarca decide sola.",
@@ -559,7 +573,8 @@ export const es = {
     "trois-faces": "Elige una de tus tres caras: protección, poción o inspección.",
     voleur: "Roba el rol de un jugador: se convertirá en un simple aldeano.",
     maniaque: "Designa a la víctima que ninguna protección puede detener.",
-    marionnettiste: "Selecciona a tu títere. Si eres atacado, tu títere sufrirá el daño en tu lugar y quedarás en silencio durante el debate.",
+    marionnettiste:
+      "Selecciona a tu títere. Si eres atacado, tu títere sufrirá el daño en tu lugar y quedarás en silencio durante el debate.",
     renard: "Recibes un informe vago de los eventos de la noche.",
   } as Record<string, string>,
   teams: {
@@ -572,14 +587,18 @@ export const es = {
   roles: {
     marionnettiste: {
       name: "Titiritero",
-      description: "Vinculas tu destino a un títere. Si eres atacado por la noche, tu títere sufrirá el daño en tu lugar y quedarás en silencio durante el debate matutino.",
-      power: "Elige un títere. Si eres atacado, el títere recibe el golpe en tu lugar y quedas en silencio."
+      description:
+        "Vinculas tu destino a un títere. Si eres atacado por la noche, tu títere sufrirá el daño en tu lugar y quedarás en silencio durante el debate matutino.",
+      power:
+        "Elige un títere. Si eres atacado, el títere recibe el golpe en tu lugar y quedas en silencio.",
     },
     renard: {
       name: "Zorro",
-      description: "El zorro merodeador del pueblo. Cada noche, recibe un informe nocturno vago del Director de Juego. En su última noche, debe elegir un confidente para compartir sus secretos.",
-      power: "Cada noche, el Director de Juego informa brevemente al Zorro de los eventos. En su última noche, designa un confidente. Si alguno revela públicamente esta información, es eliminado y el otro se convierte en el JOKER."
-    }
+      description:
+        "El zorro merodeador del pueblo. Cada noche, recibe un informe nocturno vago del Director de Juego. En su última noche, debe elegir un confidente para compartir sus secretos.",
+      power:
+        "Cada noche, el Director de Juego informa brevemente al Zorro de los eventos. En su última noche, designa un confidente. Si alguno revela públicamente esta información, es eliminado y el otro se convierte en el JOKER.",
+    },
   } as Record<string, { name: string; description: string; power: string }>,
 };
 

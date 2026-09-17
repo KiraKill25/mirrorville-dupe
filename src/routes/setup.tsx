@@ -43,8 +43,7 @@ function SetupPage() {
     preloadRoleMedia();
   }, []);
 
-  const update = (i: number, v: string) =>
-    setNames((n) => n.map((x, k) => (k === i ? v : x)));
+  const update = (i: number, v: string) => setNames((n) => n.map((x, k) => (k === i ? v : x)));
 
   const filled = names.map((n, i) => n.trim() || `${t("defaultPlayer")} ${i + 1}`);
 
@@ -52,10 +51,7 @@ function SetupPage() {
     <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-28">
       <TopBar
         left={
-          <button
-            onClick={() => navigate({ to: "/" })}
-            className="text-sm text-muted-foreground"
-          >
+          <button onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground">
             {t("back")}
           </button>
         }
@@ -126,9 +122,7 @@ function SetupPage() {
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
-                  onClick={() =>
-                    setSettings((s) => ({ ...s, debateTimePerPlayer: v }))
-                  }
+                  onClick={() => setSettings((s) => ({ ...s, debateTimePerPlayer: v }))}
                   className={`rounded-full px-4 py-2 text-xs font-bold transition ${
                     settings.debateTimePerPlayer === v
                       ? "bg-primary text-primary-foreground"
@@ -150,10 +144,7 @@ function SetupPage() {
                 onChange={(e) =>
                   setSettings((s) => ({
                     ...s,
-                    debateTimePerPlayer: Math.max(
-                      5,
-                      Math.min(600, Number(e.target.value) || 0),
-                    ),
+                    debateTimePerPlayer: Math.max(5, Math.min(600, Number(e.target.value) || 0)),
                   }))
                 }
                 className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"

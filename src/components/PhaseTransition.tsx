@@ -63,7 +63,11 @@ export function PhaseTransition({
             filter: "blur(1px)",
           }}
           initial={{ opacity: 0, y: 20, scale: 0.4 }}
-          animate={{ opacity: [0, 0.9, 0], y: night ? [20, -40] : [20, -70], scale: [0.4, 1.2, 0.6] }}
+          animate={{
+            opacity: [0, 0.9, 0],
+            y: night ? [20, -40] : [20, -70],
+            scale: [0.4, 1.2, 0.6],
+          }}
           transition={{ duration: 3.2, delay: i * 0.12, repeat: Infinity, ease: "easeOut" }}
         />
       ))}

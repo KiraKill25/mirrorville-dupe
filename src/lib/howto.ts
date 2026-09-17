@@ -74,7 +74,8 @@ const HOWTO_BASE = {
         kicker: "La nuit",
         title: "Actions silencieuses",
         body: "Le village s'endort. Le Meneur réveille les rôles un par un, en silence. Les loups désignent leur victime, les protecteurs et voyants agissent dans l'ombre.",
-        badge: "Nuit 1 : le Corbeau, le Geôlier et le Loup Bavard restent endormis jusqu'à la nuit 2.",
+        badge:
+          "Nuit 1 : le Corbeau, le Geôlier et le Loup Bavard restent endormis jusqu'à la nuit 2.",
       },
       {
         kicker: "L'aube",

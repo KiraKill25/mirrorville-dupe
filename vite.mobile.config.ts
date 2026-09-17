@@ -20,8 +20,21 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    target: "es2020",
+    // Le bundle est chargé localement depuis le WebView : on scinde par gros
+    // groupes pour accélérer le démarrage sans multiplier les requêtes.
+    chunkSizeWarningLimit: 1600,
     rollupOptions: {
       input: fileURLToPath(new URL("./index.mobile.html", import.meta.url)),
+      output: {
+        manualChunks(id: string) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("framer-motion")) return "motion";
+          if (id.includes("@tanstack")) return "router";
+          if (id.includes("react")) return "react";
+          return "vendor";
+        },
+      },
     },
   },
 });

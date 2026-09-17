@@ -74,8 +74,7 @@ function SeatingPage() {
     setDragIndex(i);
     const target = e.currentTarget as HTMLElement;
     target.setPointerCapture?.(e.pointerId);
-    const move = (ev: PointerEvent) =>
-      setOverIndex(indexAtPoint(ev.clientX, ev.clientY));
+    const move = (ev: PointerEvent) => setOverIndex(indexAtPoint(ev.clientX, ev.clientY));
     const up = (ev: PointerEvent) => {
       const to = indexAtPoint(ev.clientX, ev.clientY);
       if (to !== null) swap(i, to);
@@ -118,9 +117,7 @@ function SeatingPage() {
               <p className="text-[10px] tracking-[0.3em] text-primary uppercase">
                 {t("seatingTable")}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {t("seatingCount", { n })}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("seatingCount", { n })}</p>
             </div>
           </div>
           <div className="pointer-events-none absolute inset-[8%] rounded-full border border-dashed border-border" />

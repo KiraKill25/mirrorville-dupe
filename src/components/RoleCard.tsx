@@ -68,8 +68,6 @@ function RoleVideo({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-
-
 export function RoleCard({
   role,
   index = 0,
@@ -119,9 +117,7 @@ export function RoleCard({
         </div>
         <div className="relative -mt-8 space-y-1 p-3">
           <h3 className="text-sm font-bold tracking-tight">{rt.name}</h3>
-          <p className="text-[11px] tracking-widest text-primary uppercase">
-            {team(role.team)}
-          </p>
+          <p className="text-[11px] tracking-widest text-primary uppercase">{team(role.team)}</p>
           {footer}
         </div>
       </article>
@@ -131,13 +127,7 @@ export function RoleCard({
   );
 }
 
-export function RoleDialog({
-  role,
-  onClose,
-}: {
-  role: RoleDef;
-  onClose: () => void;
-}) {
+export function RoleDialog({ role, onClose }: { role: RoleDef; onClose: () => void }) {
   const { role: tr, team, t } = useI18n();
   const rt = tr(role.id);
   useScrollLock();
@@ -201,12 +191,6 @@ export function RoleDialog({
   );
 }
 
-export function RoleDialogById({
-  roleId,
-  onClose,
-}: {
-  roleId: string;
-  onClose: () => void;
-}) {
+export function RoleDialogById({ roleId, onClose }: { roleId: string; onClose: () => void }) {
   return <RoleDialog role={ROLE_BY_ID[roleId]} onClose={onClose} />;
 }

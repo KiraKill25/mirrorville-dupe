@@ -44,11 +44,7 @@ export function SeatingWheel({
         <div className="absolute top-[19%] left-1/2 -translate-x-1/2 -translate-y-1/2">
           <span
             className="flex items-center gap-1 rounded-full border border-primary/50 bg-background/80 px-2 py-1 text-[10px] font-bold tracking-widest text-primary uppercase"
-            aria-label={
-              direction === "clockwise"
-                ? t("rotationClockwise")
-                : t("rotationCounter")
-            }
+            aria-label={direction === "clockwise" ? t("rotationClockwise") : t("rotationCounter")}
           >
             {direction === "clockwise" ? (
               <RotateCw className="size-3 animate-pulse" />
@@ -112,9 +108,7 @@ export function SeatingWheel({
                 : "border-border bg-card/80"
             } ${!p.alive ? "opacity-40 line-through" : ""}`}
           >
-            <span className="block text-[9px] tabular-nums text-muted-foreground">
-              {i + 1}
-            </span>
+            <span className="block text-[9px] tabular-nums text-muted-foreground">{i + 1}</span>
             <span className="flex items-center justify-center gap-0.5 text-[10px] leading-tight font-bold break-words">
               {p.name}
               {p.id === captainId && <Crown className="size-2.5 text-accent" />}
@@ -143,10 +137,7 @@ export function buildTurnQueue(
   const n = seating.length;
   const queue: Player[] = [];
   for (let k = 1; k <= n; k++) {
-    const idx =
-      direction === "clockwise"
-        ? (capIndex + k) % n
-        : ((capIndex - k) % n + n) % n;
+    const idx = direction === "clockwise" ? (capIndex + k) % n : (((capIndex - k) % n) + n) % n;
     const p = seating[idx];
     if (p?.alive) queue.push(p);
   }
@@ -162,15 +153,11 @@ function othersInDirection(
   if (!seating) return [];
   const alive = seating.filter((p) => p.alive);
   const capIndex = seating.findIndex((p) => p.id === captainId);
-  if (capIndex < 0)
-    return direction === "clockwise" ? alive : [...alive].reverse();
+  if (capIndex < 0) return direction === "clockwise" ? alive : [...alive].reverse();
   const n = seating.length;
   const out: Player[] = [];
   for (let k = 1; k < n; k++) {
-    const idx =
-      direction === "clockwise"
-        ? (capIndex + k) % n
-        : (((capIndex - k) % n) + n) % n;
+    const idx = direction === "clockwise" ? (capIndex + k) % n : (((capIndex - k) % n) + n) % n;
     const p = seating[idx];
     if (p?.alive && p.id !== captainId) out.push(p);
   }
@@ -189,8 +176,7 @@ export function buildDebateQueue(
   if (!seating) return [];
   const captain = seating.find((p) => p.id === captainId && p.alive);
   const others = othersInDirection(seating, captainId, direction);
-  if (!captain)
-    return others.map((player) => ({ player, role: "normal" as const }));
+  if (!captain) return others.map((player) => ({ player, role: "normal" as const }));
   return [
     { player: captain, role: "opening" as const },
     ...others.map((player) => ({ player, role: "normal" as const })),

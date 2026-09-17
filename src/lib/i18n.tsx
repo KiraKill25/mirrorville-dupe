@@ -68,9 +68,7 @@ interface Ctx {
 
 function interpolate(s: string, vars?: Record<string, string | number>) {
   if (!vars) return s;
-  return s.replace(/\{(\w+)\}/g, (m, k) =>
-    k in vars ? String(vars[k]) : m,
-  );
+  return s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
 }
 
 function roleTextFor(lang: Lang, id: string): RoleText {
@@ -89,7 +87,9 @@ function getInitialLang(): Lang {
   try {
     const saved = localStorage.getItem(KEY) as Lang | null;
     if (saved && DICTS[saved]) return saved;
-  } catch {}
+  } catch {
+    /* stockage local indisponible */
+  }
   return "fr";
 }
 
@@ -110,7 +110,9 @@ export function setGlobalLang(l: Lang) {
   globalLang = l;
   try {
     localStorage.setItem(KEY, l);
-  } catch {}
+  } catch {
+    /* stockage local indisponible */
+  }
   notifyListeners();
 }
 

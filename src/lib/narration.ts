@@ -45,7 +45,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     jailExecuted: "{name} est exécuté dans sa geôle.",
     jailLocked: "{name} passe la nuit sous les verrous, à l'abri des crocs.",
     seerSees: "{name} est : {role}.",
-    shieldUltimate: "Le Bouclier Ultime enveloppe le village entier — le Salvateur perd ses pouvoirs.",
+    shieldUltimate:
+      "Le Bouclier Ultime enveloppe le village entier — le Salvateur perd ses pouvoirs.",
     logShieldUltimate: "Nuit {n} : Bouclier Ultime activé par {name}.",
     protectedTonight: "{name} est protégé cette nuit.",
     protectAlreadyDone: "{name} a déjà été protégé pendant ce cycle.",
@@ -56,11 +57,13 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     packDisagree: "Désaccord dans la meute : les loups se rendorment, la Matriarche va trancher.",
     packChose: "La meute a choisi {name}.",
     infectedKill: "Le loup infecté dévore {name}.",
-    infectedFallback: "Nuit {n} : tous les loups originaux sont éliminés — le loup infecté traque seul.",
+    infectedFallback:
+      "Nuit {n} : tous les loups originaux sont éliminés — le loup infecté traque seul.",
     matriarchImpose: "La Matriarche impose {name}.",
     logMatriarch: "La Matriarche tranche : {name}.",
     logSoloKill: "{role} dévore {name} (meute solitaire).",
-    talkativeWord: "Mot imposé au Loup Bavard : « {word} ». Il devra le prononcer pendant le débat.",
+    talkativeWord:
+      "Mot imposé au Loup Bavard : « {word} ». Il devra le prononcer pendant le débat.",
     infectBlocked: "La contamination échoue : la cible est protégée.",
     logInfectBlocked: "Contamination bloquée par le Salvateur — pouvoir conservé.",
     infectJoin: "{name} rejoint la meute en gardant son pouvoir.",
@@ -84,7 +87,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     survivedAttack: "{name} a survécu à l'attaque… pour cette fois.",
     deathLine: "{name} est mort — {cause}.",
     logDeath: "{name} ({role}) — {cause}.",
-    elderFall: "L'Ancien est tombé par la main du village : tous les villageois perdent leurs pouvoirs.",
+    elderFall:
+      "L'Ancien est tombé par la main du village : tous les villageois perdent leurs pouvoirs.",
     wildAwaken: "{name} sent la bête s'éveiller en lui…",
     redRidingHood: "Le Chaperon Rouge est resté sous la garde du Chasseur : l'attaque échoue.",
     villageShieldSaved: "🛡️ Le Bouclier Ultime a protégé le village entier cette nuit.",
@@ -128,7 +132,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     repSilence: "🤐 Loup Noir impose le silence à {name}",
     repSilenceSelf: "🤐 Loup Noir s'impose le silence à lui-même ({name})",
     repInfect: "🩸 Loup Noir contamine {name}",
-    repThief: "🎭 Le Voleur ({thief}) vole le rôle de {name} → {role} ; {name} devient Simple Villageois",
+    repThief:
+      "🎭 Le Voleur ({thief}) vole le rôle de {name} → {role} ; {name} devient Simple Villageois",
     repFaces: "🎭 3 faces utilise « {power} » sur {name}",
     repDied: "💀 {name} ({role}) — {cause}",
     repSavedBy: "✨ {name} sauvé par {role}",
@@ -153,8 +158,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "trahi par son silence",
     cause_GENERAL_STRIKE: "abattu par le Général",
     cause_GENERAL_FAILED: "éliminé par le Maître du Jeu (coup manqué du Général)",
-    puppetSaved: "{name} a été attaqué(e), mais son pantin a absorbé le coup ! Il/Elle survit, mais est réduit(e) au silence pour le débat du jour.",
-    repPuppetSaved: "🎭 {name} (Marionnettiste) a absorbé l'attaque grâce à son pantin et est réduit(e) au silence.",
+    puppetSaved:
+      "{name} a été attaqué(e), mais son pantin a absorbé le coup ! Il/Elle survit, mais est réduit(e) au silence pour le débat du jour.",
+    repPuppetSaved:
+      "🎭 {name} (Marionnettiste) a absorbé l'attaque grâce à son pantin et est réduit(e) au silence.",
     renardVagueAttack: "🐺 Un cri déchire la nuit — quelqu'un a été visé par les crocs.",
     renardVagueProtect: "🛡️ Une lueur bienveillante veille près d'une maison.",
     renardVaguePoison: "☠️ Une odeur d'herbes amères flotte dans l'air.",
@@ -179,8 +186,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "Le Renard désigne {name} comme confident.",
     repRenardConfidant: "🦊 Le Renard choisit {name} comme confident",
     winJoker: "Le Joker {name} gagne : le village l'a éliminé !",
-    logFoxReveal: "{name} (Renard) a révélé les événements nocturnes en public : suicide ! {confidant} devient le Joker.",
-    logConfidantReveal: "{name} (Confident) a révélé les secrets du Renard en public : suicide ! {fox} devient le Joker.",
+    logFoxReveal:
+      "{name} (Renard) a révélé les événements nocturnes en public : suicide ! {confidant} devient le Joker.",
+    logConfidantReveal:
+      "{name} (Confident) a révélé les secrets du Renard en public : suicide ! {fox} devient le Joker.",
   },
   en: {
     logVoteTally: "Day {d} — Vote: [{tally}] → Eliminated: {names}",
@@ -206,7 +215,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     matriarchImpose: "The Matriarch imposes {name}.",
     logMatriarch: "The Matriarch decides: {name}.",
     logSoloKill: "{role} devours {name} (lone pack).",
-    talkativeWord: "Secret word for the Talkative Wolf: “{word}”. He must say it during the debate.",
+    talkativeWord:
+      "Secret word for the Talkative Wolf: “{word}”. He must say it during the debate.",
     infectBlocked: "The infection fails: the target is protected.",
     logInfectBlocked: "Infection blocked by the Savior — power retained.",
     infectJoin: "{name} joins the pack and keeps their power.",
@@ -274,7 +284,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     repSilence: "🤐 Black Wolf silences {name}",
     repSilenceSelf: "🤐 Black Wolf silences himself ({name})",
     repInfect: "🩸 Black Wolf infects {name}",
-    repThief: "🎭 The Thief ({thief}) steals {name}'s role → {role}; {name} becomes a plain Villager",
+    repThief:
+      "🎭 The Thief ({thief}) steals {name}'s role → {role}; {name} becomes a plain Villager",
     repFaces: "🎭 3 faces uses “{power}” on {name}",
     repDied: "💀 {name} ({role}) — {cause}",
     repSavedBy: "✨ {name} saved by {role}",
@@ -299,7 +310,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "betrayed by their silence",
     cause_GENERAL_STRIKE: "shot by the General",
     cause_GENERAL_FAILED: "removed by the Game Master (the General missed)",
-    puppetSaved: "{name} was attacked, but their puppet absorbed the strike! They survive, but are silenced for today's debate.",
+    puppetSaved:
+      "{name} was attacked, but their puppet absorbed the strike! They survive, but are silenced for today's debate.",
     repPuppetSaved: "🎭 {name} (Puppeteer) absorbed the attack using their puppet and is silenced.",
     renardVagueAttack: "🐺 A scream tears through the night — someone was targeted by the fangs.",
     renardVagueProtect: "🛡️ A benevolent glimmer watches over a house.",
@@ -325,8 +337,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "The Fox designates {name} as confidant.",
     repRenardConfidant: "🦊 The Fox chooses {name} as confidant",
     winJoker: "The Joker {name} wins: the village voted them out!",
-    logFoxReveal: "{name} (Fox) revealed the night's events in public: suicide! {confidant} becomes the Joker.",
-    logConfidantReveal: "{name} (Confidant) revealed the Fox's secrets in public: suicide! {fox} becomes the Joker.",
+    logFoxReveal:
+      "{name} (Fox) revealed the night's events in public: suicide! {confidant} becomes the Joker.",
+    logConfidantReveal:
+      "{name} (Confidant) revealed the Fox's secrets in public: suicide! {fox} becomes the Joker.",
   },
   ar: {
     logVoteTally: "اليوم {d} — التصويت: [{tally}] ← المُقصى: {names}",
@@ -445,7 +459,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "خانه صمته",
     cause_GENERAL_STRIKE: "أسقطه الجنرال",
     cause_GENERAL_FAILED: "أقصاه سيد اللعبة (ضربة الجنرال الفاشلة)",
-    puppetSaved: "تعرّض {name} للهجوم، لكن الدُمية امتصّت الضربة! ينجو من الموت ولكنه يُمنع من الكلام خلال نقاش اليوم.",
+    puppetSaved:
+      "تعرّض {name} للهجوم، لكن الدُمية امتصّت الضربة! ينجو من الموت ولكنه يُمنع من الكلام خلال نقاش اليوم.",
     repPuppetSaved: "🎭 {name} (محرّك الدمى) امتص الهجوم بفضل دمية ويُمنع من الكلام.",
     renardVagueAttack: "🐺 صرقة مزقت الليل — استهدف أحدهم بالأنياب.",
     renardVagueProtect: "🛡️ وميض خيّر يحرس أحد البيوت.",
@@ -494,11 +509,13 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     packDisagree: "Desacuerdo en la manada: los lobos vuelven a dormir, la Matriarca decidirá.",
     packChose: "La manada ha elegido a {name}.",
     infectedKill: "El lobo infectado devora a {name}.",
-    infectedFallback: "Noche {n}: todos los lobos originales eliminados — el lobo infectado caza solo.",
+    infectedFallback:
+      "Noche {n}: todos los lobos originales eliminados — el lobo infectado caza solo.",
     matriarchImpose: "La Matriarca impone a {name}.",
     logMatriarch: "La Matriarca decide: {name}.",
     logSoloKill: "{role} devora a {name} (manada solitaria).",
-    talkativeWord: "Palabra secreta para el Lobo Charlatán: «{word}». Debe decirla durante el debate.",
+    talkativeWord:
+      "Palabra secreta para el Lobo Charlatán: «{word}». Debe decirla durante el debate.",
     infectBlocked: "La infección falla: el objetivo está protegido.",
     logInfectBlocked: "Infección bloqueada por el Salvador — poder conservado.",
     infectJoin: "{name} se une a la manada conservando su poder.",
@@ -533,7 +550,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     nobodyDied: "Extrañamente, nadie murió esta noche.",
     newCaptain: "{name} se convierte en el nuevo Capitán.",
     day1NoVote: "Día 1: la aldea se negó a votar.",
-    logTalkativeExecuted: "Día {d} — Lobo Charlatán ejecutado (no dijo la palabra); votación cancelada.",
+    logTalkativeExecuted:
+      "Día {d} — Lobo Charlatán ejecutado (no dijo la palabra); votación cancelada.",
     nightHeader: "— Noche {n} —",
     killerFallback: "Noche {n}: sin lobo estándar — la matanza recae en {role}.",
     idiotSurvives: "{name} es el Tonto del Pueblo: sobrevive pero pierde su derecho a voto.",
@@ -566,7 +584,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     repSilence: "🤐 Lobo Negro silencia a {name}",
     repSilenceSelf: "🤐 Lobo Negro se silencia a sí mismo ({name})",
     repInfect: "🩸 Lobo Negro infecta a {name}",
-    repThief: "🎭 El Ladrón ({thief}) roba el rol de {name} → {role} ; {name} se convierte en Aldeano",
+    repThief:
+      "🎭 El Ladrón ({thief}) roba el rol de {name} → {role} ; {name} se convierte en Aldeano",
     repFaces: "🎭 3 caras usa «{power}» en {name}",
     repDied: "💀 {name} ({role}) — {cause}",
     repSavedBy: "✨ {name} salvado por {role}",
@@ -591,8 +610,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "traicionado por su silencio",
     cause_GENERAL_STRIKE: "abatido por el General",
     cause_GENERAL_FAILED: "eliminado por el Director de Juego (fallo del General)",
-    puppetSaved: "{name} fue atacado(a), pero su marioneta absorbió el golpe. Sobrevive, pero es silenciado(a) para el debate de hoy.",
-    repPuppetSaved: "🎭 {name} (Titiritero) absorbió el ataque con su marioneta y está silenciado(a).",
+    puppetSaved:
+      "{name} fue atacado(a), pero su marioneta absorbió el golpe. Sobrevive, pero es silenciado(a) para el debate de hoy.",
+    repPuppetSaved:
+      "🎭 {name} (Titiritero) absorbió el ataque con su marioneta y está silenciado(a).",
     renardVagueAttack: "🐺 Un grito desgarra la noche — alguien fue objetivo de los colmillos.",
     renardVagueProtect: "🛡️ Un brillo benevolente vela sobre una casa.",
     renardVaguePoison: "☠️ Un aroma a hierbas amargas flota en el aire.",
@@ -617,8 +638,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "El Zorro designa a {name} como confidente.",
     repRenardConfidant: "🦊 El Zorro elige a {name} como confidente",
     winJoker: "El Comodín {name} gana: ¡la aldea lo ha eliminado!",
-    logFoxReveal: "{name} (Zorro) reveló los eventos nocturnos en público: ¡suicidio! {confidant} se convierte en el Comodín.",
-    logConfidantReveal: "{name} (Confidente) reveló los secretos del Zorro en público: ¡suicidio! {fox} se convierte en el Comodín.",
+    logFoxReveal:
+      "{name} (Zorro) reveló los eventos nocturnos en público: ¡suicidio! {confidant} se convierte en el Comodín.",
+    logConfidantReveal:
+      "{name} (Confidente) reveló los secretos del Zorro en público: ¡suicidio! {fox} se convierte en el Comodín.",
   },
   pt: {
     logVoteTally: "Dia {d} — Votação: [{tally}] → Eliminado(s): {names}",
@@ -640,11 +663,13 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     packDisagree: "Desacordo na alcateia: os lobos voltam a dormir, a Matriarca decidirá.",
     packChose: "A alcateia escolheu {name}.",
     infectedKill: "O lobo infectado devora {name}.",
-    infectedFallback: "Noite {n}: todos os lobos originais eliminados — o lobo infectado caça sozinho.",
+    infectedFallback:
+      "Noite {n}: todos os lobos originais eliminados — o lobo infectado caça sozinho.",
     matriarchImpose: "A Matriarca impõe {name}.",
     logMatriarch: "A Matriarca decide: {name}.",
     logSoloKill: "{role} devora {name} (alcateia solitária).",
-    talkativeWord: "Palavra secreta para o Lobo Falador: «{word}». Ele deve dizê-la durante o debate.",
+    talkativeWord:
+      "Palavra secreta para o Lobo Falador: «{word}». Ele deve dizê-la durante o debate.",
     infectBlocked: "A infeção falha: o alvo está protegido.",
     logInfectBlocked: "Infeção bloqueada pelo Salvador — poder conservado.",
     infectJoin: "{name} junta-se à alcateia conservando o seu poder.",
@@ -679,7 +704,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     nobodyDied: "Estranhamente, ninguém morreu esta noite.",
     newCaptain: "{name} torna-se o novo Capitão.",
     day1NoVote: "Dia 1: a aldeia recusou-se a votar.",
-    logTalkativeExecuted: "Dia {d} — Lobo Falador executado (não disse a palavra); votação cancelada.",
+    logTalkativeExecuted:
+      "Dia {d} — Lobo Falador executado (não disse a palavra); votação cancelada.",
     nightHeader: "— Noite {n} —",
     killerFallback: "Noite {n}: sem lobo padrão — a morte recai em {role}.",
     idiotSurvives: "{name} é o Idiota da Aldeia: sobrevive mas perde o seu direito de voto.",
@@ -737,8 +763,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "traído pelo seu silêncio",
     cause_GENERAL_STRIKE: "abatido pelo General",
     cause_GENERAL_FAILED: "eliminado pelo Mestre de Jogo (falha do General)",
-    puppetSaved: "{name} foi atacado(a), mas sua marionete absorveu o golpe! Sobrevive, mas está silenciado(a) para o debate de hoje.",
-    repPuppetSaved: "🎭 {name} (Marionetista) absorveu o ataque usando sua marionete e está silenciado(a).",
+    puppetSaved:
+      "{name} foi atacado(a), mas sua marionete absorveu o golpe! Sobrevive, mas está silenciado(a) para o debate de hoje.",
+    repPuppetSaved:
+      "🎭 {name} (Marionetista) absorveu o ataque usando sua marionete e está silenciado(a).",
     renardVagueAttack: "🐺 Um grito rasga a noite — alguém foi visado pelas presas.",
     renardVagueProtect: "🛡️ Um brilho benevolente vigia uma casa.",
     renardVaguePoison: "☠️ Um cheiro de ervas amargas paira no ar.",
@@ -763,8 +791,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "A Raposa designa {name} como confidente.",
     repRenardConfidant: "🦊 A Raposa escolhe {name} como confidente",
     winJoker: "O Coringa {name} ganha: a aldeia votou para eliminá-lo!",
-    logFoxReveal: "{name} (Raposa) revelou os eventos noturnos em público: suicídio! {confidant} torna-se o Coringa.",
-    logConfidantReveal: "{name} (Confidente) revelou os segredos da Raposa em público: suicídio! {fox} torna-se o Coringa.",
+    logFoxReveal:
+      "{name} (Raposa) revelou os eventos noturnos em público: suicídio! {confidant} torna-se o Coringa.",
+    logConfidantReveal:
+      "{name} (Confidente) revelou os segredos da Raposa em público: suicídio! {fox} torna-se o Coringa.",
   },
   ru: {
     logVoteTally: "День {d} — Голосование: [{tally}] → Исключен(ы): {names}",
@@ -786,7 +816,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     packDisagree: "Разногласия в стае: волки засыпают, решение примет Матриарх.",
     packChose: "Стая выбрала {name}.",
     infectedKill: "Заражённый волк пожирает {name}.",
-    infectedFallback: "Ночь {n}: все оригинальные волки уничтожены — заражённый волк охотится один.",
+    infectedFallback:
+      "Ночь {n}: все оригинальные волки уничтожены — заражённый волк охотится один.",
     matriarchImpose: "Матриарх настаивает на {name}.",
     logMatriarch: "Матриарх решает: {name}.",
     logSoloKill: "{role} пожирает {name} (одинокий волк).",
@@ -825,7 +856,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     nobodyDied: "Странно, но никто не умер этой ночью.",
     newCaptain: "{name} становится новым Капитаном.",
     day1NoVote: "День 1: деревня отказалась голосовать.",
-    logTalkativeExecuted: "День {d} — Болтливый Волк казнен (слово не названо); голосование отменено.",
+    logTalkativeExecuted:
+      "День {d} — Болтливый Волк казнен (слово не названо); голосование отменено.",
     nightHeader: "— Ночь {n} —",
     killerFallback: "Ночь {n}: нет обычных волков — убийство поручается {role}.",
     idiotSurvives: "{name} — Деревенский Дурак: он выживает, но теряет право голоса.",
@@ -883,7 +915,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "выдан своим молчанием",
     cause_GENERAL_STRIKE: "застрелен Генералом",
     cause_GENERAL_FAILED: "устранен Ведущим (промах Генерала)",
-    puppetSaved: "{name} подвергся нападению, но его кукла приняла удар на себя! Он выживает, но лишается голоса на сегодняшнем обсуждении.",
+    puppetSaved:
+      "{name} подвергся нападению, но его кукла приняла удар на себя! Он выживает, но лишается голоса на сегодняшнем обсуждении.",
     repPuppetSaved: "🎭 {name} (Кукловод) поглотил атаку с помощью куклы и лишен голоса.",
     renardVagueAttack: "🐺 Крик разрывает ночь — кто-то стал мишенью клыков.",
     renardVagueProtect: "🛡️ Добрый блеск сторожит один из домов.",
@@ -909,8 +942,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "Лиса назначает {name} доверенным лицом.",
     repRenardConfidant: "🦊 Лиса выбирает {name} доверенным лицом",
     winJoker: "Джокер {name} побеждает: деревня изгнала его голосованием!",
-    logFoxReveal: "{name} (Лиса) публично раскрыл ночные события: самоубийство! {confidant} становится Джокером.",
-    logConfidantReveal: "{name} (Доверенное лицо) публично раскрыл секреты Лисы: самоубийство! {fox} становится Джокером.",
+    logFoxReveal:
+      "{name} (Лиса) публично раскрыл ночные события: самоубийство! {confidant} становится Джокером.",
+    logConfidantReveal:
+      "{name} (Доверенное лицо) публично раскрыл секреты Лисы: самоубийство! {fox} становится Джокером.",
   },
   zh: {
     logVoteTally: "第 {d} 天 — 投票：[{tally}] → 淘汰：{names}",
@@ -1029,7 +1064,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "因沉默而暴露",
     cause_GENERAL_STRIKE: "被将军击毙",
     cause_GENERAL_FAILED: "被法官淘汰（将军失误）",
-    puppetSaved: "{name} 受到了攻击，但 their 傀儡吸收了伤害！他们幸存下来，但在今天的讨论中被禁言。",
+    puppetSaved:
+      "{name} 受到了攻击，但 their 傀儡吸收了伤害！他们幸存下来，但在今天的讨论中被禁言。",
     repPuppetSaved: "🎭 {name} (傀儡师) 使用傀儡吸收了攻击并被禁言。",
     renardVagueAttack: "🐺 一声尖叫撕裂黑夜 — 有人被獠牙盯上了。",
     renardVagueProtect: "🛡️ 一道善意的光芒守护着一栋房屋。",
@@ -1067,7 +1103,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     jailExecuted: "{name} wird in der Zelle hingerichtet.",
     jailLocked: "{name} verbringt die Nacht eingesperrt, sicher vor den Zähnen.",
     seerSees: "{name} ist: {role}.",
-    shieldUltimate: "Der Ultimative Schild umhüllt das ganze Dorf — der Beschützer verliert seine Kräfte.",
+    shieldUltimate:
+      "Der Ultimative Schild umhüllt das ganze Dorf — der Beschützer verliert seine Kräfte.",
     logShieldUltimate: "Nacht {n}: Ultimativer Schild aktiviert durch {name}.",
     protectedTonight: "{name} ist heute Nacht beschützt.",
     protectAlreadyDone: "{name} wurde in diesem Zyklus schon beschützt.",
@@ -1078,11 +1115,13 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     packDisagree: "Uneinigkeit im Rudel: Die Wölfe schlafen weiter, die Matriarchin entscheidet.",
     packChose: "Das Rudel hat {name} gewählt.",
     infectedKill: "Der infizierte Wolf verschlingt {name}.",
-    infectedFallback: "Nacht {n}: alle ursprünglichen Wölfe eliminiert — der infizierte Wolf jagt allein.",
+    infectedFallback:
+      "Nacht {n}: alle ursprünglichen Wölfe eliminiert — der infizierte Wolf jagt allein.",
     matriarchImpose: "Die Matriarchin bestimmt {name}.",
     logMatriarch: "Die Matriarchin entscheidet: {name}.",
     logSoloKill: "{role} verschlingt {name} (einsamer Wolf).",
-    talkativeWord: "Geheimwort für den Geschwätzigen Wolf: „{word}“. Er muss es in der Debatte sagen.",
+    talkativeWord:
+      "Geheimwort für den Geschwätzigen Wolf: „{word}“. Er muss es in der Debatte sagen.",
     infectBlocked: "Die Infektion schlägt fehl: Das Ziel ist geschützt.",
     logInfectBlocked: "Infektion blockiert durch den Beschützer — Kraft behalten.",
     infectJoin: "{name} tritt dem Rudel bei und behält seine Kraft.",
@@ -1106,7 +1145,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     survivedAttack: "{name} hat den Angriff überlebt... für dieses Mal.",
     deathLine: "{name} ist tot — {cause}.",
     logDeath: "{name} ({role}) — {cause}.",
-    elderFall: "Der Älteste fiel durch die Hand des Dorfes: Alle Dorfbewohner verlieren ihre Kräfte.",
+    elderFall:
+      "Der Älteste fiel durch die Hand des Dorfes: Alle Dorfbewohner verlieren ihre Kräfte.",
     wildAwaken: "{name} spürt, wie die Bestie in ihm erwacht...",
     redRidingHood: "Rotkäppchen blieb unter dem Schutz des Jägers: Der Angriff schlägt fehl.",
     villageShieldSaved: "🛡️ Der Ultimative Schild hat heute Nacht das ganze Dorf beschützt.",
@@ -1117,7 +1157,8 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     nobodyDied: "Seltsamerweise ist heute Nacht niemand gestorben.",
     newCaptain: "{name} wird der neue Hauptmann.",
     day1NoVote: "Tag 1: Das Dorf weigerte sich abzustimmen.",
-    logTalkativeExecuted: "Tag {d} — Geschwätziger Wolf hingerichtet (Wort nicht gesagt); Abstimmung abgesagt.",
+    logTalkativeExecuted:
+      "Tag {d} — Geschwätziger Wolf hingerichtet (Wort nicht gesagt); Abstimmung abgesagt.",
     nightHeader: "— Nacht {n} —",
     killerFallback: "Nacht {n}: Kein Standardwolf — der Mord fällt an {role}.",
     idiotSurvives: "{name} ist der Dorfdepp: Er überlebt, verliert aber sein Stimmrecht.",
@@ -1175,8 +1216,10 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     cause_TALKATIVE_WOLF: "durch sein Schweigen verraten",
     cause_GENERAL_STRIKE: "vom General erschossen",
     cause_GENERAL_FAILED: "vom Spielleiter eliminiert (General verfehlte)",
-    puppetSaved: "{name} wurde angegriffen, aber seine Puppe hat den Schlag abgefangen! Er überlebt, ist aber für die heutige Debatte stummgeschaltet.",
-    repPuppetSaved: "🎭 {name} (Puppenspieler) hat den Angriff mit seiner Puppe abgefangen und ist stummgeschaltet.",
+    puppetSaved:
+      "{name} wurde angegriffen, aber seine Puppe hat den Schlag abgefangen! Er überlebt, ist aber für die heutige Debatte stummgeschaltet.",
+    repPuppetSaved:
+      "🎭 {name} (Puppenspieler) hat den Angriff mit seiner Puppe abgefangen und ist stummgeschaltet.",
     renardVagueAttack: "🐺 Ein Schrei zerreißt die Nacht — jemand war das Ziel der Reißzähne.",
     renardVagueProtect: "🛡️ Ein gütiger Schimmer wacht über ein Haus.",
     renardVaguePoison: "☠️ Ein Geruch nach bitteren Kräutern liegt in der Luft.",
@@ -1201,9 +1244,11 @@ const NARRATION: Partial<Record<Lang, Table>> & { fr: Table } = {
     logRenardConfidant: "Der Fuchs ernennt {name} zum Vertrauten.",
     repRenardConfidant: "🦊 Der Fuchs wählt {name} als Vertrauten",
     winJoker: "Der Joker {name} gewinnt: das Dorf hat ihn rausgewählt!",
-    logFoxReveal: "{name} (Fuchs) hat die nächtlichen Ereignisse öffentlich verraten: Selbstmord! {confidant} wird zum Joker.",
-    logConfidantReveal: "{name} (Vertrauter) hat die Geheimnisse des Fuchses öffentlich verraten: Selbstmord! {fox} wird zum Joker.",
-  }
+    logFoxReveal:
+      "{name} (Fuchs) hat die nächtlichen Ereignisse öffentlich verraten: Selbstmord! {confidant} wird zum Joker.",
+    logConfidantReveal:
+      "{name} (Vertrauter) hat die Geheimnisse des Fuchses öffentlich verraten: Selbstmord! {fox} wird zum Joker.",
+  },
 };
 
 const ROLE_NAMES: Partial<Record<Lang, Record<string, { name?: string }>>> = {

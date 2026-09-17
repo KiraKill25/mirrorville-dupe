@@ -29,27 +29,27 @@ const ROLE_EMOJIS: Record<string, string> = {
   "enfant-sauvage": "🧒",
   "petite-fille": "👧",
   "chaperon-rouge": "🔴",
-  "voyante": "🔮",
-  "sorciere": "⚗️",
-  "chasseur": "🎯",
-  "cupidon": "🏹",
-  "ancien": "👴",
-  "marionnettiste": "🎭",
-  "salvateur": "🛡️",
+  voyante: "🔮",
+  sorciere: "⚗️",
+  chasseur: "🎯",
+  cupidon: "🏹",
+  ancien: "👴",
+  marionnettiste: "🎭",
+  salvateur: "🛡️",
   "idiot-du-village": "🤡",
   "joueur-de-flute": "🎵",
-  "ange": "😇",
-  "tavernier": "🍺",
-  "corbeau": "🐦‍⬛",
-  "general": "⚔️",
-  "mime": "🤹",
-  "geolier": "🔒",
+  ange: "😇",
+  tavernier: "🍺",
+  corbeau: "🐦‍⬛",
+  general: "⚔️",
+  mime: "🤹",
+  geolier: "🔒",
   "montreur-dours": "🐻",
-  "juge": "⚖️",
+  juge: "⚖️",
   "trois-faces": "🎲",
-  "voleur": "🥷",
-  "maniaque": "🔪",
-  "renard": "🦊",
+  voleur: "🥷",
+  maniaque: "🔪",
+  renard: "🦊",
 };
 
 export function roleEmoji(id: string): string {
@@ -109,10 +109,8 @@ export const ROLES: RoleDef[] = [
     id: "loup-matriarche",
     name: "Loup Matriarche",
     team: "WEREWOLVES",
-    description:
-      "Mère de la meute, sa parole fait loi quand les crocs hésitent.",
-    power:
-      "En cas d'égalité lors du vote des loups, son choix fixe seul la cible de la nuit.",
+    description: "Mère de la meute, sa parole fait loi quand les crocs hésitent.",
+    power: "En cas d'égalité lors du vote des loups, son choix fixe seul la cible de la nuit.",
     order: 39,
     hasNightAction: true,
   },
@@ -155,8 +153,7 @@ export const ROLES: RoleDef[] = [
     team: "VILLAGEOIS",
     description:
       "Protégée par l'ombre du Chasseur, sa cape rouge éloigne les crocs tant que le fusil veille.",
-    power:
-      "À l'aube : si le Chasseur est vivant, l'attaque des loups la concernant est annulée.",
+    power: "À l'aube : si le Chasseur est vivant, l'attaque des loups la concernant est annulée.",
     order: 0,
     hasNightAction: false,
   },
@@ -164,8 +161,7 @@ export const ROLES: RoleDef[] = [
     id: "voyante",
     name: "Voyante",
     team: "VILLAGEOIS",
-    description:
-      "Ses visions percent les masques. Elle sait, mais parler trop tôt la condamne.",
+    description: "Ses visions percent les masques. Elle sait, mais parler trop tôt la condamne.",
     power: "Chaque nuit, elle inspecte un joueur et découvre son rôle exact.",
     order: 20,
     hasNightAction: true,
@@ -174,8 +170,7 @@ export const ROLES: RoleDef[] = [
     id: "sorciere",
     name: "Sorcière",
     team: "VILLAGEOIS",
-    description:
-      "Gardienne de deux fioles : l'une rend la vie, l'autre l'arrache.",
+    description: "Gardienne de deux fioles : l'une rend la vie, l'autre l'arrache.",
     power:
       "Après les loups : potion de soin (annule l'attaque, 1×) et potion de mort (empoisonne une cible, 1×).",
     order: 50,
@@ -185,8 +180,7 @@ export const ROLES: RoleDef[] = [
     id: "chasseur",
     name: "Chasseur",
     team: "VILLAGEOIS",
-    description:
-      "Il ne part jamais seul : son dernier souffle est un coup de feu.",
+    description: "Il ne part jamais seul : son dernier souffle est un coup de feu.",
     power: "À sa mort, il désigne un joueur qui meurt immédiatement.",
     order: 0,
     hasNightAction: false,
@@ -195,8 +189,7 @@ export const ROLES: RoleDef[] = [
     id: "cupidon",
     name: "Cupidon",
     team: "VILLAGEOIS",
-    description:
-      "Il tisse un lien fatal entre deux cœurs : leur destin devient indissociable.",
+    description: "Il tisse un lien fatal entre deux cœurs : leur destin devient indissociable.",
     power:
       "Nuit 1 : lie deux joueurs. Camps différents → camp des Amoureux. Si l'un meurt, l'autre meurt de chagrin.",
     order: 10,
@@ -229,8 +222,7 @@ export const ROLES: RoleDef[] = [
     id: "salvateur",
     name: "Salvateur",
     team: "VILLAGEOIS",
-    description:
-      "Bouclier silencieux du village, il veille sur une maison chaque nuit.",
+    description: "Bouclier silencieux du village, il veille sur une maison chaque nuit.",
     power:
       "Protège un joueur (jamais le même deux nuits d'affilée) : l'attaque des loups est annulée.",
     order: 30,
@@ -240,8 +232,7 @@ export const ROLES: RoleDef[] = [
     id: "idiot-du-village",
     name: "Idiot du Village",
     team: "VILLAGEOIS",
-    description:
-      "On rit de lui, on l'accuse, mais on n'ose pas le pendre deux fois.",
+    description: "On rit de lui, on l'accuse, mais on n'ose pas le pendre deux fois.",
     power:
       "S'il est exécuté par le vote, il survit une fois, mais perd définitivement son droit de vote.",
     order: 0,
@@ -251,8 +242,7 @@ export const ROLES: RoleDef[] = [
     id: "joueur-de-flute",
     name: "Joueur de Flûte",
     team: "SOLO",
-    description:
-      "Sa mélodie s'insinue dans les esprits jusqu'à posséder le village entier.",
+    description: "Sa mélodie s'insinue dans les esprits jusqu'à posséder le village entier.",
     power:
       "Chaque nuit, il enchante 2 joueurs. Il gagne quand tous les vivants sauf lui sont enchantés.",
     order: 60,
@@ -262,8 +252,7 @@ export const ROLES: RoleDef[] = [
     id: "ange",
     name: "Ange",
     team: "SOLO",
-    description:
-      "Déchu, il ne rêve que d'un martyre immédiat sous les mains du village.",
+    description: "Déchu, il ne rêve que d'un martyre immédiat sous les mains du village.",
     power:
       "S'il est exécuté au premier vote du village, il gagne instantanément. Sinon il devient Simple Villageois.",
     order: 0,
@@ -273,8 +262,7 @@ export const ROLES: RoleDef[] = [
     id: "tavernier",
     name: "Tavernier",
     team: "VILLAGEOIS",
-    description:
-      "Son vin trouble les esprits : celui qui boit est intouchable mais inaudible.",
+    description: "Son vin trouble les esprits : celui qui boit est intouchable mais inaudible.",
     power:
       "Offre un verre à un joueur : le jour suivant il est immunisé au vote du village mais ne peut pas voter.",
     order: 62,
@@ -284,8 +272,7 @@ export const ROLES: RoleDef[] = [
     id: "corbeau",
     name: "Corbeau",
     team: "VILLAGEOIS",
-    description:
-      "Messager de mauvais augure, il marque une porte d'une plume noire.",
+    description: "Messager de mauvais augure, il marque une porte d'une plume noire.",
     power: "Désigne un joueur : il commence le vote du jour suivant avec 2 voix.",
     order: 61,
     hasNightAction: true,
@@ -305,8 +292,7 @@ export const ROLES: RoleDef[] = [
     id: "mime",
     name: "Mime",
     team: "VILLAGEOIS",
-    description:
-      "Il imite jusqu'à devenir l'autre, sans jamais prononcer un mot.",
+    description: "Il imite jusqu'à devenir l'autre, sans jamais prononcer un mot.",
     power: "Nuit 1 : copie le rôle d'un joueur pour le reste de la partie.",
     order: 11,
     firstNightOnly: true,
@@ -316,8 +302,7 @@ export const ROLES: RoleDef[] = [
     id: "geolier",
     name: "Geôlier",
     team: "VILLAGEOIS",
-    description:
-      "Il enferme un suspect pour la nuit : à l'abri des crocs, mais à sa merci.",
+    description: "Il enferme un suspect pour la nuit : à l'abri des crocs, mais à sa merci.",
     power:
       "Séquestre un joueur : pouvoir nocturne désactivé et immunité aux attaques. Il peut choisir de l'exécuter.",
     order: 15,
@@ -339,8 +324,7 @@ export const ROLES: RoleDef[] = [
     id: "juge",
     name: "Juge",
     team: "VILLAGEOIS",
-    description:
-      "Gardien de la loi du village, il tranche quand les voix se déchirent à égalité.",
+    description: "Gardien de la loi du village, il tranche quand les voix se déchirent à égalité.",
     power:
       "En cas d'égalité au vote du village : il désigne un des ex æquo à exécuter, ou ordonne un revote. Si le revote est encore à égalité, tous les ex æquo périssent.",
     order: 0,
@@ -398,9 +382,7 @@ for (const role of ROLES) {
   if (url) role.videoUrl = url;
 }
 
-export const ROLE_BY_ID: Record<string, RoleDef> = Object.fromEntries(
-  ROLES.map((r) => [r.id, r]),
-);
+export const ROLE_BY_ID: Record<string, RoleDef> = Object.fromEntries(ROLES.map((r) => [r.id, r]));
 
 export const TEAM_LABEL: Record<Team, string> = {
   VILLAGEOIS: "Village",

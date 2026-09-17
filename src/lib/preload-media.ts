@@ -32,9 +32,11 @@ export function preloadRoleMedia(roleIds?: string[]) {
     }
   };
 
-  const idle = (window as unknown as {
-    requestIdleCallback?: (cb: () => void) => number;
-  }).requestIdleCallback;
+  const idle = (
+    window as unknown as {
+      requestIdleCallback?: (cb: () => void) => number;
+    }
+  ).requestIdleCallback;
   if (idle) idle(prefetchVideos);
   else window.setTimeout(prefetchVideos, 1200);
 }

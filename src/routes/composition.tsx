@@ -45,10 +45,7 @@ function CompositionPage() {
     setNames(loadNames().filter((n) => n !== master));
   }, []);
 
-  const total = useMemo(
-    () => Object.values(counts).reduce((a, b) => a + b, 0),
-    [counts],
-  );
+  const total = useMemo(() => Object.values(counts).reduce((a, b) => a + b, 0), [counts]);
 
   const bump = (id: string, delta: number) =>
     setCounts((c) => {

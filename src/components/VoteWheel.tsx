@@ -11,11 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { NarratorCard } from "@/components/NarratorCard";
-import {
-  SeatingWheel,
-  buildVoteQueue,
-  type RotationDirection,
-} from "@/components/SeatingWheel";
+import { SeatingWheel, buildVoteQueue, type RotationDirection } from "@/components/SeatingWheel";
 import type { VoteRecord } from "@/components/GameRecapCard";
 import { useI18n } from "@/lib/i18n";
 import { nk } from "@/lib/narration";
@@ -28,7 +24,6 @@ import {
   type GameState,
   type Player,
 } from "@/game/engine";
-
 
 const ABSTAIN = "__abstain__";
 
@@ -108,20 +103,13 @@ export function VoteWheel({
     return () => clearInterval(interval);
   }, [defensePlayerId, isTimerRunning]);
 
-  const judge = state.players.find(
-    (p) => p.alive && effectiveRoleId(p) === "juge",
-  );
+  const judge = state.players.find((p) => p.alive && effectiveRoleId(p) === "juge");
 
   const inTieBreak = tieSubset.length > 1;
 
   const voters = useMemo(
     () =>
-      buildVoteQueue(
-        seating,
-        state.villageCaptainId,
-        direction,
-        captainVotesFirst,
-      ).filter(
+      buildVoteQueue(seating, state.villageCaptainId, direction, captainVotesFirst).filter(
         // Revote : les joueurs à égalité ne votent pas.
         (p) => p.canVote && (!inTieBreak || !tieSubset.includes(p.id)),
       ),
@@ -145,9 +133,7 @@ export function VoteWheel({
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
     for (const p of alive)
-      c[p.id] =
-        (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) +
-        (p.penaltyVotes ?? 0);
+      c[p.id] = (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
     for (const targets of Object.values(votes)) {
       for (const targetId of targets) {
         if (targetId === ABSTAIN) continue;
@@ -158,8 +144,7 @@ export function VoteWheel({
   }, [votes, alive, inTieBreak, tieSubset]);
 
   const currentVoter = voters[idx];
-  const isCaptainTurn =
-    !!currentVoter && currentVoter.id === state.villageCaptainId;
+  const isCaptainTurn = !!currentVoter && currentVoter.id === state.villageCaptainId;
   const allVoted = idx >= voters.length;
   /** Revote / égalité : le capitaine n'a plus qu'une seule voix. */
   const isRevote = revoteRound > 0 || inTieBreak;
@@ -177,8 +162,7 @@ export function VoteWheel({
     const updatedCounts: Record<string, number> = {};
     for (const p of alive) {
       updatedCounts[p.id] =
-        (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) +
-        (p.penaltyVotes ?? 0);
+        (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
     }
     for (const tList of Object.values(nextVotes)) {
       for (const tId of tList) {
@@ -212,10 +196,11 @@ export function VoteWheel({
       playVoteTick();
       return;
     }
-    const points = isCaptainTurn
-      ? captainPoints
-      : Math.max(1, currentVoter.voteWeight);
-    commit(currentVoter.id, Array.from({ length: points }, () => targetId));
+    const points = isCaptainTurn ? captainPoints : Math.max(1, currentVoter.voteWeight);
+    commit(
+      currentVoter.id,
+      Array.from({ length: points }, () => targetId),
+    );
   };
 
   const undoVote = (voterId: string) => {
@@ -249,9 +234,7 @@ export function VoteWheel({
     setIsTimerRunning(false);
   };
 
-  const ranked = [...candidates].sort(
-    (a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0),
-  );
+  const ranked = [...candidates].sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0));
   const top = counts[ranked[0]?.id ?? ""] ?? 0;
   const leaders = ranked.filter((p) => (counts[p.id] ?? 0) === top && top > 0);
 
@@ -287,9 +270,7 @@ export function VoteWheel({
     const names = elimIds
       .map((id) => state.players.find((p) => p.id === id)?.name ?? id)
       .join(", ");
-    next.log.push(
-      nk("logVoteTally", { d: state.day, tally: tally || "—", names }),
-    );
+    next.log.push(nk("logVoteTally", { d: state.day, tally: tally || "—", names }));
     return next;
   };
 
@@ -297,9 +278,7 @@ export function VoteWheel({
     playGavel();
     onVoteRecord?.(buildRecord(ids));
     const next =
-      ids.length === 1
-        ? submitVote(state, ids[0], true)
-        : eliminateTied(state, ids, true);
+      ids.length === 1 ? submitVote(state, ids[0], true) : eliminateTied(state, ids, true);
     onChange(withTallyLog(next, ids));
   };
 
@@ -330,7 +309,9 @@ export function VoteWheel({
             <span className="font-bold text-foreground">
               {state.players.find((p) => p.id === defensePlayerId)?.name}
             </span>{" "}
-            {t("defenseDesc", { name: state.players.find((p) => p.id === defensePlayerId)?.name ?? "" })}
+            {t("defenseDesc", {
+              name: state.players.find((p) => p.id === defensePlayerId)?.name ?? "",
+            })}
           </p>
           <div className="flex items-center justify-center gap-2 text-2xl font-black text-amber-500 tabular-nums">
             <Timer
@@ -373,9 +354,7 @@ export function VoteWheel({
           <p className="rounded-xl border border-primary/40 px-3 py-2 text-center text-xs tracking-widest text-primary uppercase">
             {t("tieBreakOnly", { n: tieSubset.length })}
           </p>
-          <p className="text-center text-[11px] text-muted-foreground">
-            {t("revoteTiedExcluded")}
-          </p>
+          <p className="text-center text-[11px] text-muted-foreground">{t("revoteTiedExcluded")}</p>
         </div>
       )}
 
@@ -386,55 +365,53 @@ export function VoteWheel({
       )}
 
       <div className="relative">
-      <SeatingWheel
-        players={seating}
-        activeId={currentVoter?.id}
-        direction={direction}
-        captainId={state.villageCaptainId}
-        onNodeClick={
-          !allVoted
-            ? (id) => {
-                const target = alive.find((p) => p.id === id);
-                if (!target || target.id === currentVoter?.id) return;
-                if (!candidates.some((c) => c.id === id)) return;
-                cast(id);
-              }
-            : onPenalty
-        }
-        onNodeLongPress={onRemovePenalty}
-        badge={(p) =>
-          (counts[p.id] ?? 0) > 0 ? (
-            <span className="mt-0.5 inline-block rounded-full bg-primary px-1.5 text-[9px] font-black text-primary-foreground tabular-nums">
-              {counts[p.id]}
-            </span>
-          ) : null
-        }
-        center={
-          allVoted ? (
-            <div className="px-2">
-              <p className="text-[9px] tracking-widest text-muted-foreground uppercase">
-                {t("topVoted")}
-              </p>
-              <p className="truncate text-sm font-black text-primary">
-                {leaders.map((p) => p.name).join(" / ") || "—"}
-              </p>
-              <p className="text-lg font-black tabular-nums">{top}</p>
-            </div>
-          ) : (
-            <div className="px-2">
-              <p className="text-[9px] tracking-widest text-primary uppercase">
-                {t("nowVoting")}
-              </p>
-              <p className="truncate text-sm font-black">
-                {currentVoter?.name}
-              </p>
-              <p className="text-[9px] text-muted-foreground tabular-nums">
-                {t("voteProgress", { i: idx + 1, n: voters.length })}
-              </p>
-            </div>
-          )
-        }
-      />
+        <SeatingWheel
+          players={seating}
+          activeId={currentVoter?.id}
+          direction={direction}
+          captainId={state.villageCaptainId}
+          onNodeClick={
+            !allVoted
+              ? (id) => {
+                  const target = alive.find((p) => p.id === id);
+                  if (!target || target.id === currentVoter?.id) return;
+                  if (!candidates.some((c) => c.id === id)) return;
+                  cast(id);
+                }
+              : onPenalty
+          }
+          onNodeLongPress={onRemovePenalty}
+          badge={(p) =>
+            (counts[p.id] ?? 0) > 0 ? (
+              <span className="mt-0.5 inline-block rounded-full bg-primary px-1.5 text-[9px] font-black text-primary-foreground tabular-nums">
+                {counts[p.id]}
+              </span>
+            ) : null
+          }
+          center={
+            allVoted ? (
+              <div className="px-2">
+                <p className="text-[9px] tracking-widest text-muted-foreground uppercase">
+                  {t("topVoted")}
+                </p>
+                <p className="truncate text-sm font-black text-primary">
+                  {leaders.map((p) => p.name).join(" / ") || "—"}
+                </p>
+                <p className="text-lg font-black tabular-nums">{top}</p>
+              </div>
+            ) : (
+              <div className="px-2">
+                <p className="text-[9px] tracking-widest text-primary uppercase">
+                  {t("nowVoting")}
+                </p>
+                <p className="truncate text-sm font-black">{currentVoter?.name}</p>
+                <p className="text-[9px] text-muted-foreground tabular-nums">
+                  {t("voteProgress", { i: idx + 1, n: voters.length })}
+                </p>
+              </div>
+            )
+          }
+        />
       </div>
 
       {!allVoted && isCaptainTurn && (
@@ -467,14 +444,10 @@ export function VoteWheel({
           )}
           {!isRevote && splitMode && (
             <p className="text-[11px] text-muted-foreground">
-              {splitPick.length === 0
-                ? t("captainSplitPickA")
-                : t("captainSplitPickB")}
+              {splitPick.length === 0 ? t("captainSplitPickA") : t("captainSplitPickB")}
               {splitPick.length > 0 && (
                 <span className="ms-1 font-bold text-accent">
-                  {
-                    state.players.find((p) => p.id === splitPick[0])?.name
-                  }
+                  {state.players.find((p) => p.id === splitPick[0])?.name}
                 </span>
               )}
             </p>
@@ -506,9 +479,7 @@ export function VoteWheel({
           className="flex w-full items-center justify-between px-3 py-2 text-xs tracking-widest text-muted-foreground uppercase"
         >
           {t("auditTitle")} ({Object.keys(votes).length})
-          <ChevronDown
-            className={`size-4 transition-transform ${auditOpen ? "rotate-180" : ""}`}
-          />
+          <ChevronDown className={`size-4 transition-transform ${auditOpen ? "rotate-180" : ""}`} />
         </button>
         {auditOpen && (
           <ul className="space-y-1 px-3 pb-3">
@@ -516,8 +487,7 @@ export function VoteWheel({
               .filter((v) => votes[v.id])
               .map((v) => {
                 const targets = votes[v.id] ?? [];
-                const name = (id?: string) =>
-                  state.players.find((p) => p.id === id)?.name ?? "—";
+                const name = (id?: string) => state.players.find((p) => p.id === id)?.name ?? "—";
                 const line = targets.includes(ABSTAIN)
                   ? t("auditAbstain", { voter: v.name })
                   : targets.length === 2 && targets[0] !== targets[1]
@@ -536,10 +506,7 @@ export function VoteWheel({
                           target: name(targets[0]),
                         });
                 return (
-                  <li
-                    key={v.id}
-                    className="flex items-center justify-between gap-2 text-xs"
-                  >
+                  <li key={v.id} className="flex items-center justify-between gap-2 text-xs">
                     <span className="flex flex-wrap items-center gap-1">
                       {line}
                       {targets.length === 2 && targets[0] !== targets[1] && (
@@ -581,9 +548,7 @@ export function VoteWheel({
               <button
                 key={p.id}
                 onClick={() =>
-                  setJudgePick((s) =>
-                    picked ? s.filter((x) => x !== p.id) : [...s, p.id],
-                  )
+                  setJudgePick((s) => (picked ? s.filter((x) => x !== p.id) : [...s, p.id]))
                 }
                 className={`w-full rounded-full py-3 text-sm ${picked ? "bg-primary font-bold text-primary-foreground" : "border border-primary"}`}
               >

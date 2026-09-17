@@ -37,8 +37,7 @@ export const zh = {
 
     // Grimoire
     grimoireTitle: "角色魔导书",
-    grimoireHint:
-      "点击卡牌上的信息图标可查看其详细描述与技能。",
+    grimoireHint: "点击卡牌上的信息图标可查看其详细描述与技能。",
     narratorTitle: "主持人 (法官)",
     narratorIntro:
       "我是法官。我唤醒灵魂，统计票数，并宣布死者。请遵从我的指示：村庄与獠牙之间只有一夜之隔。",
@@ -59,8 +58,7 @@ export const zh = {
 
     // Game Master
     gmTitle: "法官",
-    gmSubtitle:
-      "指定一名法官：他将持有手机并引导游戏。法官不会获得身份牌。",
+    gmSubtitle: "指定一名法官：他将持有手机并引导游戏。法官不会获得身份牌。",
     gmRandom: "🎲 随机抽取",
     gmNext: "继续",
     gmChosen: "法官",
@@ -79,7 +77,8 @@ export const zh = {
     discoverRole: "查看我的身份",
     memorized: "我已记住身份",
     handoverTitle: "将手机交给法官",
-    handoverText: "身份牌已发放完毕。我是法官：从现在起由我保管手机。我将主持夜晚、黎明以及村庄的投票。",
+    handoverText:
+      "身份牌已发放完毕。我是法官：从现在起由我保管手机。我将主持夜晚、黎明以及村庄的投票。",
     captainElection: "竞选警长",
     captainElectionDesc:
       "村庄通过举手投票选出警长。其秘密身份保持隐藏：仅法官可见此徽章。将军不能当选警长。",
@@ -104,8 +103,7 @@ export const zh = {
 
     // Night
     secretWordTitle: "唠叨狼的暗号词",
-    secretWordHint:
-      "将此屏幕展示给唠叨狼。他必须在早晨的讨论中说出这个词。",
+    secretWordHint: "将此屏幕展示给唠叨狼。他必须在早晨的讨论中说出这个词。",
     editWord: "修改词语",
     bavardSeen: "唠叨狼已查看其暗号词",
     packAgrees: "狼队达成一致",
@@ -127,14 +125,13 @@ export const zh = {
 
     // Dawn & debate
     debateTitle: "自由讨论 — 第 {n} 天",
-    debateText:
-      "警长发言发言，每位玩家依次发言，最后由警长总结。",
-    captainMutedHint: "警长已被禁言：无法发言（无开场与总结），但保留所有决策权 — 讨论方向、投票顺序及投票时机。",
+    debateText: "警长发言发言，每位玩家依次发言，最后由警长总结。",
+    captainMutedHint:
+      "警长已被禁言：无法发言（无开场与总结），但保留所有决策权 — 讨论方向、投票顺序及投票时机。",
     mutedBy: "被大黑狼禁言：{names}",
     dawnTitle: "黎明 — 第 {n} 天",
     bavardWordOfDay: "唠叨狼，你今天的暗号词是：",
-    firstDayVoteQuestion:
-      "村民们，首日是否进行投票？仅在首日早晨，投票为可选项目。",
+    firstDayVoteQuestion: "村民们，首日是否进行投票？仅在首日早晨，投票为可选项目。",
     vote: "进行投票",
     noVote: "放弃投票",
     forceVote: "法官强制开启村庄投票",
@@ -220,23 +217,19 @@ export const zh = {
     // Vote
     voteTitle: "村庄投票 — 第 {n} 天",
     revoteSuffix: " (PK 投票)",
-    voteText:
-      "村庄必须选出被放逐者。请统计票数：至少需淘汰一名玩家。",
+    voteText: "村庄必须选出被放逐者。请统计票数：至少需淘汰一名玩家。",
     voteTotal: "已分配票数：{c} / {t}",
-    voteTotalHint:
-      "最大可能票数等于存活人数 + 1（警长的双倍票权）。",
+    voteTotalHint: "最大可能票数等于存活人数 + 1（警长的双倍票权）。",
     addVote: "增加 {name} 的票数",
     removeVote: "减少 {name} 的票数",
     bavardCheck: "检查 — 唠叨狼",
     bavardAsk: "他是否说出了暗号词 '{word}'？",
     bavardInactiveDay1: "唠叨狼在第 1 夜未生效 — 无需检查。",
-    tieJudge:
-      "平票：由裁决者决定。选择一名或多名平票者放逐，或重新组织投票。",
+    tieJudge: "平票：由裁决者决定。选择一名或多名平票者放逐，或重新组织投票。",
     judgeExecute: "执行裁决者决定",
     orderRevote: "重新组织投票",
     tieBreakOnly: "PK 投票 — 仅显示 {n} 名平票玩家",
-    tieNote:
-      "若 PK 投票后再次平票，所有平票玩家将同时被放逐。",
+    tieNote: "若 PK 投票后再次平票，所有平票玩家将同时被放逐。",
     validateExec: "确认放逐",
     bavardPreVoteTitle: "唠叨狼 — 投票前检查",
     bavardPreVoteAsk: "他是否说出了暗号词 '{word}'？",
@@ -305,8 +298,7 @@ export const zh = {
 
     // Events
     captainSuccession: "警长移交",
-    captainSuccessionText:
-      "{name} 倒下了。在倒下前，他将指定自己的继承人：无需重新投票。",
+    captainSuccessionText: "{name} 倒下了。在倒下前，他将指定自己的继承人：无需重新投票。",
     transmit: "移交警徽",
     hunterTitle: "猎人的最后一枪",
     hunterText: "猎人倒下了，但他的猎枪发出了最后一响。",
@@ -477,12 +469,10 @@ export const zh = {
     skipVoteDay1Vote: "跳过投票（第1天）",
     guideStep1Kicker: "步骤 1",
     guideStep1Title: "设置与玩家",
-    guideStep1Body:
-      "输入玩家姓名并点击 '+ 添加玩家'。开局前选择好板子配置与发言计时器。",
+    guideStep1Body: "输入玩家姓名并点击 '+ 添加玩家'。开局前选择好板子配置与发言计时器。",
     guideStep2Kicker: "步骤 2",
     guideStep2Title: "发牌与暗中查看",
-    guideStep2Body:
-      "顺时针传递手机：每位玩家暗中查看自己的身份牌，记住后遮挡屏幕再传给下一位。",
+    guideStep2Body: "顺时针传递手机：每位玩家暗中查看自己的身份牌，记住后遮挡屏幕再传给下一位。",
     guideStep3Kicker: "步骤 3",
     guideStep3Title: "夜晚流程",
     guideStep3Body:
@@ -502,8 +492,7 @@ export const zh = {
 
     // Orientation
     rotateTitle: "请旋转手机",
-    rotateText:
-      "Nightfall Oracle 需在竖屏模式下游玩。请将设备垂直放置以继续。",
+    rotateText: "Nightfall Oracle 需在竖屏模式下游玩。请将设备垂直放置以继续。",
 
     // Missing keys — added for full localization
     pass: "跳过回合",
@@ -545,13 +534,10 @@ export const zh = {
     voyante: "你要查验哪位玩家的身份？",
     salvateur: "今晚你要守护谁？（不能连续两夜守护同一人）",
     "petite-fille": "你微微睁开眼睛… 是否要偷窥狼人阵营？",
-    "loup-garou":
-      "狼队请指定袭击目标。若意见不一，由狼后独立裁决。",
-    "loup-noir":
-      "感染袭击目标（每局限 1 次）和/或对一名玩家实施禁言。",
+    "loup-garou": "狼队请指定袭击目标。若意见不一，由狼后独立裁决。",
+    "loup-noir": "感染袭击目标（每局限 1 次）和/或对一名玩家实施禁言。",
     "loup-blanc": "今晚是否要击杀一名同队狼人？",
-    "loup-bavard":
-      "法官向你展示暗号词：你必须在早晨的讨论中说出此词。",
+    "loup-bavard": "法官向你展示暗号词：你必须在早晨的讨论中说出此词。",
     sorciere: "请使用你的药水。",
     "joueur-de-flute": "请迷惑/魅惑两名玩家。",
     corbeau: "你要将黑羽毛放置给谁？",
@@ -561,7 +547,8 @@ export const zh = {
     "trois-faces": "选择你今晚揭示的面具：守护、药水或查验。",
     voleur: "偷取一名玩家的身份：该玩家将变为普通村民。",
     maniaque: "指定刺杀目标（任何守护技能均无法阻挡）。",
-    marionnettiste: "选择绑定为傀儡的玩家。若你受到袭击，傀儡将替你承受伤害，且你在次日早晨将被禁言。",
+    marionnettiste:
+      "选择绑定为傀儡的玩家。若你受到袭击，傀儡将替你承受伤害，且你在次日早晨将被禁言。",
     renard: "你收到夜晚事件的模糊报告。",
   } as Record<string, string>,
   teams: {
@@ -574,14 +561,17 @@ export const zh = {
   roles: {
     marionnettiste: {
       name: "傀儡师",
-      description: "将自己的命运与一名傀儡绑定。若夜间受到袭击，傀儡将替你承受致命伤害，而你在次日早晨的讨论中将被禁言。",
-      power: "选择一名傀儡。遭到袭击时由傀儡替伤，且你次日早晨无法发言。"
+      description:
+        "将自己的命运与一名傀儡绑定。若夜间受到袭击，傀儡将替你承受致命伤害，而你在次日早晨的讨论中将被禁言。",
+      power: "选择一名傀儡。遭到袭击时由傀儡替伤，且你次日早晨无法发言。",
     },
     renard: {
       name: "狐狸",
-      description: "村庄里潜行的狐狸。每晚从主持人那里收到模糊的夜间报告。在最后一晚，必须选择一个知己来分享秘密。",
-      power: "每晚主持人简要告知狐狸发生的事件。在最后一晚，指定知己。如果任何一方公开透露此信息，将被淘汰，另一方成为小丑。"
-    }
+      description:
+        "村庄里潜行的狐狸。每晚从主持人那里收到模糊的夜间报告。在最后一晚，必须选择一个知己来分享秘密。",
+      power:
+        "每晚主持人简要告知狐狸发生的事件。在最后一晚，指定知己。如果任何一方公开透露此信息，将被淘汰，另一方成为小丑。",
+    },
   } as Record<string, { name: string; description: string; power: string }>,
 };
 

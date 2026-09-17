@@ -7,13 +7,7 @@ const VIDEO_URL = "/media/logo-video.mp4";
  * Logo vidéo interactif : lecture unique avec son, gel sur la dernière image,
  * relance au clic. Anneau néon en dégradé radial avec pulsation continue.
  */
-export function VideoLogo({
-  label,
-  onFinished,
-}: {
-  label: string;
-  onFinished?: () => void;
-}) {
+export function VideoLogo({ label, onFinished }: { label: string; onFinished?: () => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [loaded, setLoaded] = useState(false);
   const finished = useRef(false);
