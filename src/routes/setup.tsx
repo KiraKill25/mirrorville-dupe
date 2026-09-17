@@ -36,11 +36,14 @@ function SetupPage() {
   const { t } = useI18n();
   const [names, setNames] = useState<string[]>(Array(8).fill(""));
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
+  const [customTime, setCustomTime] = useState(String(DEFAULT_SETTINGS.debateTimePerPlayer));
 
   useEffect(() => {
     const saved = loadNames();
     if (saved.length) setNames(saved);
-    setSettings(loadSettings());
+    const s = loadSettings();
+    setSettings(s);
+    setCustomTime(String(s.debateTimePerPlayer));
     preloadRoleMedia();
   }, []);
 
