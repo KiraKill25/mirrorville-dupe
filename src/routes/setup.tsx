@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { X } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { useI18n } from "@/lib/i18n";
@@ -12,7 +12,6 @@ import {
   sanitizeDebateSeconds,
   type GameSettings,
 } from "@/lib/session";
-import { preloadRoleMedia } from "@/lib/preload-media";
 
 const TITLE = "Noms des joueurs — Nightfall Oracle";
 const DESC = "Ajoute les joueurs autour de la table avant de distribuer les rôles.";
@@ -31,6 +30,48 @@ export const Route = createFileRoute("/setup")({
   component: SetupPage,
 });
 
+// Memoized player row to prevent full list re-renders on every keypress
+const PlayerInputRow = memo(function PlayerInputRow({
+  index,
+  value,
+  placeholder,
+  removeLabel,
+  onChange,
+  onRemove,
+}: {
+  index: number;
+  value: string;
+  placeholder: string;
+  removeLabel: string;
+  onChange: (index: number, val: string) => void;
+  onRemove: (index: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+        {index + 1}
+      </span>
+      <input
+        type="text"
+        autoComplete="off"
+        autoCorrect="off"
+        value={value}
+        onChange={(e) => onChange(index, e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary touch-manipulation"
+      />
+      <button
+        type="button"
+        aria-label={removeLabel}
+        onClick={() => onRemove(index)}
+        className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground active:scale-95 touch-manipulation"
+      >
+        <X className="size-4" />
+      </button>
+    </div>
+  );
+});
+
 function SetupPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
@@ -46,31 +87,23 @@ function SetupPage() {
     setIsDebateTimerEnabled(s.isDebateTimerEnabled);
     setDebateSeconds(s.debateTimePerPlayer);
     setCustomInput(String(s.debateTimePerPlayer));
-
-    const timer = setTimeout(() => preloadRoleMedia(), 200);
-    return () => clearTimeout(timer);
   }, []);
 
-  const updateName = (index: number, value: string) => {
+  const updateName = useCallback((index: number, value: string) => {
     setNames((prev) => {
       const copy = [...prev];
       copy[index] = value;
       return copy;
     });
-  };
+  }, []);
 
-  const removePlayer = (index: number) => {
+  const removePlayer = useCallback((index: number) => {
     setNames((prev) => prev.filter((_, k) => k !== index));
-  };
+  }, []);
 
-  const addPlayer = () => {
+  const addPlayer = useCallback(() => {
     setNames((prev) => [...prev, ""]);
-  };
-
-  const selectPreset = (seconds: number) => {
-    setDebateSeconds(seconds);
-    setCustomInput(String(seconds));
-  };
+  }, []);
 
   const handleNext = () => {
     const finalSeconds = sanitizeDebateSeconds(customInput);
@@ -85,10 +118,10 @@ function SetupPage() {
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-12">
+    <div className="mx-auto min-h-screen w-full max-w-lg px-4 py-4 pb-16">
       <TopBar
         left={
-          <button type="button" onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground">
+          <button type="button" onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground touch-manipulation">
             {t("back")}
           </button>
         }
@@ -97,38 +130,27 @@ function SetupPage() {
 
       <div className="space-y-3">
         {names.map((n, i) => (
-          <div key={`player-input-${i}`} className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-              {i + 1}
-            </span>
-            <input
-              type="text"
-              value={n}
-              onChange={(e) => updateName(i, e.target.value)}
-              placeholder={t("playerNamePlaceholder")}
-              className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary"
-            />
-            <button
-              type="button"
-              aria-label={t("remove")}
-              onClick={() => removePlayer(i)}
-              className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
+          <PlayerInputRow
+            key={i}
+            index={i}
+            value={n}
+            placeholder={t("playerNamePlaceholder")}
+            removeLabel={t("remove")}
+            onChange={updateName}
+            onRemove={removePlayer}
+          />
         ))}
       </div>
 
       <button
         type="button"
         onClick={addPlayer}
-        className="mt-4 w-full rounded-full border border-dashed border-border py-3 text-sm text-muted-foreground"
+        className="mt-4 w-full rounded-full border border-dashed border-border py-3 text-sm text-muted-foreground active:bg-input touch-manipulation"
       >
         {t("addPlayer")}
       </button>
 
-      <section className="surface-card mt-6 space-y-4 rounded-3xl p-4">
+      <section className="mt-6 space-y-4 rounded-3xl border border-border/40 bg-card p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-bold">{t("debateTimer")}</h2>
@@ -140,7 +162,7 @@ function SetupPage() {
             aria-checked={isDebateTimerEnabled}
             aria-label={t("debateTimerToggle")}
             onClick={() => setIsDebateTimerEnabled((prev) => !prev)}
-            className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+            className={`relative h-7 w-12 shrink-0 rounded-full transition-colors touch-manipulation ${
               isDebateTimerEnabled ? "bg-primary" : "bg-input"
             }`}
           >
@@ -153,14 +175,17 @@ function SetupPage() {
         </div>
 
         {isDebateTimerEnabled && (
-          <div className="space-y-3">
+          <div className="space-y-3 pt-2">
             <div className="flex flex-wrap gap-2">
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
                   type="button"
-                  onClick={() => selectPreset(v)}
-                  className={`rounded-full px-4 py-2 text-xs font-bold transition-colors ${
+                  onClick={() => {
+                    setDebateSeconds(v);
+                    setCustomInput(String(v));
+                  }}
+                  className={`rounded-full px-4 py-2 text-xs font-bold touch-manipulation ${
                     debateSeconds === v
                       ? "bg-primary text-primary-foreground"
                       : "border border-border text-muted-foreground"
@@ -183,7 +208,7 @@ function SetupPage() {
                   setCustomInput(val);
                   if (val) setDebateSeconds(Number(val));
                 }}
-                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"
+                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary touch-manipulation"
               />
             </div>
             <p className="text-xs text-muted-foreground">
@@ -198,11 +223,11 @@ function SetupPage() {
           type="button"
           disabled={names.length < 4}
           onClick={handleNext}
-          className="mx-auto block w-full max-w-lg rounded-full bg-primary py-4 font-bold text-primary-foreground disabled:opacity-40"
+          className="block w-full rounded-full bg-primary py-4 font-bold text-primary-foreground disabled:opacity-40 touch-manipulation active:scale-[0.99]"
         >
           {t("next")}
         </button>
       </div>
-    </main>
+    </div>
   );
 }
