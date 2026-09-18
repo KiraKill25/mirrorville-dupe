@@ -23,13 +23,11 @@ const MJ = "mvno-mj";
 export const saveGameMaster = (name: string) => localStorage.setItem(MJ, name);
 export const loadGameMaster = (): string | null => localStorage.getItem(MJ);
 
+/** Garantit une durée de débat valide (jamais NaN, null, 0 ou négative). */
 export const sanitizeDebateSeconds = (v: unknown): number => {
-  if (v === null || v === undefined || v === "") return DEFAULT_SETTINGS.debateTimePerPlayer;
-  const parsed = typeof v === "number" ? v : parseInt(String(v), 10);
-  if (isNaN(parsed) || !isFinite(parsed) || parsed <= 0) {
-    return DEFAULT_SETTINGS.debateTimePerPlayer;
-  }
-  return Math.max(5, Math.min(600, parsed));
+  const n = Math.floor(Number(v));
+  if (!Number.isFinite(n) || n <= 0) return DEFAULT_SETTINGS.debateTimePerPlayer;
+  return Math.max(5, Math.min(600, n));
 };
 
 export const saveSettings = (s: GameSettings) =>
@@ -40,11 +38,12 @@ export const saveSettings = (s: GameSettings) =>
       debateTimePerPlayer: sanitizeDebateSeconds(s.debateTimePerPlayer),
     } satisfies GameSettings),
   );
-
 export const loadSettings = (): GameSettings => {
   try {
     const raw = localStorage.getItem(SETTINGS);
-    const parsed = raw ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) } : DEFAULT_SETTINGS;
+    const parsed = raw
+      ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) }
+      : DEFAULT_SETTINGS;
     return {
       isDebateTimerEnabled: !!parsed.isDebateTimerEnabled,
       debateTimePerPlayer: sanitizeDebateSeconds(parsed.debateTimePerPlayer),
@@ -62,7 +61,6 @@ export const loadNames = (): string[] => {
     return [];
   }
 };
-
 export const saveSetup = (data: SetupData) => localStorage.setItem(KEY, JSON.stringify(data));
 export const loadSetup = (): SetupData | null => {
   try {
@@ -72,7 +70,6 @@ export const loadSetup = (): SetupData | null => {
     return null;
   }
 };
-
 export const saveGame = (g: unknown) => localStorage.setItem(GAME, JSON.stringify(g));
 export const loadGame = <T>(): T | null => {
   try {
@@ -82,5 +79,4 @@ export const loadGame = <T>(): T | null => {
     return null;
   }
 };
-
 export const clearGame = () => localStorage.removeItem(GAME);

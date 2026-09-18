@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { useI18n } from "@/lib/i18n";
@@ -12,6 +12,7 @@ import {
   sanitizeDebateSeconds,
   type GameSettings,
 } from "@/lib/session";
+import { preloadRoleMedia } from "@/lib/preload-media";
 
 const TITLE = "Noms des joueurs — Nightfall Oracle";
 const DESC = "Ajoute les joueurs autour de la table avant de distribuer les rôles.";
@@ -30,163 +31,107 @@ export const Route = createFileRoute("/setup")({
   component: SetupPage,
 });
 
-// Memoized player row to prevent full list re-renders on every keypress
-const PlayerInputRow = memo(function PlayerInputRow({
-  index,
-  value,
-  placeholder,
-  removeLabel,
-  onChange,
-  onRemove,
-}: {
-  index: number;
-  value: string;
-  placeholder: string;
-  removeLabel: string;
-  onChange: (index: number, val: string) => void;
-  onRemove: (index: number) => void;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-        {index + 1}
-      </span>
-      <input
-        type="text"
-        autoComplete="off"
-        autoCorrect="off"
-        value={value}
-        onChange={(e) => onChange(index, e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary touch-manipulation"
-      />
-      <button
-        type="button"
-        aria-label={removeLabel}
-        onClick={() => onRemove(index)}
-        className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground active:scale-95 touch-manipulation"
-      >
-        <X className="size-4" />
-      </button>
-    </div>
-  );
-});
-
 function SetupPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [names, setNames] = useState<string[]>(Array(8).fill(""));
-  const [isDebateTimerEnabled, setIsDebateTimerEnabled] = useState(false);
-  const [debateSeconds, setDebateSeconds] = useState(60);
-  const [customInput, setCustomInput] = useState("60");
+  const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
+  const [customTime, setCustomTime] = useState(String(DEFAULT_SETTINGS.debateTimePerPlayer));
 
   useEffect(() => {
     const saved = loadNames();
     if (saved.length) setNames(saved);
     const s = loadSettings();
-    setIsDebateTimerEnabled(s.isDebateTimerEnabled);
-    setDebateSeconds(s.debateTimePerPlayer);
-    setCustomInput(String(s.debateTimePerPlayer));
+    setSettings(s);
+    setCustomTime(String(s.debateTimePerPlayer));
+    preloadRoleMedia();
   }, []);
 
-  const updateName = useCallback((index: number, value: string) => {
-    setNames((prev) => {
-      const copy = [...prev];
-      copy[index] = value;
-      return copy;
-    });
-  }, []);
+  const update = (i: number, v: string) => setNames((n) => n.map((x, k) => (k === i ? v : x)));
 
-  const removePlayer = useCallback((index: number) => {
-    setNames((prev) => prev.filter((_, k) => k !== index));
-  }, []);
-
-  const addPlayer = useCallback(() => {
-    setNames((prev) => [...prev, ""]);
-  }, []);
-
-  const handleNext = () => {
-    const finalSeconds = sanitizeDebateSeconds(customInput);
-    const finalSettings: GameSettings = {
-      isDebateTimerEnabled,
-      debateTimePerPlayer: finalSeconds,
-    };
-    const filledNames = names.map((n, i) => n.trim() || `${t("defaultPlayer")} ${i + 1}`);
-    saveNames(filledNames);
-    saveSettings(finalSettings);
-    navigate({ to: "/gamemaster" });
-  };
+  const filled = names.map((n, i) => n.trim() || `${t("defaultPlayer")} ${i + 1}`);
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-lg px-4 py-4 pb-16">
+    <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto px-4 py-4 pb-28">
       <TopBar
         left={
-          <button type="button" onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground touch-manipulation">
+          <button onClick={() => navigate({ to: "/" })} className="text-sm text-muted-foreground">
             {t("back")}
           </button>
         }
       />
-      <h1 className="mt-3 mb-6 text-2xl font-black">{t("setupTitle")}</h1>
+      <h1 className="neon-text mt-3 mb-6 text-2xl font-black">{t("setupTitle")}</h1>
 
       <div className="space-y-3">
         {names.map((n, i) => (
-          <PlayerInputRow
-            key={i}
-            index={i}
-            value={n}
-            placeholder={t("playerNamePlaceholder")}
-            removeLabel={t("remove")}
-            onChange={updateName}
-            onRemove={removePlayer}
-          />
+          <div key={i} className="flex items-center gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+              {i + 1}
+            </span>
+            <input
+              value={n}
+              onChange={(e) => update(i, e.target.value)}
+              placeholder={t("playerNamePlaceholder")}
+              className="w-full rounded-full bg-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
+            <button
+              aria-label={t("remove")}
+              onClick={() => setNames((s) => s.filter((_, k) => k !== i))}
+              className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
         ))}
       </div>
 
       <button
-        type="button"
-        onClick={addPlayer}
-        className="mt-4 w-full rounded-full border border-dashed border-border py-3 text-sm text-muted-foreground active:bg-input touch-manipulation"
+        onClick={() => setNames((s) => [...s, ""])}
+        className="mt-4 w-full rounded-full border border-dashed border-border py-3 text-sm text-muted-foreground"
       >
         {t("addPlayer")}
       </button>
 
-      <section className="mt-6 space-y-4 rounded-3xl border border-border/40 bg-card p-4">
+      <section className="surface-card mt-6 space-y-4 rounded-3xl p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-bold">{t("debateTimer")}</h2>
             <p className="text-xs text-muted-foreground">{t("debateTimerDesc")}</p>
           </div>
           <button
-            type="button"
             role="switch"
-            aria-checked={isDebateTimerEnabled}
+            aria-checked={settings.isDebateTimerEnabled}
             aria-label={t("debateTimerToggle")}
-            onClick={() => setIsDebateTimerEnabled((prev) => !prev)}
-            className={`relative h-7 w-12 shrink-0 rounded-full transition-colors touch-manipulation ${
-              isDebateTimerEnabled ? "bg-primary" : "bg-input"
+            onClick={() =>
+              setSettings((s) => ({
+                ...s,
+                isDebateTimerEnabled: !s.isDebateTimerEnabled,
+              }))
+            }
+            className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+              settings.isDebateTimerEnabled ? "neon-ring bg-primary" : "bg-input"
             }`}
           >
             <span
               className={`absolute top-1 size-5 rounded-full bg-foreground transition-all ${
-                isDebateTimerEnabled ? "left-6" : "left-1"
+                settings.isDebateTimerEnabled ? "left-6" : "left-1"
               }`}
             />
           </button>
         </div>
 
-        {isDebateTimerEnabled && (
-          <div className="space-y-3 pt-2">
+        {settings.isDebateTimerEnabled && (
+          <div className="animate-rise-in space-y-3">
             <div className="flex flex-wrap gap-2">
               {[30, 60, 90, 120].map((v) => (
                 <button
                   key={v}
-                  type="button"
                   onClick={() => {
-                    setDebateSeconds(v);
-                    setCustomInput(String(v));
+                    setSettings((s) => ({ ...s, debateTimePerPlayer: v }));
+                    setCustomTime(String(v));
                   }}
-                  className={`rounded-full px-4 py-2 text-xs font-bold touch-manipulation ${
-                    debateSeconds === v
+                  className={`rounded-full px-4 py-2 text-xs font-bold transition ${
+                    settings.debateTimePerPlayer === v
                       ? "bg-primary text-primary-foreground"
                       : "border border-border text-muted-foreground"
                   }`}
@@ -198,36 +143,41 @@ function SetupPage() {
                 {t("custom")}
               </span>
               <input
-                type="text"
+                type="number"
                 inputMode="numeric"
-                pattern="[0-9]*"
+                min={5}
+                max={600}
                 aria-label={t("custom")}
-                value={customInput}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, "");
-                  setCustomInput(val);
-                  if (val) setDebateSeconds(Number(val));
+                value={customTime}
+                onChange={(e) => setCustomTime(e.target.value)}
+                onBlur={() => {
+                  const safe = sanitizeDebateSeconds(customTime);
+                  setCustomTime(String(safe));
+                  setSettings((s) => ({ ...s, debateTimePerPlayer: safe }));
                 }}
-                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary touch-manipulation"
+                className="w-20 rounded-full bg-input px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              {t("perPlayerDebate", { n: debateSeconds })}
+              {t("perPlayerDebate", { n: settings.debateTimePerPlayer })}
             </p>
           </div>
         )}
       </section>
 
-      <div className="mt-8">
+      <div className="fixed inset-x-0 bottom-0 bg-gradient-to-t from-background to-transparent p-4">
         <button
-          type="button"
           disabled={names.length < 4}
-          onClick={handleNext}
-          className="block w-full rounded-full bg-primary py-4 font-bold text-primary-foreground disabled:opacity-40 touch-manipulation active:scale-[0.99]"
+          onClick={() => {
+            saveNames(filled);
+            saveSettings(settings);
+            navigate({ to: "/gamemaster" });
+          }}
+          className="neon-ring mx-auto block w-full max-w-lg rounded-full bg-primary py-4 font-bold text-primary-foreground disabled:opacity-40"
         >
           {t("next")}
         </button>
       </div>
-    </div>
+    </main>
   );
 }
