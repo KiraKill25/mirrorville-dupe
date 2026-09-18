@@ -4,9 +4,18 @@ const config: CapacitorConfig = {
   appId: "com.mouradsvilleomega",
   appName: "Mourad's Ville Omega",
   webDir: "dist",
+  server: {
+    androidScheme: "https",
+  },
   android: {
     backgroundColor: "#000000",
     allowMixedContent: false,
+  },
+  plugins: {
+    Keyboard: {
+      resize: "none",
+      resizeOnFullScreen: false,
+    },
   },
 };
 
