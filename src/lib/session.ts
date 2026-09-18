@@ -41,7 +41,9 @@ export const saveSettings = (s: GameSettings) =>
 export const loadSettings = (): GameSettings => {
   try {
     const raw = localStorage.getItem(SETTINGS);
-    const parsed = raw ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) } : DEFAULT_SETTINGS;
+    const parsed = raw
+      ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as GameSettings) }
+      : DEFAULT_SETTINGS;
     return {
       isDebateTimerEnabled: !!parsed.isDebateTimerEnabled,
       debateTimePerPlayer: sanitizeDebateSeconds(parsed.debateTimePerPlayer),

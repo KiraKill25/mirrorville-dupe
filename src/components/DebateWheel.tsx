@@ -271,13 +271,15 @@ export function DebateWheel({
   }, [i, total]);
 
   useEffect(() => {
-    if (!running || !armed || left <= 0) return;
-    const id = setInterval(() => setLeft((v) => (v > 0 ? v - 1 : 0)), 1000);
+    if (!running || !armed) return;
+    const id = setInterval(() => {
+      setLeft((prev) => (Number.isFinite(prev) && prev > 0 ? prev - 1 : 0));
+    }, 1000);
     return () => clearInterval(id);
-  }, [running, armed, left > 0]);
+  }, [running, armed, i]);
 
   useEffect(() => {
-    if (left === 0 && !alerted.current) {
+    if (left <= 0 && !alerted.current) {
       alerted.current = true;
       playTimeUpAlert();
     }
@@ -342,7 +344,8 @@ export function DebateWheel({
   };
 
   if (!current) return null;
-  const pct = Math.max(0, Math.min(1, left / Math.max(1, seconds)));
+  const safeLeft = Number.isFinite(left) && left > 0 ? Math.floor(left) : 0;
+  const pct = Math.max(0, Math.min(1, safeLeft / total));
   const R = 42;
   const C = 2 * Math.PI * R;
 
@@ -397,7 +400,7 @@ export function DebateWheel({
                   strokeLinecap="round"
                   strokeDasharray={C}
                   strokeDashoffset={C * (1 - pct)}
-                  className={left === 0 ? "stroke-destructive" : "stroke-primary"}
+                  className={safeLeft === 0 ? "stroke-destructive" : "stroke-primary"}
                   style={{ transition: "stroke-dashoffset 1s linear" }}
                 />
               </svg>
@@ -431,10 +434,10 @@ export function DebateWheel({
                   ))}
                 </div>
                 <p
-                  className={`text-2xl font-black tabular-nums ${left === 0 ? "animate-danger-pulse text-destructive" : "text-foreground"}`}
+                  className={`text-2xl font-black tabular-nums ${safeLeft === 0 ? "animate-danger-pulse text-destructive" : "text-foreground"}`}
                 >
-                  {String(Math.floor(left / 60)).padStart(2, "0")}:
-                  {String(left % 60).padStart(2, "0")}
+                  {String(Math.floor(safeLeft / 60)).padStart(2, "0")}:
+                  {String(safeLeft % 60).padStart(2, "0")}
                 </p>
                 <p
                   key={`stars-${currentStars}`}
@@ -462,7 +465,7 @@ export function DebateWheel({
         </button>
         <button
           onClick={() => {
-            setLeft(seconds);
+            setLeft(total);
             alerted.current = false;
           }}
           className="flex items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold"
@@ -471,7 +474,7 @@ export function DebateWheel({
           {t("resetTimer")}
         </button>
         <button
-          onClick={() => setLeft((v) => v + 10)}
+          onClick={() => setLeft((v) => (Number.isFinite(v) ? Math.max(0, v) + 10 : 10))}
           className="flex items-center justify-center gap-1 rounded-full border border-primary/60 py-3 text-sm font-bold text-primary"
         >
           <Plus className="size-3.5" />
