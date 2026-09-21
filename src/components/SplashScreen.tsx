@@ -15,7 +15,10 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden select-none">
+    <div
+      onClick={onComplete}
+      className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden select-none"
+    >
       <img
         src="/splash.png"
         alt="Splash Screen"
