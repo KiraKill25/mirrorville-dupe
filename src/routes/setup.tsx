@@ -100,12 +100,26 @@ function SetupPage() {
   const draftRef = useRef<Record<string, string>>({});
 
   useEffect(() => {
-    const saved = loadNames();
-    if (saved.length) setPlayers(saved.map((name) => ({ id: newId(), name })));
-    const s = loadSettings();
-    setSettings(s);
-    setCustomTime(String(s.debateTimePerPlayer));
-    preloadRoleMedia();
+    // Sécurité WebView : une erreur au montage (localStorage, préchargement…)
+    // ne doit jamais casser le système d'événements React ni geler l'écran.
+    try {
+      const saved = loadNames();
+      if (saved.length) setPlayers(saved.map((name) => ({ id: newId(), name })));
+    } catch {
+      /* ignore */
+    }
+    try {
+      const s = loadSettings();
+      setSettings(s);
+      setCustomTime(String(s.debateTimePerPlayer));
+    } catch {
+      /* ignore */
+    }
+    try {
+      preloadRoleMedia();
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const commitName = useCallback((id: string, name: string) => {
@@ -143,7 +157,10 @@ function SetupPage() {
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28">
+    <main
+      style={{ pointerEvents: "auto" }}
+      className="relative z-[1] mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28"
+    >
       <header className="-mx-4 mb-2 flex items-center justify-between gap-3 bg-background px-4 py-3">
         <button
           type="button"
