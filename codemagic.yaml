@@ -9,24 +9,23 @@ workflows:
       vars:
         JAVA_TOOL_OPTIONS: "-Xmx4g"
     scripts:
-      - name: Install npm dependencies
-        script: npm install --legacy-peer-deps
+      - name: Install dependencies
+        script: |
+          npm install --legacy-peer-deps
+          npm install @capacitor/android @capacitor/keyboard
 
-      - name: Build web assets (static bundle for Capacitor)
+      - name: Build web assets
         script: npm run build:mobile || npm run build
 
-      - name: Generate native Android icons from public folder
+      - name: Generate fresh Android native project
         script: |
-          mkdir -p assets
-          cp public/icon.png assets/logo.png
-          cp public/icon.png assets/icon-only.png
-          npm install -D @capacitor/assets
-          npx @capacitor/assets generate --android
-
-      - name: Copy and Sync Capacitor Android project
-        script: |
-          npx cap copy android
+          npx cap add android
           npx cap sync android
+
+      - name: Configure AndroidManifest for soft keyboard
+        script: |
+          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+          sed -i '' 's/android:name=".MainActivity"/android:name=".MainActivity" android:windowSoftInputMode="adjustPan"/g' $MANIFEST_PATH
 
       - name: Set Android SDK location
         script: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
@@ -35,7 +34,7 @@ workflows:
         script: |
           cd android
           chmod +x ./gradlew
-          ./gradlew clean assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon
     artifacts:
       - android/app/build/outputs/apk/**/*.apk
     publishing:
