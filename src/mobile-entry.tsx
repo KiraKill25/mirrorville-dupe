@@ -15,17 +15,17 @@ const router = getRouter();
  * on affiche un écran de secours cliquable au lieu d'une vue figée.
  */
 class RootErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
+  override state = { failed: false };
 
   static getDerivedStateFromError() {
     return { failed: true };
   }
 
-  componentDidCatch(error: unknown, info: ErrorInfo) {
+  override componentDidCatch(error: unknown, info: ErrorInfo) {
     console.error("RootErrorBoundary", error, info);
   }
 
-  render() {
+  override render() {
     if (this.state.failed) {
       return (
         <div
