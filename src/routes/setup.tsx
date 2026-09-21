@@ -110,9 +110,11 @@ function SetupPage() {
 
   const commitName = useCallback((id: string, name: string) => {
     draftRef.current[id] = name;
-    setPlayers((list) => (list.some((p) => p.id === id && p.name !== name)
-      ? list.map((p) => (p.id === id ? { ...p, name } : p))
-      : list));
+    setPlayers((list) =>
+      list.some((p) => p.id === id && p.name !== name)
+        ? list.map((p) => (p.id === id ? { ...p, name } : p))
+        : list,
+    );
   }, []);
 
   const removePlayer = useCallback((id: string) => {
