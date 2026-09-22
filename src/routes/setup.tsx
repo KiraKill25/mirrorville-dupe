@@ -1,5 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Component,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from "react";
 import { X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -11,7 +20,6 @@ import {
   sanitizeDebateSeconds,
   type GameSettings,
 } from "@/lib/session";
-import { preloadRoleMedia } from "@/lib/preload-media";
 
 const TITLE = "Noms des joueurs — Nightfall Oracle";
 const DESC = "Ajoute les joueurs autour de la table avant de distribuer les rôles.";
@@ -27,8 +35,47 @@ export const Route = createFileRoute("/setup")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: SetupPage,
+  component: SetupRoute,
 });
+
+class SetupErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  override state: { error: Error | null } = { error: null };
+
+  static getDerivedStateFromError(error: unknown) {
+    return { error: error instanceof Error ? error : new Error(String(error)) };
+  }
+
+  override componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("SetupErrorBoundary", error, info);
+  }
+
+  override render() {
+    if (this.state.error) {
+      return (
+        <main className="relative z-[1] min-h-screen bg-background p-4 text-foreground">
+          <div
+            role="alert"
+            className="border border-destructive bg-destructive/20 p-4 text-destructive"
+          >
+            <strong className="block">Setup error</strong>
+            <pre className="mt-2 whitespace-pre-wrap break-words text-xs">
+              {this.state.error.toString()}
+            </pre>
+          </div>
+        </main>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function SetupRoute() {
+  return (
+    <SetupErrorBoundary>
+      <SetupPage />
+    </SetupErrorBoundary>
+  );
+}
 
 type Player = { id: string; name: string };
 
@@ -96,29 +143,35 @@ function SetupPage() {
   );
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
   const [customTime, setCustomTime] = useState(String(DEFAULT_SETTINGS.debateTimePerPlayer));
+  const [mountError, setMountError] = useState<Error | null>(null);
   // Valeurs "live" pour le bouton Suivant, sans re-render à chaque frappe.
   const draftRef = useRef<Record<string, string>>({});
 
   useEffect(() => {
-    // Sécurité WebView : une erreur au montage (localStorage, préchargement…)
-    // ne doit jamais casser le système d'événements React ni geler l'écran.
+    const root = document.getElementById("root");
+    document.body.style.pointerEvents = "auto";
+    document.body.removeAttribute("inert");
+    document.body.removeAttribute("aria-hidden");
+    if (root) {
+      root.style.pointerEvents = "auto";
+      root.removeAttribute("inert");
+      root.removeAttribute("aria-hidden");
+    }
+
     try {
       const saved = loadNames();
       if (saved.length) setPlayers(saved.map((name) => ({ id: newId(), name })));
-    } catch {
-      /* ignore */
+    } catch (error) {
+      console.error(error);
+      setMountError(error instanceof Error ? error : new Error(String(error)));
     }
     try {
       const s = loadSettings();
       setSettings(s);
       setCustomTime(String(s.debateTimePerPlayer));
-    } catch {
-      /* ignore */
-    }
-    try {
-      preloadRoleMedia();
-    } catch {
-      /* ignore */
+    } catch (error) {
+      console.error(error);
+      setMountError(error instanceof Error ? error : new Error(String(error)));
     }
   }, []);
 
@@ -161,6 +214,17 @@ function SetupPage() {
       style={{ pointerEvents: "auto" }}
       className="relative z-[1] mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28"
     >
+      {mountError ? (
+        <div
+          role="alert"
+          className="mb-4 border border-destructive bg-destructive/20 p-4 text-destructive"
+        >
+          <strong className="block">Setup error</strong>
+          <pre className="mt-2 whitespace-pre-wrap break-words text-xs">
+            {mountError.toString()}
+          </pre>
+        </div>
+      ) : null}
       <header className="-mx-4 mb-2 flex items-center justify-between gap-3 bg-background px-4 py-3">
         <button
           type="button"
@@ -201,27 +265,19 @@ function SetupPage() {
             <h2 className="text-sm font-bold">{t("debateTimer")}</h2>
             <p className="text-xs text-muted-foreground">{t("debateTimerDesc")}</p>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={settings.isDebateTimerEnabled}
+          <input
+            type="checkbox"
             aria-label={t("debateTimerToggle")}
-            onClick={() =>
+            checked={settings.isDebateTimerEnabled}
+            onChange={(event) =>
               setSettings((s) => ({
                 ...s,
-                isDebateTimerEnabled: !s.isDebateTimerEnabled,
+                isDebateTimerEnabled: event.target.checked,
               }))
             }
-            className={`relative h-7 w-12 shrink-0 rounded-full ${
-              settings.isDebateTimerEnabled ? "bg-primary" : "bg-input"
-            }`}
-          >
-            <span
-              className={`absolute top-1 size-5 rounded-full bg-foreground ${
-                settings.isDebateTimerEnabled ? "left-6" : "left-1"
-              }`}
-            />
-          </button>
+            style={{ touchAction: "manipulation" }}
+            className="size-7 shrink-0 accent-primary"
+          />
         </div>
 
         <div hidden={!settings.isDebateTimerEnabled} className="space-y-3">
