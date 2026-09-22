@@ -29,11 +29,6 @@ workflows:
           cp public/icon.png assets/icon-only.png
           npx @capacitor/assets generate --android
 
-      - name: Configure AndroidManifest for soft keyboard
-        script: |
-          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
-          sed -i '' 's/android:name=".MainActivity"/android:name=".MainActivity" android:windowSoftInputMode="adjustPan"/g' $MANIFEST_PATH
-
       - name: Set Android SDK location
         script: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
