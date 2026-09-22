@@ -38,10 +38,7 @@ export const Route = createFileRoute("/setup")({
   component: SetupRoute,
 });
 
-class SetupErrorBoundary extends Component<
-  { children: ReactNode },
-  { error: Error | null }
-> {
+class SetupErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   override state: { error: Error | null } = { error: null };
 
   static getDerivedStateFromError(error: unknown) {
@@ -56,7 +53,10 @@ class SetupErrorBoundary extends Component<
     if (this.state.error) {
       return (
         <main className="relative z-[1] min-h-screen bg-background p-4 text-foreground">
-          <div role="alert" className="border border-destructive bg-destructive/20 p-4 text-destructive">
+          <div
+            role="alert"
+            className="border border-destructive bg-destructive/20 p-4 text-destructive"
+          >
             <strong className="block">Setup error</strong>
             <pre className="mt-2 whitespace-pre-wrap break-words text-xs">
               {this.state.error.toString()}
