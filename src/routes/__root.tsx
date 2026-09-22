@@ -1,6 +1,12 @@
-import { useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createRootRouteWithContext, Outlet, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+  Scripts,
+  useRouterState,
+} from "@tanstack/react-router";
 import { SplashScreen } from "@/components/SplashScreen";
 
 import appCss from "../styles.css?url";
@@ -47,10 +53,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const [showSplash, setShowSplash] = useState(true);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const completeSplash = useCallback(() => setShowSplash(false), []);
+  const shouldMountSplash = pathname === "/" && showSplash;
 
   return (
     <QueryClientProvider client={queryClient}>
-      {showSplash ? <SplashScreen onComplete={() => setShowSplash(false)} /> : <Outlet />}
+      {shouldMountSplash ? <SplashScreen onComplete={completeSplash} /> : <Outlet />}
     </QueryClientProvider>
   );
 }
