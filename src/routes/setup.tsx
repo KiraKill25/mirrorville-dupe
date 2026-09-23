@@ -159,6 +159,7 @@ function SetupPage() {
     }
 
     try {
+      window.localStorage.getItem("mvno-names");
       const saved = loadNames();
       if (saved.length) setPlayers(saved.map((name) => ({ id: newId(), name })));
     } catch (error) {
@@ -166,6 +167,7 @@ function SetupPage() {
       setMountError(error instanceof Error ? error : new Error(String(error)));
     }
     try {
+      window.localStorage.getItem("mvno-settings");
       const s = loadSettings();
       setSettings(s);
       setCustomTime(String(s.debateTimePerPlayer));
