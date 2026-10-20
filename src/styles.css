@@ -385,6 +385,14 @@
   }
 }
 
+/* ---------- Écran /setup : garantie tactile (Android WebView) ---------- */
+/* Aucun descendant de l'écran de configuration ne doit hériter d'un
+   pointer-events: none résiduel — les champs et boutons restent cliquables. */
+[data-setup-screen],
+[data-setup-screen] * {
+  pointer-events: auto;
+}
+
 .landscape-block {
   display: none;
 }
