@@ -148,15 +148,19 @@ function SetupPage() {
   const draftRef = useRef<Record<string, string>>({});
 
   useEffect(() => {
-    const root = document.getElementById("root");
-    document.body.style.pointerEvents = "auto";
-    document.body.removeAttribute("inert");
-    document.body.removeAttribute("aria-hidden");
-    if (root) {
-      root.style.pointerEvents = "auto";
-      root.removeAttribute("inert");
-      root.removeAttribute("aria-hidden");
-    }
+    // Déverrouillage tactile défensif : purge tout verrou hérité d'un écran
+    // précédent (pointer-events, inert, aria-hidden, overflow, touch-action).
+    const unlock = (el: HTMLElement | null) => {
+      if (!el) return;
+      el.style.pointerEvents = "auto";
+      el.style.overflow = "";
+      el.style.touchAction = "manipulation";
+      el.removeAttribute("inert");
+      el.removeAttribute("aria-hidden");
+    };
+    unlock(document.body);
+    unlock(document.documentElement);
+    unlock(document.getElementById("root"));
 
     try {
       window.localStorage.getItem("mvno-names");
@@ -213,8 +217,9 @@ function SetupPage() {
 
   return (
     <main
-      style={{ pointerEvents: "auto" }}
-      className="relative z-[1] mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28"
+      data-setup-screen
+      style={{ pointerEvents: "auto", touchAction: "manipulation" }}
+      className="pointer-events-auto relative z-10 mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28"
     >
       {mountError ? (
         <div
