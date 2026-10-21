@@ -1,3 +1,9 @@
+import alienAsset from "@/assets/new-roles/alien.png.asset.json";
+import pyroAsset from "@/assets/new-roles/pyromaniac.png.asset.json";
+import babyAsset from "@/assets/new-roles/bebe-loup.png.asset.json";
+import redAsset from "@/assets/new-roles/loup-rouge.png.asset.json";
+import { NEW_ROLE_LOCALES } from "@/lib/locales/new-roles";
+
 export type Team = "VILLAGEOIS" | "WEREWOLVES" | "SOLO" | "LOVERS" | "DYNAMIC";
 
 export interface RoleDef {
@@ -14,12 +20,17 @@ export interface RoleDef {
   videoUrl?: string;
 }
 
-/** Tous les rôles chargent leurs médias depuis /public, sans exception. */
+const NEW_ROLE_IMAGES: Record<string, string> = {
+  alien: alienAsset.url, pyromaniac: pyroAsset.url, "bébé-loup": babyAsset.url, "loup-rouge": redAsset.url,
+};
+
+/** Existing bundled portraits and supplied CDN portraits share one resolver. */
 export function roleImage(id: string): string {
-  return `/images/roles/${id}.png`;
+  return NEW_ROLE_IMAGES[id] ?? `/images/roles/${id}.png`;
 }
 
 const ROLE_EMOJIS: Record<string, string> = {
+  "loup-rouge": "🐺", "bébé-loup": "🐺", pyromaniac: "🔥", alien: "👽",
   "loup-garou": "🐺",
   "loup-noir": "🐺‍⬛",
   "loup-blanc": "🐺",
@@ -57,10 +68,15 @@ export function roleEmoji(id: string): string {
 }
 
 export function roleVideo(id: string): string | undefined {
+  if (id in NEW_ROLE_IMAGES) return undefined;
   return `/videos/roles/${id}.mp4`;
 }
 
 export const ROLES: RoleDef[] = [
+  { id: "loup-rouge", ...NEW_ROLE_LOCALES.fr.roles["loup-rouge"], team: "WEREWOLVES", order: 13, hasNightAction: true },
+  { id: "bébé-loup", ...NEW_ROLE_LOCALES.fr.roles["bébé-loup"], team: "WEREWOLVES", order: 40, hasNightAction: true },
+  { id: "pyromaniac", ...NEW_ROLE_LOCALES.fr.roles.pyromaniac, team: "SOLO", order: 47, hasNightAction: true },
+  { id: "alien", ...NEW_ROLE_LOCALES.fr.roles.alien, team: "SOLO", order: 48, hasNightAction: true },
   {
     id: "loup-garou",
     name: "Loup-Garou",
