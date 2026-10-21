@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** Simplified Chinese dictionary — translated from source of truth. */
 export const zh = {
   ui: {
+    ...NEW_ROLE_LOCALES.zh.ui,
     seatingTitle: "座位顺序",
     seatingHint: "拖动一名玩家到另一名玩家身上以交换位置。环形顺序决定了相邻关系。",
     seatingTable: "圆桌",
@@ -527,6 +529,7 @@ export const zh = {
     skipDay1Vote: "跳过第1天投票（可选）",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.zh.prompts,
     cupidon: "请指定两名情侣。",
     mime: "请选择你要模仿复制其身份的玩家。",
     "enfant-sauvage": "请选择你的榜样/榜样玩家。",
@@ -559,6 +562,7 @@ export const zh = {
     DYNAMIC: "动态阵营",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.zh.roles,
     marionnettiste: {
       name: "傀儡师",
       description:

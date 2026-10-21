@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** Portuguese dictionary — translated from source of truth. */
 export const pt = {
   ui: {
+    ...NEW_ROLE_LOCALES.pt.ui,
     seatingTitle: "Disposição do círculo",
     seatingHint:
       "Arraste um jogador sobre outro para trocar as suas posições. A ordem do círculo determina os vizinhos.",
@@ -544,6 +546,7 @@ export const pt = {
     skipDay1Vote: "Saltar votação do Dia 1 (Opcional)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.pt.prompts,
     cupidon: "Designe os dois apaixonados.",
     mime: "Selecione o jogador cujo papel vai copiar.",
     "enfant-sauvage": "Selecione o seu modelo.",
@@ -579,6 +582,7 @@ export const pt = {
     DYNAMIC: "Dinâmico",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.pt.roles,
     marionnettiste: {
       name: "Marionetista",
       description:

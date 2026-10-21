@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** Arabic dictionary — translated from French source of truth. */
 export const ar = {
   ui: {
+    ...NEW_ROLE_LOCALES.ar.ui,
     seatingTitle: "ترتيب الحلقة",
     seatingHint: "اسحب لاعباً فوق آخر لتبادل أماكنهما. ترتيب الحلقة يحدد الجيران.",
     seatingTable: "الطاولة",
@@ -532,6 +534,7 @@ export const ar = {
     skipDay1Vote: "تخطي تصويت اليوم 1 (اختياري)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.ar.prompts,
     cupidon: "حدد العاشقين الاثنين.",
     mime: "اختر اللاعب الذي تنسخ دوره.",
     "enfant-sauvage": "اختر قدوتك.",
@@ -564,6 +567,7 @@ export const ar = {
     DYNAMIC: "ديناميكي",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.ar.roles,
     marionnettiste: {
       name: "محرك الدمى",
       description:

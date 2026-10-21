@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** Spanish dictionary — translated from source of truth. */
 export const es = {
   ui: {
+    ...NEW_ROLE_LOCALES.es.ui,
     seatingTitle: "Disposición del círculo",
     seatingHint:
       "Arrastra a un jugador sobre otro para intercambiar sus asientos. El orden del círculo determina los vecinos.",
@@ -549,6 +551,7 @@ export const es = {
     skipDay1Vote: "Saltar votación del Día 1 (Opcional)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.es.prompts,
     cupidon: "Designa a los dos enamorados.",
     mime: "Selecciona al jugador cuyo rol copias.",
     "enfant-sauvage": "Selecciona a tu modelo a seguir.",
@@ -585,6 +588,7 @@ export const es = {
     DYNAMIC: "Dinámico",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.es.roles,
     marionnettiste: {
       name: "Titiritero",
       description:
