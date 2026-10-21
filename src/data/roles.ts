@@ -21,7 +21,10 @@ export interface RoleDef {
 }
 
 const NEW_ROLE_IMAGES: Record<string, string> = {
-  alien: alienAsset.url, pyromaniac: pyroAsset.url, "bébé-loup": babyAsset.url, "loup-rouge": redAsset.url,
+  alien: alienAsset.url,
+  pyromaniac: pyroAsset.url,
+  "bébé-loup": babyAsset.url,
+  "loup-rouge": redAsset.url,
 };
 
 /** Existing bundled portraits and supplied CDN portraits share one resolver. */
@@ -30,7 +33,10 @@ export function roleImage(id: string): string {
 }
 
 const ROLE_EMOJIS: Record<string, string> = {
-  "loup-rouge": "🐺", "bébé-loup": "🐺", pyromaniac: "🔥", alien: "👽",
+  "loup-rouge": "🐺",
+  "bébé-loup": "🐺",
+  pyromaniac: "🔥",
+  alien: "👽",
   "loup-garou": "🐺",
   "loup-noir": "🐺‍⬛",
   "loup-blanc": "🐺",
@@ -73,10 +79,34 @@ export function roleVideo(id: string): string | undefined {
 }
 
 export const ROLES: RoleDef[] = [
-  { id: "loup-rouge", ...NEW_ROLE_LOCALES.fr.roles["loup-rouge"], team: "WEREWOLVES", order: 13, hasNightAction: true },
-  { id: "bébé-loup", ...NEW_ROLE_LOCALES.fr.roles["bébé-loup"], team: "WEREWOLVES", order: 40, hasNightAction: true },
-  { id: "pyromaniac", ...NEW_ROLE_LOCALES.fr.roles.pyromaniac, team: "SOLO", order: 47, hasNightAction: true },
-  { id: "alien", ...NEW_ROLE_LOCALES.fr.roles.alien, team: "SOLO", order: 48, hasNightAction: true },
+  {
+    id: "loup-rouge",
+    ...NEW_ROLE_LOCALES.fr.roles["loup-rouge"],
+    team: "WEREWOLVES",
+    order: 13,
+    hasNightAction: true,
+  },
+  {
+    id: "bébé-loup",
+    ...NEW_ROLE_LOCALES.fr.roles["bébé-loup"],
+    team: "WEREWOLVES",
+    order: 40,
+    hasNightAction: true,
+  },
+  {
+    id: "pyromaniac",
+    ...NEW_ROLE_LOCALES.fr.roles.pyromaniac,
+    team: "SOLO",
+    order: 47,
+    hasNightAction: true,
+  },
+  {
+    id: "alien",
+    ...NEW_ROLE_LOCALES.fr.roles.alien,
+    team: "SOLO",
+    order: 48,
+    hasNightAction: true,
+  },
   {
     id: "loup-garou",
     name: "Loup-Garou",

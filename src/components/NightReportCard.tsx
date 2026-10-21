@@ -25,6 +25,13 @@ const REPORT_ROLE_MAP: Record<string, string> = {
   repThief: "voleur",
   repFaces: "trois-faces",
   repRenardConfidant: "renard",
+  redWolfFrozen: "loup-rouge",
+  redWolfWasted: "loup-rouge",
+  pyroDoused: "pyromaniac",
+  pyroIgnited: "pyromaniac",
+  alienCorrect: "alien",
+  alienWrong: "alien",
+  alienFailed: "alien",
 };
 
 /** Extrait l'ID du rôle illustrant une ligne de rapport nocturne. */

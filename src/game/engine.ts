@@ -295,7 +295,12 @@ export function alivePlayers(s: GameState) {
 
 /** A temporary freeze never changes the role, faction or permanent powers. */
 export function hasPower(p: Player): boolean {
-  return effectiveRoleId(p) !== "simple-villageois" && !p.powersDisabled && !p.hasLostPower && !!ROLE_BY_ID[effectiveRoleId(p)];
+  return (
+    effectiveRoleId(p) !== "simple-villageois" &&
+    !p.powersDisabled &&
+    !p.hasLostPower &&
+    !!ROLE_BY_ID[effectiveRoleId(p)]
+  );
 }
 
 function powerAvailable(s: GameState, p: Player): boolean {
@@ -383,7 +388,15 @@ export function buildNightSteps(s: GameState): Step[] {
   if (!steps.some((st) => st.mode === "wolves")) {
     const newWolf = hasRole(s, "loup-rouge") ?? hasRole(s, "bébé-loup");
     if (newWolf && powerAvailable(s, newWolf)) {
-      steps.push({ key: `${s.night}-new-wolf-pack`, roleId: newWolf.roleId === "bébé-loup" ? "bébé-loup" : "loup-rouge", title: "", prompt: nk("newWolfPackPrompt"), mode: "wolves", actorId: newWolf.id, soloKill: true });
+      steps.push({
+        key: `${s.night}-new-wolf-pack`,
+        roleId: newWolf.roleId === "bébé-loup" ? "bébé-loup" : "loup-rouge",
+        title: "",
+        prompt: nk("newWolfPackPrompt"),
+        mode: "wolves",
+        actorId: newWolf.id,
+        soloKill: true,
+      });
     }
   }
 
@@ -637,187 +650,409 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
     s.round.attackedId = target.id;
     s.reveal = nk("packChose", { name: target.name });
     rep(s, nk("repWolvesTarget", { name: target.name }));
-  } else switch (step.roleId) {
-    case "loup-rouge": {
-      if (!target?.alive || target.id === actor.id) return payload.targetId ? state : advanceNight(s);
-      if (hasPower(target)) target.frozenNight = s.night;
-      s.reveal = nk(hasPower(target) ? "redWolfFrozen" : "redWolfWasted", { name: target.name });
-      s.log.push(s.reveal);
-      rep(s, s.reveal);
-      break;
-    }
-    case "pyromaniac": {
-      if (actor.matchUsed) return state;
-      if (payload.ignite) {
-        actor.matchUsed = true;
-        const victims = s.players.filter((p) => p.alive && p.doused);
-        s.reveal = nk("pyroIgnited", { names: victims.map((p) => p.name).join(", ") });
+  } else
+    switch (step.roleId) {
+      case "loup-rouge": {
+        if (!target?.alive || target.id === actor.id)
+          return payload.targetId ? state : advanceNight(s);
+        if (hasPower(target)) target.frozenNight = s.night;
+        s.reveal = nk(hasPower(target) ? "redWolfFrozen" : "redWolfWasted", { name: target.name });
         s.log.push(s.reveal);
         rep(s, s.reveal);
-        victims.forEach((p) => killPlayer(s, p.id, "FIRE"));
-      } else {
-        const ids = [...new Set(payload.targetIds ?? (payload.targetId ? [payload.targetId] : []))];
-        const limit = s.initialPlayerCount <= 10 ? 1 : 2;
-        if (ids.length > limit || ids.some((id) => !s.players.some((p) => p.id === id && p.alive && !p.doused && p.id !== actor.id))) return state;
-        const targets = s.players.filter((p) => ids.includes(p.id));
-        targets.forEach((p) => { p.doused = true; });
-        if (targets.length) {
-          s.reveal = nk("pyroDoused", { names: targets.map((p) => p.name).join(", ") });
+        break;
+      }
+      case "pyromaniac": {
+        if (actor.matchUsed) return state;
+        if (payload.ignite) {
+          actor.matchUsed = true;
+          const victims = s.players.filter((p) => p.alive && p.doused);
+          s.reveal = nk("pyroIgnited", { names: victims.map((p) => p.name).join(", ") });
           s.log.push(s.reveal);
           rep(s, s.reveal);
+          victims.forEach((p) => killPlayer(s, p.id, "FIRE"));
+        } else {
+          const ids = [
+            ...new Set(payload.targetIds ?? (payload.targetId ? [payload.targetId] : [])),
+          ];
+          const limit = s.initialPlayerCount <= 10 ? 1 : 2;
+          if (
+            ids.length > limit ||
+            ids.some(
+              (id) =>
+                !s.players.some((p) => p.id === id && p.alive && !p.doused && p.id !== actor.id),
+            )
+          )
+            return state;
+          const targets = s.players.filter((p) => ids.includes(p.id));
+          targets.forEach((p) => {
+            p.doused = true;
+          });
+          if (targets.length) {
+            s.reveal = nk("pyroDoused", { names: targets.map((p) => p.name).join(", ") });
+            s.log.push(s.reveal);
+            rep(s, s.reveal);
+          }
         }
+        break;
       }
-      break;
-    }
-    case "alien": {
-      if (!payload.targetId && !payload.guessedRoleId) break;
-      if (!target?.alive || target.id === actor.id || !payload.guessedRoleId || !ROLE_BY_ID[payload.guessedRoleId]) return state;
-      if (effectiveRoleId(target) === payload.guessedRoleId) {
-        s.reveal = nk("alienCorrect", { name: target.name, role: nrole(payload.guessedRoleId) });
-        killPlayer(s, target.id, "ALIEN");
-      } else {
-        actor.alienErrors = (actor.alienErrors ?? 0) + 1;
-        s.reveal = nk("alienWrong", { n: Math.max(0, 3 - actor.alienErrors) });
-        if (actor.alienErrors >= 3) {
-          killPlayer(s, actor.id, "ALIEN_FAILURE");
-          s.reveal = nk("alienFailed");
-        }
-      }
-      s.log.push(s.reveal);
-      rep(s, s.reveal);
-      break;
-    }
-    case "marionnettiste": {
-      if (target) {
-        s.players.forEach((p) => (p.hasPuppetShield = false));
-        target.hasPuppetShield = true;
-        s.reveal = `La marionnette veille sur ${target.name} cette nuit.`;
-        s.log.push(`Le Marionnettiste place sa marionnette sur ${target.name}.`);
-        rep(s, `Le Marionnettiste a placé sa marionnette sur ${target.name}.`);
-      }
-      break;
-    }
-    case "cupidon": {
-      const [a, b] = (payload.targetIds ?? []).map((id) => s.players.find((p) => p.id === id));
-      if (a && b) {
-        a.isLover = true;
-        b.isLover = true;
-        if (a.team !== b.team) {
-          a.team = "LOVERS";
-          b.team = "LOVERS";
-        }
-        s.reveal = nk("lovers", { a: a.name, b: b.name });
-        s.log.push(nk("logCupid", { a: a.name, b: b.name }));
-      }
-      break;
-    }
-    case "mime": {
-      if (target) {
-        actor.copiedRoleId = target.roleId;
-        s.reveal = nk("mimeCopy", { role: nrole(target.roleId) });
-      }
-      break;
-    }
-    case "enfant-sauvage": {
-      if (target) {
-        actor.roleModelId = target.id;
-        s.reveal = nk("wildModel", { name: target.name });
-      }
-      break;
-    }
-    case "geolier": {
-      if (target) {
-        if (target.id === s.round.previousJailedId) {
-          s.reveal = "Tu ne peux pas séquestrer le même joueur deux nuits d'affilée.";
+      case "alien": {
+        if (!payload.targetId && !payload.guessedRoleId) break;
+        if (
+          !target?.alive ||
+          target.id === actor.id ||
+          !payload.guessedRoleId ||
+          !ROLE_BY_ID[payload.guessedRoleId]
+        )
           return state;
+        if (effectiveRoleId(target) === payload.guessedRoleId) {
+          s.reveal = nk("alienCorrect", { name: target.name, role: nrole(payload.guessedRoleId) });
+          killPlayer(s, target.id, "ALIEN");
+        } else {
+          actor.alienErrors = (actor.alienErrors ?? 0) + 1;
+          s.reveal = nk("alienWrong", { n: Math.max(0, 3 - actor.alienErrors) });
+          if (actor.alienErrors >= 3) {
+            killPlayer(s, actor.id, "ALIEN_FAILURE");
+            s.reveal = nk("alienFailed");
+          }
         }
-        s.round.jailedId = target.id;
-        target.canVote = false; // Prevents voting during the next day phase
-        s.reveal = nk("jailLocked", { name: target.name });
+        s.log.push(s.reveal);
+        rep(s, s.reveal);
+        break;
       }
-      break;
-    }
-    case "voyante": {
-      if (target) {
-        const seenId = seenRoleId(target);
-        s.round.seerCheckTargetId = target.id;
-        s.round.seerCheckResultRole = seenId;
-        s.reveal = nk("seerSees", { name: target.name, role: nrole(seenId) });
-        rep(
-          s,
-          nk("repSeerCheck", {
-            role: nrole("voyante"),
-            name: target.name,
-            result: nrole(seenId),
-          }),
-        );
+      case "marionnettiste": {
+        if (target) {
+          s.players.forEach((p) => (p.hasPuppetShield = false));
+          target.hasPuppetShield = true;
+          s.reveal = `La marionnette veille sur ${target.name} cette nuit.`;
+          s.log.push(`Le Marionnettiste place sa marionnette sur ${target.name}.`);
+          rep(s, `Le Marionnettiste a placé sa marionnette sur ${target.name}.`);
+        }
+        break;
       }
-      break;
-    }
-    case "voleur": {
-      if (target) {
-        const stolen = effectiveRoleId(target);
-        actor.roleId = stolen;
-        actor.copiedRoleId = undefined;
-        actor.team = target.team;
-        actor.lives = stolen === "ancien" ? 2 : actor.lives;
-        target.roleId = "simple-villageois";
-        target.copiedRoleId = undefined;
-        target.team = "VILLAGEOIS";
-        target.hasPuppetShield = false;
-        s.reveal = nk("thiefSteal", { name: target.name, role: nrole(stolen) });
-        s.log.push(nk("logThiefSteal", { name: target.name, role: nrole(stolen) }));
-        rep(
-          s,
-          nk("repThief", {
-            thief: actor.name,
-            name: target.name,
-            role: nrole(stolen),
-          }),
-        );
+      case "cupidon": {
+        const [a, b] = (payload.targetIds ?? []).map((id) => s.players.find((p) => p.id === id));
+        if (a && b) {
+          a.isLover = true;
+          b.isLover = true;
+          if (a.team !== b.team) {
+            a.team = "LOVERS";
+            b.team = "LOVERS";
+          }
+          s.reveal = nk("lovers", { a: a.name, b: b.name });
+          s.log.push(nk("logCupid", { a: a.name, b: b.name }));
+        }
+        break;
       }
-      break;
-    }
-    case "maniaque": {
-      if (target) {
-        s.round.maniacKillId = target.id;
-        s.reveal = nk("maniacTargetMsg", { name: target.name });
-        s.log.push(nk("logManiac", { name: target.name }));
-        rep(s, nk("repManiacTarget", { name: target.name }));
+      case "mime": {
+        if (target) {
+          actor.copiedRoleId = target.roleId;
+          s.reveal = nk("mimeCopy", { role: nrole(target.roleId) });
+        }
+        break;
       }
-      break;
-    }
-    case "trois-faces": {
-      const power = payload.facePower;
-      if (power) {
-        actor.facesUsed = actor.facesUsed ?? [];
-        if (power === "protect" && target) {
-          s.round.protectedId = target.id;
-          actor.facesUsed.push("protect");
-          s.reveal = nk("facesProtectMsg", { name: target.name });
-          s.log.push(nk("logFaces", { power: nk("repFacePower_protect"), name: target.name }));
-          rep(s, nk("repFaces", { power: nk("repFacePower_protect"), name: target.name }));
-        } else if (power === "inspect" && target) {
+      case "enfant-sauvage": {
+        if (target) {
+          actor.roleModelId = target.id;
+          s.reveal = nk("wildModel", { name: target.name });
+        }
+        break;
+      }
+      case "geolier": {
+        if (target) {
+          if (target.id === s.round.previousJailedId) {
+            s.reveal = "Tu ne peux pas séquestrer le même joueur deux nuits d'affilée.";
+            return state;
+          }
+          s.round.jailedId = target.id;
+          target.canVote = false; // Prevents voting during the next day phase
+          s.reveal = nk("jailLocked", { name: target.name });
+        }
+        break;
+      }
+      case "voyante": {
+        if (target) {
           const seenId = seenRoleId(target);
           s.round.seerCheckTargetId = target.id;
           s.round.seerCheckResultRole = seenId;
-          actor.facesUsed.push("inspect");
-          s.reveal = nk("facesInspectMsg", { name: target.name, role: nrole(seenId) });
+          s.reveal = nk("seerSees", { name: target.name, role: nrole(seenId) });
           rep(
             s,
             nk("repSeerCheck", {
-              role: nrole("trois-faces"),
+              role: nrole("voyante"),
               name: target.name,
               result: nrole(seenId),
             }),
           );
-        } else if (power === "life" && canWitchHeal(s)) {
+        }
+        break;
+      }
+      case "voleur": {
+        if (target) {
+          const stolen = effectiveRoleId(target);
+          actor.roleId = stolen;
+          actor.copiedRoleId = undefined;
+          actor.team = target.team;
+          actor.lives = stolen === "ancien" ? 2 : actor.lives;
+          target.roleId = "simple-villageois";
+          target.copiedRoleId = undefined;
+          target.team = "VILLAGEOIS";
+          target.hasPuppetShield = false;
+          s.reveal = nk("thiefSteal", { name: target.name, role: nrole(stolen) });
+          s.log.push(nk("logThiefSteal", { name: target.name, role: nrole(stolen) }));
+          rep(
+            s,
+            nk("repThief", {
+              thief: actor.name,
+              name: target.name,
+              role: nrole(stolen),
+            }),
+          );
+        }
+        break;
+      }
+      case "maniaque": {
+        if (target) {
+          s.round.maniacKillId = target.id;
+          s.reveal = nk("maniacTargetMsg", { name: target.name });
+          s.log.push(nk("logManiac", { name: target.name }));
+          rep(s, nk("repManiacTarget", { name: target.name }));
+        }
+        break;
+      }
+      case "trois-faces": {
+        const power = payload.facePower;
+        if (power) {
+          actor.facesUsed = actor.facesUsed ?? [];
+          if (power === "protect" && target) {
+            s.round.protectedId = target.id;
+            actor.facesUsed.push("protect");
+            s.reveal = nk("facesProtectMsg", { name: target.name });
+            s.log.push(nk("logFaces", { power: nk("repFacePower_protect"), name: target.name }));
+            rep(s, nk("repFaces", { power: nk("repFacePower_protect"), name: target.name }));
+          } else if (power === "inspect" && target) {
+            const seenId = seenRoleId(target);
+            s.round.seerCheckTargetId = target.id;
+            s.round.seerCheckResultRole = seenId;
+            actor.facesUsed.push("inspect");
+            s.reveal = nk("facesInspectMsg", { name: target.name, role: nrole(seenId) });
+            rep(
+              s,
+              nk("repSeerCheck", {
+                role: nrole("trois-faces"),
+                name: target.name,
+                result: nrole(seenId),
+              }),
+            );
+          } else if (power === "life" && canWitchHeal(s)) {
+            const saved = s.players.find((p) => p.id === s.round.attackedId);
+            s.round.healedId = s.round.attackedId;
+            s.round.attackedId = undefined;
+            s.round.healed = true;
+            actor.facesUsed.push("potion");
+            s.reveal = nk("facesLifeMsg");
+            rep(s, nk("repWitchLife", { name: saved?.name ?? "" }));
+            if (saved)
+              pushEvent(s, {
+                round: s.night,
+                phase: "NIGHT",
+                type: "RESCUE",
+                name: saved.name,
+                bySavior: "trois-faces",
+              });
+          } else if (power === "poison" && target) {
+            s.round.facesPoisonedId = target.id;
+            actor.facesUsed.push("potion");
+            s.reveal = nk("facesPoisonMsg", { name: target.name });
+            s.log.push(nk("logFaces", { power: nk("repFacePower_poison"), name: target.name }));
+            rep(s, nk("repWitchPoison", { name: target.name }));
+          }
+        }
+        break;
+      }
+      case "salvateur": {
+        if (payload.ultimateShield) {
+          s.round.villageShield = true;
+          rep(s, nk("repVillageShield"));
+          actor.ultimateShieldUsed = true;
+          actor.powersDisabled = true;
+          actor.hasLostPower = true;
+          actor.protectedHistory = [];
+          s.reveal = nk("shieldUltimate");
+          s.log.push(nk("logShieldUltimate", { n: s.night, name: actor.name }));
+          break;
+        }
+        if (target) {
+          // Le Salvateur peut se protéger lui-même : tous les vivants sont éligibles.
+          const living = s.players.filter((p) => p.alive);
+          let history = actor.protectedHistory ?? [];
+          let availableTargets = living.filter((p) => !history.includes(p.id));
+
+          // Cycle terminé (ou plus aucune cible libre) → on repart de zéro.
+          if (availableTargets.length === 0) {
+            history = [];
+            availableTargets = living;
+          }
+
+          if (!availableTargets.some((p) => p.id === target.id)) {
+            s.reveal = nk("protectAlreadyDone", { name: target.name });
+            return state;
+          }
+
+          history.push(target.id);
+          actor.protectedHistory = history;
+
+          s.round.protectedId = target.id;
+          s.reveal = nk("protectedTonight", { name: target.name });
+          rep(s, nk("repProtect", { role: nrole("salvateur"), name: target.name }));
+        }
+        break;
+      }
+      case "petite-fille": {
+        if (payload.yes) {
+          const caught = Math.random() < 0.25;
+          if (caught) {
+            s.round.spyCaught = true;
+            s.pendingDeaths.push({ id: actor.id, cause: "SPY_DETECTED" });
+            s.reveal = nk("spyCaught");
+          } else {
+            const wolves = s.players.filter((p) => p.alive && p.team === "WEREWOLVES");
+            const hint = wolves[Math.floor(Math.random() * wolves.length)];
+            s.reveal = hint
+              ? nk("spyHint", { letter: hint.name.charAt(0).toUpperCase() })
+              : nk("spyNothing");
+          }
+        } else {
+          s.reveal = nk("eyesClosed");
+        }
+        break;
+      }
+      case "loup-garou": {
+        const matriarch = s.players.find(
+          (p) =>
+            p.alive &&
+            effectiveRoleId(p) === "loup-matriarche" &&
+            !p.disabledNightAbility &&
+            !p.powersDisabled,
+        );
+        if (payload.disagreement && matriarch) {
+          s.round.wolvesDisagreed = true;
+          s.round.attackedId = undefined;
+          s.steps = [
+            ...s.steps.slice(0, s.stepIndex + 1),
+            {
+              key: `${s.night}-loup-matriarche`,
+              roleId: "loup-matriarche",
+              title: "Loup Matriarche",
+              prompt: "La meute n'a pas trouvé d'accord : désigne seule la victime de la nuit.",
+              mode: "one",
+              actorId: matriarch.id,
+            },
+            ...s.steps.slice(s.stepIndex + 1),
+          ];
+          s.reveal = nk("packDisagree");
+        } else if (target) {
+          s.round.attackedId = target.id;
+          s.reveal = actor.isConvertedToWolf
+            ? nk("infectedKill", { name: target.name })
+            : nk("packChose", { name: target.name });
+          rep(s, nk("repWolvesTarget", { name: target.name }));
+        }
+        break;
+      }
+      case "loup-matriarche": {
+        if (target) {
+          s.round.attackedId = target.id;
+          s.reveal = nk("matriarchImpose", { name: target.name });
+          rep(s, nk("repWolvesTarget", { name: target.name }));
+          s.log.push(nk("logMatriarch", { name: target.name }));
+        }
+        break;
+      }
+      case "loup-bavard": {
+        if (step.soloKill && payload.targetId && !s.round.attackedId) {
+          s.round.attackedId = payload.targetId;
+          const v = s.players.find((p) => p.id === payload.targetId);
+          if (v) s.log.push(nk("logSoloKill", { role: nrole("loup-bavard"), name: v.name }));
+        }
+        s.reveal = nk("talkativeWord", { word: s.round.requiredWord ?? "" });
+        break;
+      }
+      case "loup-noir": {
+        if (payload.targetId && !s.round.attackedId) {
+          s.round.attackedId = payload.targetId;
+          const soloVictim = s.players.find((p) => p.id === payload.targetId);
+          if (soloVictim) {
+            s.log.push(nk("logSoloKill", { role: nrole("loup-noir"), name: soloVictim.name }));
+          }
+        }
+        const notes: string[] = [];
+        const infectionBlocked =
+          !!payload.yes &&
+          !!s.round.attackedId &&
+          (s.round.villageShield || s.round.attackedId === s.round.protectedId);
+        if (infectionBlocked) {
+          notes.push(nk("infectBlocked"));
+          s.log.push(nk("logInfectBlocked"));
+        }
+        if (payload.yes && !infectionBlocked && s.round.attackedId && !actor.abilityUsed) {
+          const victim = s.players.find((p) => p.id === s.round.attackedId);
+          victim.originalRoleId = victim.roleId;
+          victim.isConvertedToWolf = true;
+          victim.retainsOriginalPowers = true;
+          victim.team = "WEREWOLVES";
+          s.round.infectedId = s.round.attackedId;
+          s.round.attackedId = undefined;
+          s.round.blackWolfConvert = true;
+          actor.abilityUsed = true;
+          notes.push(nk("infectJoin", { name: victim.name }));
+          s.log.push(nk("logInfect", { name: victim.name }));
+          rep(s, nk("repInfect", { name: victim.name }));
+          pushEvent(s, {
+            round: s.night,
+            phase: "NIGHT",
+            type: "CONTAMINATION",
+            name: victim.name,
+            roleId: victim.originalRoleId,
+          });
+        }
+        if (payload.muteId && s.night >= 2 && payload.muteId !== s.round.previousMutedId) {
+          const muted = s.players.find((p) => p.id === payload.muteId);
+          if (muted) {
+            s.round.mutedId = muted.id;
+            notes.push(nk("silenceNote", { name: muted.name }));
+            s.log.push(nk("logSilence", { name: muted.name }));
+            rep(
+              s,
+              muted.id === actor.id
+                ? nk("repSilenceSelf", { name: muted.name })
+                : nk("repSilence", { name: muted.name }),
+            );
+          }
+        }
+        s.reveal = notes.length ? notes.join(" ") : nk("packAsPlanned");
+        break;
+      }
+      case "loup-blanc": {
+        if (target) {
+          if (step.soloKill) {
+            if (!s.round.attackedId) s.round.attackedId = target.id;
+            s.log.push(nk("logSoloKill", { role: nrole("loup-blanc"), name: target.name }));
+          } else {
+            s.round.whiteWolfKillId = target.id;
+          }
+          s.reveal = nk("whiteTarget", { name: target.name });
+        }
+        break;
+      }
+      case "sorciere": {
+        if (payload.healUsed && s.round.attackedId && canWitchHeal(s)) {
           const saved = s.players.find((p) => p.id === s.round.attackedId);
+          s.round.healed = true;
           s.round.healedId = s.round.attackedId;
           s.round.attackedId = undefined;
-          s.round.healed = true;
-          actor.facesUsed.push("potion");
-          s.reveal = nk("facesLifeMsg");
+          actor.healUsed = true;
+          actor.hasUsedLifePotion = true;
+          s.reveal = nk("witchSaved");
           rep(s, nk("repWitchLife", { name: saved?.name ?? "" }));
           if (saved)
             pushEvent(s, {
@@ -825,323 +1060,120 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
               phase: "NIGHT",
               type: "RESCUE",
               name: saved.name,
-              bySavior: "trois-faces",
+              bySavior: "sorciere",
             });
-        } else if (power === "poison" && target) {
-          s.round.facesPoisonedId = target.id;
-          actor.facesUsed.push("potion");
-          s.reveal = nk("facesPoisonMsg", { name: target.name });
-          s.log.push(nk("logFaces", { power: nk("repFacePower_poison"), name: target.name }));
-          rep(s, nk("repWitchPoison", { name: target.name }));
         }
-      }
-      break;
-    }
-    case "salvateur": {
-      if (payload.ultimateShield) {
-        s.round.villageShield = true;
-        rep(s, nk("repVillageShield"));
-        actor.ultimateShieldUsed = true;
-        actor.powersDisabled = true;
-        actor.hasLostPower = true;
-        actor.protectedHistory = [];
-        s.reveal = nk("shieldUltimate");
-        s.log.push(nk("logShieldUltimate", { n: s.night, name: actor.name }));
+        if (payload.poisonId) {
+          s.round.poisonedId = payload.poisonId;
+          actor.poisonUsed = true;
+          actor.hasUsedDeathPotion = true;
+          const v = s.players.find((p) => p.id === payload.poisonId);
+          s.reveal = nk("poisoned", { name: v?.name ?? "" });
+          rep(s, nk("repWitchPoison", { name: v?.name ?? "" }));
+        }
         break;
       }
-      if (target) {
-        // Le Salvateur peut se protéger lui-même : tous les vivants sont éligibles.
-        const living = s.players.filter((p) => p.alive);
-        let history = actor.protectedHistory ?? [];
-        let availableTargets = living.filter((p) => !history.includes(p.id));
-
-        // Cycle terminé (ou plus aucune cible libre) → on repart de zéro.
-        if (availableTargets.length === 0) {
-          history = [];
-          availableTargets = living;
-        }
-
-        if (!availableTargets.some((p) => p.id === target.id)) {
-          s.reveal = nk("protectAlreadyDone", { name: target.name });
-          return state;
-        }
-
-        history.push(target.id);
-        actor.protectedHistory = history;
-
-        s.round.protectedId = target.id;
-        s.reveal = nk("protectedTonight", { name: target.name });
-        rep(s, nk("repProtect", { role: nrole("salvateur"), name: target.name }));
-      }
-      break;
-    }
-    case "petite-fille": {
-      if (payload.yes) {
-        const caught = Math.random() < 0.25;
-        if (caught) {
-          s.round.spyCaught = true;
-          s.pendingDeaths.push({ id: actor.id, cause: "SPY_DETECTED" });
-          s.reveal = nk("spyCaught");
-        } else {
-          const wolves = s.players.filter((p) => p.alive && p.team === "WEREWOLVES");
-          const hint = wolves[Math.floor(Math.random() * wolves.length)];
-          s.reveal = hint
-            ? nk("spyHint", { letter: hint.name.charAt(0).toUpperCase() })
-            : nk("spyNothing");
-        }
-      } else {
-        s.reveal = nk("eyesClosed");
-      }
-      break;
-    }
-    case "loup-garou": {
-      const matriarch = s.players.find(
-        (p) =>
-          p.alive &&
-          effectiveRoleId(p) === "loup-matriarche" &&
-          !p.disabledNightAbility &&
-          !p.powersDisabled,
-      );
-      if (payload.disagreement && matriarch) {
-        s.round.wolvesDisagreed = true;
-        s.round.attackedId = undefined;
-        s.steps = [
-          ...s.steps.slice(0, s.stepIndex + 1),
-          {
-            key: `${s.night}-loup-matriarche`,
-            roleId: "loup-matriarche",
-            title: "Loup Matriarche",
-            prompt: "La meute n'a pas trouvé d'accord : désigne seule la victime de la nuit.",
-            mode: "one",
-            actorId: matriarch.id,
-          },
-          ...s.steps.slice(s.stepIndex + 1),
-        ];
-        s.reveal = nk("packDisagree");
-      } else if (target) {
-        s.round.attackedId = target.id;
-        s.reveal = actor.isConvertedToWolf
-          ? nk("infectedKill", { name: target.name })
-          : nk("packChose", { name: target.name });
-        rep(s, nk("repWolvesTarget", { name: target.name }));
-      }
-      break;
-    }
-    case "loup-matriarche": {
-      if (target) {
-        s.round.attackedId = target.id;
-        s.reveal = nk("matriarchImpose", { name: target.name });
-        rep(s, nk("repWolvesTarget", { name: target.name }));
-        s.log.push(nk("logMatriarch", { name: target.name }));
-      }
-      break;
-    }
-    case "loup-bavard": {
-      if (step.soloKill && payload.targetId && !s.round.attackedId) {
-        s.round.attackedId = payload.targetId;
-        const v = s.players.find((p) => p.id === payload.targetId);
-        if (v) s.log.push(nk("logSoloKill", { role: nrole("loup-bavard"), name: v.name }));
-      }
-      s.reveal = nk("talkativeWord", { word: s.round.requiredWord ?? "" });
-      break;
-    }
-    case "loup-noir": {
-      if (payload.targetId && !s.round.attackedId) {
-        s.round.attackedId = payload.targetId;
-        const soloVictim = s.players.find((p) => p.id === payload.targetId);
-        if (soloVictim) {
-          s.log.push(nk("logSoloKill", { role: nrole("loup-noir"), name: soloVictim.name }));
-        }
-      }
-      const notes: string[] = [];
-      const infectionBlocked =
-        !!payload.yes &&
-        !!s.round.attackedId &&
-        (s.round.villageShield || s.round.attackedId === s.round.protectedId);
-      if (infectionBlocked) {
-        notes.push(nk("infectBlocked"));
-        s.log.push(nk("logInfectBlocked"));
-      }
-      if (payload.yes && !infectionBlocked && s.round.attackedId && !actor.abilityUsed) {
-        const victim = s.players.find((p) => p.id === s.round.attackedId);
-        victim.originalRoleId = victim.roleId;
-        victim.isConvertedToWolf = true;
-        victim.retainsOriginalPowers = true;
-        victim.team = "WEREWOLVES";
-        s.round.infectedId = s.round.attackedId;
-        s.round.attackedId = undefined;
-        s.round.blackWolfConvert = true;
-        actor.abilityUsed = true;
-        notes.push(nk("infectJoin", { name: victim.name }));
-        s.log.push(nk("logInfect", { name: victim.name }));
-        rep(s, nk("repInfect", { name: victim.name }));
-        pushEvent(s, {
-          round: s.night,
-          phase: "NIGHT",
-          type: "CONTAMINATION",
-          name: victim.name,
-          roleId: victim.originalRoleId,
+      case "joueur-de-flute": {
+        (payload.targetIds ?? (payload.targetId ? [payload.targetId] : [])).forEach((id) => {
+          const p = s.players.find((x) => x.id === id);
+          if (p) p.enchanted = true;
         });
+        s.reveal = nk("fluteCharm");
+        break;
       }
-      if (payload.muteId && s.night >= 2 && payload.muteId !== s.round.previousMutedId) {
-        const muted = s.players.find((p) => p.id === payload.muteId);
-        if (muted) {
-          s.round.mutedId = muted.id;
-          notes.push(nk("silenceNote", { name: muted.name }));
-          s.log.push(nk("logSilence", { name: muted.name }));
-          rep(
-            s,
-            muted.id === actor.id
-              ? nk("repSilenceSelf", { name: muted.name })
-              : nk("repSilence", { name: muted.name }),
-          );
+      case "corbeau": {
+        if (target) {
+          s.round.ravenTargetId = target.id;
+          s.reveal = nk("ravenVotes", { name: target.name });
         }
+        break;
       }
-      s.reveal = notes.length ? notes.join(" ") : nk("packAsPlanned");
-      break;
-    }
-    case "loup-blanc": {
-      if (target) {
-        if (step.soloKill) {
-          if (!s.round.attackedId) s.round.attackedId = target.id;
-          s.log.push(nk("logSoloKill", { role: nrole("loup-blanc"), name: target.name }));
+      case "tavernier": {
+        if (target) {
+          s.round.drinkTargetId = target.id;
+          s.reveal = nk("tavernDrink", { name: target.name });
+        }
+        break;
+      }
+      case "montreur-dours": {
+        s.round.bearGrowls = bearShouldGrowl(s, actor.id);
+        s.reveal = s.round.bearGrowls ? nk("bearGrowl") : nk("bearCalm");
+        break;
+      }
+      case "general": {
+        if (target) {
+          actor.abilityUsed = true;
+          const isWolf = target.team === "WEREWOLVES" || target.isConvertedToWolf === true;
+          if (isWolf) {
+            s.pendingDeaths.push({ id: target.id, cause: "GENERAL_STRIKE" });
+            s.players.forEach((p) => {
+              p.isCaptain = false;
+              p.voteWeight = 1;
+            });
+            actor.isCaptain = true;
+            actor.voteWeight = 2;
+            s.villageCaptainId = actor.id;
+            s.reveal = nk("generalWolf", { name: target.name, actor: actor.name });
+            s.log.push(nk("logGeneralWolf", { name: target.name }));
+          } else {
+            s.pendingDeaths.push({ id: actor.id, cause: "GENERAL_FAILED" });
+            s.reveal = nk("generalFail", { name: target.name });
+            s.log.push(nk("logGeneralFail", { name: target.name }));
+          }
         } else {
-          s.round.whiteWolfKillId = target.id;
+          s.reveal = nk("generalIdle");
         }
-        s.reveal = nk("whiteTarget", { name: target.name });
+        break;
       }
-      break;
-    }
-    case "sorciere": {
-      if (payload.healUsed && s.round.attackedId && canWitchHeal(s)) {
-        const saved = s.players.find((p) => p.id === s.round.attackedId);
-        s.round.healed = true;
-        s.round.healedId = s.round.attackedId;
-        s.round.attackedId = undefined;
-        actor.healUsed = true;
-        actor.hasUsedLifePotion = true;
-        s.reveal = nk("witchSaved");
-        rep(s, nk("repWitchLife", { name: saved?.name ?? "" }));
-        if (saved)
-          pushEvent(s, {
-            round: s.night,
-            phase: "NIGHT",
-            type: "RESCUE",
-            name: saved.name,
-            bySavior: "sorciere",
-          });
-      }
-      if (payload.poisonId) {
-        s.round.poisonedId = payload.poisonId;
-        actor.poisonUsed = true;
-        actor.hasUsedDeathPotion = true;
-        const v = s.players.find((p) => p.id === payload.poisonId);
-        s.reveal = nk("poisoned", { name: v?.name ?? "" });
-        rep(s, nk("repWitchPoison", { name: v?.name ?? "" }));
-      }
-      break;
-    }
-    case "joueur-de-flute": {
-      (payload.targetIds ?? (payload.targetId ? [payload.targetId] : [])).forEach((id) => {
-        const p = s.players.find((x) => x.id === id);
-        if (p) p.enchanted = true;
-      });
-      s.reveal = nk("fluteCharm");
-      break;
-    }
-    case "corbeau": {
-      if (target) {
-        s.round.ravenTargetId = target.id;
-        s.reveal = nk("ravenVotes", { name: target.name });
-      }
-      break;
-    }
-    case "tavernier": {
-      if (target) {
-        s.round.drinkTargetId = target.id;
-        s.reveal = nk("tavernDrink", { name: target.name });
-      }
-      break;
-    }
-    case "montreur-dours": {
-      s.round.bearGrowls = bearShouldGrowl(s, actor.id);
-      s.reveal = s.round.bearGrowls ? nk("bearGrowl") : nk("bearCalm");
-      break;
-    }
-    case "general": {
-      if (target) {
-        actor.abilityUsed = true;
-        const isWolf = target.team === "WEREWOLVES" || target.isConvertedToWolf === true;
-        if (isWolf) {
-          s.pendingDeaths.push({ id: target.id, cause: "GENERAL_STRIKE" });
-          s.players.forEach((p) => {
-            p.isCaptain = false;
-            p.voteWeight = 1;
-          });
-          actor.isCaptain = true;
-          actor.voteWeight = 2;
-          s.villageCaptainId = actor.id;
-          s.reveal = nk("generalWolf", { name: target.name, actor: actor.name });
-          s.log.push(nk("logGeneralWolf", { name: target.name }));
+      case "renard": {
+        // Construire un rapport anonyme basé sur l'état du tour actuel
+        const vague: string[] = [];
+        if (s.round.attackedId) {
+          vague.push(nk("renardVagueAttack"));
+        }
+        if (s.round.blackWolfConvert) {
+          vague.push(nk("renardVagueInfect"));
+        }
+        if (s.round.healed) {
+          vague.push(nk("renardVagueHeal"));
+        }
+        if (s.round.poisonedId) {
+          vague.push(nk("renardVaguePoison"));
+        }
+        if (s.round.facesPoisonedId) {
+          vague.push(nk("renardVaguePoison"));
+        }
+        if (s.round.seerCheckTargetId && s.round.seerCheckResultRole) {
+          vague.push(nk("renardVagueSeer"));
+        }
+        if (s.round.villageShield) {
+          vague.push(nk("renardVagueShield"));
+        } else if (s.round.protectedId) {
+          vague.push(nk("renardVagueProtect"));
+        }
+        if (s.round.maniacKillId) {
+          vague.push(nk("renardVagueManiac"));
+        }
+        if (s.round.mutedId) {
+          vague.push(nk("renardVagueSilence"));
+        }
+        if (vague.length === 0) vague.push(nk("renardVagueNothing"));
+
+        // Toujours afficher et stocker le rapport
+        vague.forEach((v) => rep(s, v));
+
+        if (target) {
+          // Choix du confident — arrête définitivement les rapports futurs
+          actor.confidantId = target.id;
+          s.reveal = nk("renardConfidant", { name: target.name });
+          s.log.push(nk("logRenardConfidant", { name: target.name }));
+          rep(s, nk("repRenardConfidant", { name: target.name }));
         } else {
-          s.pendingDeaths.push({ id: actor.id, cause: "GENERAL_FAILED" });
-          s.reveal = nk("generalFail", { name: target.name });
-          s.log.push(nk("logGeneralFail", { name: target.name }));
+          s.reveal = vague.join(" ");
         }
-      } else {
-        s.reveal = nk("generalIdle");
+        break;
       }
-      break;
     }
-    case "renard": {
-      // Construire un rapport anonyme basé sur l'état du tour actuel
-      const vague: string[] = [];
-      if (s.round.attackedId) {
-        vague.push(nk("renardVagueAttack"));
-      }
-      if (s.round.blackWolfConvert) {
-        vague.push(nk("renardVagueInfect"));
-      }
-      if (s.round.healed) {
-        vague.push(nk("renardVagueHeal"));
-      }
-      if (s.round.poisonedId) {
-        vague.push(nk("renardVaguePoison"));
-      }
-      if (s.round.facesPoisonedId) {
-        vague.push(nk("renardVaguePoison"));
-      }
-      if (s.round.seerCheckTargetId && s.round.seerCheckResultRole) {
-        vague.push(nk("renardVagueSeer"));
-      }
-      if (s.round.villageShield) {
-        vague.push(nk("renardVagueShield"));
-      } else if (s.round.protectedId) {
-        vague.push(nk("renardVagueProtect"));
-      }
-      if (s.round.maniacKillId) {
-        vague.push(nk("renardVagueManiac"));
-      }
-      if (s.round.mutedId) {
-        vague.push(nk("renardVagueSilence"));
-      }
-      if (vague.length === 0) vague.push(nk("renardVagueNothing"));
-
-      // Toujours afficher et stocker le rapport
-      vague.forEach((v) => rep(s, v));
-
-      if (target) {
-        // Choix du confident — arrête définitivement les rapports futurs
-        actor.confidantId = target.id;
-        s.reveal = nk("renardConfidant", { name: target.name });
-        s.log.push(nk("logRenardConfidant", { name: target.name }));
-        rep(s, nk("repRenardConfidant", { name: target.name }));
-      } else {
-        s.reveal = vague.join(" ");
-      }
-      break;
-    }
-  }
 
   return advanceNight(s);
 }
@@ -1209,7 +1241,8 @@ function killPlayer(s: GameState, id: string, cause: DeathCause) {
   }
 
   if (
-    effectiveRoleId(p) === "ancien" && powerAvailable(s, p) &&
+    effectiveRoleId(p) === "ancien" &&
+    powerAvailable(s, p) &&
     (cause === "VILLAGE_VOTE" || cause === "HUNTER_SHOT" || cause === "WITCH_POISON")
   ) {
     s.players
@@ -1249,7 +1282,12 @@ function resolveNight(state: GameState): GameState {
   if (s.round.attackedId) {
     const victim = s.players.find((p) => p.id === s.round.attackedId)!;
     const hunterAlive = s.players.some((p) => p.alive && effectiveRoleId(p) === "chasseur");
-    if (victim && effectiveRoleId(victim) === "chaperon-rouge" && powerAvailable(s, victim) && hunterAlive) {
+    if (
+      victim &&
+      effectiveRoleId(victim) === "chaperon-rouge" &&
+      powerAvailable(s, victim) &&
+      hunterAlive
+    ) {
       s.round.attackedId = undefined;
       s.dawnSummary.push(nk("redRidingHood"));
       pushEvent(s, {
@@ -1296,7 +1334,11 @@ function resolveNight(state: GameState): GameState {
   if (s.round.attackedId) {
     const attackedPlayer = s.players.find((p) => p.id === s.round.attackedId);
 
-    if (attackedPlayer && effectiveRoleId(attackedPlayer) === "marionnettiste" && powerAvailable(s, attackedPlayer)) {
+    if (
+      attackedPlayer &&
+      effectiveRoleId(attackedPlayer) === "marionnettiste" &&
+      powerAvailable(s, attackedPlayer)
+    ) {
       const puppetPlayer = s.players.find((p) => p.alive && p.hasPuppetShield);
 
       if (puppetPlayer) {
@@ -1409,8 +1451,12 @@ function resolveNight(state: GameState): GameState {
 
   if (s.dawnSummary.length === 0) s.dawnSummary.push(nk("nobodyDied"));
 
-  s.players.filter((p) => p.alive && p.doused).forEach((p) => s.dawnSummary.push(nk("fuelNotice", { name: p.name })));
-  s.players.forEach((p) => { p.frozenNight = undefined; });
+  s.players
+    .filter((p) => p.alive && p.doused)
+    .forEach((p) => s.dawnSummary.push(nk("fuelNotice", { name: p.name })));
+  s.players.forEach((p) => {
+    p.frozenNight = undefined;
+  });
   s.phase = "AUBE";
   s.day = s.night;
   return checkVictory(s);
@@ -1429,8 +1475,10 @@ function resolveDeathAction(state: GameState, targetId: string, baby: boolean): 
   const sourceId = baby ? s.babyWolfPending?.[0] : s.hunterPending;
   const source = s.players.find((p) => p.id === sourceId);
   if (!source || source.alive || !s.players.some((p) => p.id === targetId && p.alive)) return state;
-  if (baby) { s.babyWolfPending = s.babyWolfPending?.slice(1); source.revengeUsed = true; }
-  else s.hunterPending = undefined;
+  if (baby) {
+    s.babyWolfPending = s.babyWolfPending?.slice(1);
+    source.revengeUsed = true;
+  } else s.hunterPending = undefined;
   killPlayer(s, targetId, baby ? "BABY_WOLF_REVENGE" : "HUNTER_SHOT");
   if (s.babyWolfPending?.length || s.hunterPending) return s;
   const resume = s.deathResumePhase ?? "AUBE";
@@ -1655,7 +1703,8 @@ export function executeTalkativeWolfAndSkip(state: GameState): GameState {
 }
 
 export function startNight(state: GameState): GameState {
-  if (state.babyWolfPending?.length || state.hunterPending) return checkVictory({ ...state, deathStartNextNight: true });
+  if (state.babyWolfPending?.length || state.hunterPending)
+    return checkVictory({ ...state, deathStartNextNight: true });
   const s = clone(state);
   s.night += 1;
   s.phase = "NUIT";
@@ -1734,10 +1783,16 @@ export function checkVictory(state: GameState): GameState {
   const pyro = living.find((p) => effectiveRoleId(p) === "pyromaniac" && p.team === "SOLO");
   const alien = living.find((p) => effectiveRoleId(p) === "alien" && p.team === "SOLO");
   if (pyro && living.length <= 3) {
-    s.phase = "FIN"; s.winnerTeam = "OTHER"; s.winner = nk("winPyromaniac", { name: pyro.name }); return s;
+    s.phase = "FIN";
+    s.winnerTeam = "OTHER";
+    s.winner = nk("winPyromaniac", { name: pyro.name });
+    return s;
   }
   if (alien && !living.some((p) => p.id !== alien.id && hasPower(p))) {
-    s.phase = "FIN"; s.winnerTeam = "OTHER"; s.winner = nk("winAlien", { name: alien.name }); return s;
+    s.phase = "FIN";
+    s.winnerTeam = "OTHER";
+    s.winner = nk("winAlien", { name: alien.name });
+    return s;
   }
   const wolves = living.filter((p) => p.team === "WEREWOLVES");
   if (wolves.length === 0 && !maniac && !pyro && !alien) {
@@ -1746,7 +1801,13 @@ export function checkVictory(state: GameState): GameState {
     s.winner = nk("winVillage");
     return s;
   }
-  if (wolves.length > 0 && !maniac && !pyro && !alien && wolves.length >= living.length - wolves.length) {
+  if (
+    wolves.length > 0 &&
+    !maniac &&
+    !pyro &&
+    !alien &&
+    wolves.length >= living.length - wolves.length
+  ) {
     s.phase = "FIN";
     s.winnerTeam = "WOLVES";
     s.winner = nk("winWolves");
