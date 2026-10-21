@@ -67,6 +67,10 @@ const CAUSE_KEY: Record<DeathCause, TranslationKey> = {
   MANIAC: "causeManiac",
   THREE_FACES_POISON: "causeThreeFacesPoison",
   SUICIDE_REVEAL: "causeSuicide",
+  FIRE: "causeFire",
+  ALIEN: "causeAlien",
+  ALIEN_FAILURE: "causeAlienFailure",
+  BABY_WOLF_REVENGE: "causeBabyRevenge",
 };
 
 /** Classes statiques par accent (Tailwind ne compile pas les noms dynamiques). */

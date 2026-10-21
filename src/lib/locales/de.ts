@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** German dictionary — translated from French source of truth. */
 export const de = {
   ui: {
+    ...NEW_ROLE_LOCALES.de.ui,
     seatingTitle: "Sitzordnung",
     seatingHint:
       "Ziehe einen Spieler auf einen anderen, um ihre Plätze zu tauschen. Die Sitzordnung bestimmt die Nachbarn.",
@@ -552,6 +554,7 @@ export const de = {
     skipDay1Vote: "Tag-1-Abstimmung überspringen (Optional)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.de.prompts,
     cupidon: "Bestimme die zwei Liebenden.",
     mime: "Wähle den Spieler, dessen Rolle du kopierst.",
     "enfant-sauvage": "Wähle dein Vorbild.",
@@ -587,6 +590,7 @@ export const de = {
     DYNAMIC: "Dynamisch",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.de.roles,
     marionnettiste: {
       name: "Puppenspieler",
       description:

@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** English dictionary — source of truth. */
 export const en = {
   ui: {
+    ...NEW_ROLE_LOCALES.en.ui,
     seatingTitle: "Seating Arrangement",
     seatingHint:
       "Drag a player over another to swap positions. The seating order determines neighbors.",
@@ -573,6 +575,7 @@ export const en = {
       "Nightfall Oracle is played in portrait mode. Turn your device upright to continue.",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.en.prompts,
     cupidon: "Designate the two lovers.",
     mime: "Select player whose role you copy.",
     "enfant-sauvage": "Select your role model.",
@@ -605,6 +608,7 @@ export const en = {
     DYNAMIC: "Dynamic",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.en.roles,
     marionnettiste: {
       name: "Puppeteer",
       description:

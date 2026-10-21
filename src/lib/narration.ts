@@ -9,6 +9,7 @@
  *  d'une phrase.
  */
 
+import { NEW_ROLE_LOCALES } from "@/lib/locales/new-roles";
 import type { Lang } from "@/lib/i18n";
 import { ROLE_BY_ID } from "@/data/roles";
 import { fr as frDict } from "@/lib/locales/fr";
@@ -1318,7 +1319,8 @@ export function resolveNarration(text: string, lang: Lang): string {
     if (key === "@role") {
       out += localRoleName(lang, String(vars.id ?? ""));
     } else {
-      const tpl = NARRATION[lang]?.[key] ?? NARRATION.fr[key] ?? "";
+      const extra: Record<string, string> = NEW_ROLE_LOCALES[lang].events;
+      const tpl = extra[key] ?? NARRATION[lang]?.[key] ?? NARRATION.fr[key] ?? "";
       out += tpl.replace(/\{(\w+)\}/g, (m, v: string) =>
         v in vars ? resolveNarration(String(vars[v]), lang) : m,
       );

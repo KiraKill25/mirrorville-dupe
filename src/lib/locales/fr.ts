@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** French dictionary — source of truth original. */
 export const fr = {
   ui: {
+    ...NEW_ROLE_LOCALES.fr.ui,
     seatingTitle: "Disposition du cercle",
     seatingHint:
       "Glissez un joueur sur un autre pour échanger leurs places. L'ordre du cercle détermine les voisins.",
@@ -575,6 +577,7 @@ export const fr = {
     skipDay1Vote: "Passer le vote du Jour 1 (Optionnel)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.fr.prompts,
     cupidon: "Désigne les deux amoureux.",
     mime: "Choisis le joueur dont tu copies le rôle.",
     "enfant-sauvage": "Choisis ton modèle.",
@@ -607,6 +610,7 @@ export const fr = {
     DYNAMIC: "Dynamique",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.fr.roles,
     marionnettiste: {
       name: "Le Marionnettiste",
       description:

@@ -1,6 +1,8 @@
+import { NEW_ROLE_LOCALES } from "./new-roles";
 /** Russian dictionary — translated from source of truth. */
 export const ru = {
   ui: {
+    ...NEW_ROLE_LOCALES.ru.ui,
     seatingTitle: "Расположение игроков",
     seatingHint:
       "Перетащите игрока на другого, чтобы поменять их местами. Порядок в кругу определяет соседей.",
@@ -554,6 +556,7 @@ export const ru = {
     skipDay1Vote: "Пропустить голосование Дня 1 (По желанию)",
   },
   prompts: {
+    ...NEW_ROLE_LOCALES.ru.prompts,
     cupidon: "Укажите двух влюблённых.",
     mime: "Выберите игрока, чью роль вы скопируете.",
     "enfant-sauvage": "Выберите своего кумира.",
@@ -588,6 +591,7 @@ export const ru = {
     DYNAMIC: "Динамическая",
   } as Record<string, string>,
   roles: {
+    ...NEW_ROLE_LOCALES.ru.roles,
     marionnettiste: {
       name: "Кукловод",
       description:
