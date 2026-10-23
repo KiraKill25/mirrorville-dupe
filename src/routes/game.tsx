@@ -882,7 +882,7 @@ function NightPanel({
       p.alive &&
       effectiveRoleId(p) === "loup-matriarche" &&
       !p.disabledNightAbility &&
-      !p.powersDisabled,
+      !p.powersDisabled && p.frozenNight !== state.night,
   );
 
   const attackedPlayerName = state.players.find((p) => p.id === state.round.attackedId)?.name;

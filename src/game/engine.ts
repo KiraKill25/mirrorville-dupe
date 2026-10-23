@@ -644,14 +644,9 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
   const target = payload.targetId ? s.players.find((p) => p.id === payload.targetId) : undefined;
   s.reveal = undefined;
 
-  // New wolves share exactly the same pack victim action, never a second kill.
-  if ((step.roleId === "loup-rouge" || step.roleId === "bébé-loup") && step.mode === "wolves") {
-    if (!target?.alive || target.id === actor.id || target.team === "WEREWOLVES") return state;
-    s.round.attackedId = target.id;
-    s.reveal = nk("packChose", { name: target.name });
-    rep(s, nk("repWolvesTarget", { name: target.name }));
-  } else
-    switch (step.roleId) {
+  const newWolfPack = ["loup-rouge", "bébé-loup"].includes(step.roleId) && step.mode === "wolves";
+  if (newWolfPack && payload.targetId && (!target?.alive || target.id === actor.id || target.team === "WEREWOLVES")) return state;
+  switch (newWolfPack ? "loup-garou" : step.roleId) {
       case "loup-rouge": {
         if (!target?.alive || target.id === actor.id)
           return payload.targetId ? state : advanceNight(s);
