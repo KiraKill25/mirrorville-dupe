@@ -818,10 +818,27 @@ function NightPanel({
   }
 
   const actor = state.players.find((p) => p.id === step.actorId);
-  if (!actor || !actor.alive || actor.powersDisabled || actor.hasLostPower || actor.frozenNight === state.night || actor.disabledNightAbility) {
-    return <NarratorCard text={narrate("⟦nightPowerUnavailable⟧" + JSON.stringify({name: actor?.name ?? ""}))}>
-      <Button type="button" onClick={() => onChange(submitStep(state, {}))} className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground">{t("continue")}</Button>
-    </NarratorCard>;
+  if (
+    !actor ||
+    !actor.alive ||
+    actor.powersDisabled ||
+    actor.hasLostPower ||
+    actor.frozenNight === state.night ||
+    actor.disabledNightAbility
+  ) {
+    return (
+      <NarratorCard
+        text={narrate("⟦nightPowerUnavailable⟧" + JSON.stringify({ name: actor?.name ?? "" }))}
+      >
+        <Button
+          type="button"
+          onClick={() => onChange(submitStep(state, {}))}
+          className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground"
+        >
+          {t("continue")}
+        </Button>
+      </NarratorCard>
+    );
   }
   let candidates = state.players.filter((p) => p.alive);
   if (step.roleId === "loup-blanc")
@@ -867,7 +884,7 @@ function NightPanel({
   const STANDARD_WOLF_KILLERS = ["loup-garou", "loup-noir", "loup-bavard", "loup-matriarche"];
   const isNewWolfPack = step.mode === "wolves" && ["loup-rouge", "bébé-loup"].includes(step.roleId);
   const forbiddenWolfIds =
-    STANDARD_WOLF_KILLERS.includes(step.roleId) || isNewWolfPack
+    (STANDARD_WOLF_KILLERS.includes(step.roleId) && step.roleId !== "loup-rouge") || isNewWolfPack
       ? state.players.filter((p) => p.alive && p.team === "WEREWOLVES").map((p) => p.id)
       : [];
   const toggleTarget = (id: string) => {
@@ -882,7 +899,8 @@ function NightPanel({
       p.alive &&
       effectiveRoleId(p) === "loup-matriarche" &&
       !p.disabledNightAbility &&
-      !p.powersDisabled && p.frozenNight !== state.night,
+      !p.powersDisabled &&
+      p.frozenNight !== state.night,
   );
 
   const attackedPlayerName = state.players.find((p) => p.id === state.round.attackedId)?.name;
