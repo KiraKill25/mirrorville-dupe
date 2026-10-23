@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -816,7 +817,29 @@ function NightPanel({
     );
   }
 
-  const actor = state.players.find((p) => p.id === step.actorId)!;
+  const actor = state.players.find((p) => p.id === step.actorId);
+  if (
+    !actor ||
+    !actor.alive ||
+    actor.powersDisabled ||
+    actor.hasLostPower ||
+    actor.frozenNight === state.night ||
+    actor.disabledNightAbility
+  ) {
+    return (
+      <NarratorCard
+        text={narrate("⟦nightPowerUnavailable⟧" + JSON.stringify({ name: actor?.name ?? "" }))}
+      >
+        <Button
+          type="button"
+          onClick={() => onChange(submitStep(state, {}))}
+          className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground"
+        >
+          {t("continue")}
+        </Button>
+      </NarratorCard>
+    );
+  }
   let candidates = state.players.filter((p) => p.alive);
   if (step.roleId === "loup-blanc")
     candidates = step.soloKill
@@ -861,7 +884,7 @@ function NightPanel({
   const STANDARD_WOLF_KILLERS = ["loup-garou", "loup-noir", "loup-bavard", "loup-matriarche"];
   const isNewWolfPack = step.mode === "wolves" && ["loup-rouge", "bébé-loup"].includes(step.roleId);
   const forbiddenWolfIds =
-    STANDARD_WOLF_KILLERS.includes(step.roleId) || isNewWolfPack
+    (STANDARD_WOLF_KILLERS.includes(step.roleId) && step.roleId !== "loup-rouge") || isNewWolfPack
       ? state.players.filter((p) => p.alive && p.team === "WEREWOLVES").map((p) => p.id)
       : [];
   const toggleTarget = (id: string) => {
@@ -876,7 +899,8 @@ function NightPanel({
       p.alive &&
       effectiveRoleId(p) === "loup-matriarche" &&
       !p.disabledNightAbility &&
-      !p.powersDisabled,
+      !p.powersDisabled &&
+      p.frozenNight !== state.night,
   );
 
   const attackedPlayerName = state.players.find((p) => p.id === state.round.attackedId)?.name;
@@ -1056,19 +1080,19 @@ function NightPanel({
               </select>
             </label>
             <div className="flex gap-2">
-              <button
+              <Button
                 disabled={sel.length !== 1 || !guessRole}
                 onClick={() => send({ targetId: sel[0], guessedRoleId: guessRole })}
                 className="flex-1 rounded-full bg-primary py-3 font-bold text-primary-foreground disabled:opacity-40"
               >
                 {t("validate")}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => send({})}
                 className="flex-1 rounded-full border border-border py-3 text-sm font-semibold text-muted-foreground"
               >
                 {t("pass")}
-              </button>
+              </Button>
             </div>
           </div>
         ) : step.mode === "wolves" ? (
@@ -1559,7 +1583,7 @@ function NightPanel({
             )}
 
             {step.roleId === "pyromaniac" && (
-              <button
+              <Button
                 disabled={!!actor.matchUsed}
                 onClick={() => {
                   setIgnite((v) => !v);
@@ -1569,7 +1593,7 @@ function NightPanel({
               >
                 <Flame className="mr-1 inline size-4" />
                 {actor.matchUsed ? t("pyroMatchUsed") : t("pyroIgnite")}
-              </button>
+              </Button>
             )}
 
             {!shieldConfirm && !ignite && (
@@ -1673,13 +1697,13 @@ function BabyWolfPanel({ state, onDone }: { state: GameState; onDone: (s: GameSt
         onToggle={setTargetId}
         accent="crimson"
       />
-      <button
+      <Button
         disabled={!targetId}
         onClick={() => targetId && onDone(resolveBabyWolf(state, targetId))}
         className="w-full rounded-full bg-destructive py-3 font-bold text-destructive-foreground disabled:opacity-40"
       >
         {t("babyRevengeConfirm")}
-      </button>
+      </Button>
     </div>
   );
 }
