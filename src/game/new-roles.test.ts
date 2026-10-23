@@ -119,7 +119,7 @@ describe("new role rules", () => {
     expect(resumed.steps[resumed.stepIndex].roleId).toBe("alien");
   });
   it("manual death chains Baby Wolf to Hunter before victory", () => {
-    const s = {...game(["bébé-loup", "chasseur", "loup-garou", "simple-villageois", "simple-villageois"]), phase:"AUBE" as const};
+    const s = {...game(["bébé-loup", "chasseur", "loup-garou", "simple-villageois", "simple-villageois", "simple-villageois"]), phase:"AUBE" as const};
     const pending = suicideRevealMany(s,[s.players[0].id]);
     const hunter = resolveBabyWolf(pending,s.players[1].id);
     expect(hunter.phase).toBe("EVENEMENT_MORT");
