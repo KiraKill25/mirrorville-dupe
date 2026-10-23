@@ -6,6 +6,9 @@ import {
   resolveBabyWolf,
   submitStep,
   submitVote,
+  suicideRevealMany,
+  startNight,
+  resolveHunter,
 } from "./engine";
 
 const game = (roles: string[]) => createGame(roles.map((roleId, i) => ({ name: `P${i}`, roleId })));
@@ -80,5 +83,52 @@ describe("new role rules", () => {
     expect(
       buildNightSteps(game(["bébé-loup", "simple-villageois"])).some((x) => x.mode === "wolves"),
     ).toBe(true);
+  });
+  it("Alien wins only after opposing power holders are gone", () => {
+    const s = game(["alien", "voyante", "simple-villageois"]);
+    expect(checkVictory(s).phase).not.toBe("FIN");
+    s.players[1].alive = false;
+    expect(checkVictory(s).winner).toContain("winAlien");
+  });
+  it("one wrong Alien guess leaves two chances", () => {
+    const s = game(["alien", "loup-garou", "simple-villageois"]);
+    expect(submitStep(at(s, "alien"), {targetId:s.players[1].id, guessedRoleId:"voyante"}).players[0].alienErrors).toBe(1);
+  });
+  it("freeze blocks an active action and expires next night", () => {
+    const s = game(["loup-rouge", "voyante", "simple-villageois", "simple-villageois"]);
+    s.night = 2; s.steps = buildNightSteps(s);
+    const frozen = submitStep(at(s,"loup-rouge"), {targetId:s.players[1].id});
+    const skipped = submitStep(at(frozen,"voyante"), {targetId:s.players[2].id});
+    expect(skipped.round.seerCheckTargetId).toBeUndefined();
+    expect(startNight(skipped).players[1].frozenNight).toBeUndefined();
+  });
+  it("freeze disables Elder passive wolf resistance", () => {
+    const s = game(["loup-rouge", "ancien", "simple-villageois", "simple-villageois"]);
+    const frozen = submitStep(at(s,"loup-rouge"), {targetId:s.players[1].id});
+    frozen.round.attackedId = s.players[1].id;
+    frozen.stepIndex = frozen.steps.length;
+    expect(submitStep(frozen,{}).players[1].alive).toBe(false);
+  });
+  it("fire triggers Baby Wolf immediately and resumes the same night", () => {
+    const s = game(["pyromaniac", "bébé-loup", "alien", "simple-villageois", "simple-villageois", "simple-villageois"]);
+    s.players[1].doused = true;
+    const pending = submitStep(at(s,"pyromaniac"),{ignite:true});
+    expect(pending.phase).toBe("EVENEMENT_MORT");
+    const resumed = resolveBabyWolf(pending,s.players[3].id);
+    expect(resumed.night).toBe(1);
+    expect(resumed.steps[resumed.stepIndex].roleId).toBe("alien");
+  });
+  it("manual death chains Baby Wolf to Hunter before victory", () => {
+    const s = {...game(["bébé-loup", "chasseur", "loup-garou", "simple-villageois", "simple-villageois"]), phase:"AUBE" as const};
+    const pending = suicideRevealMany(s,[s.players[0].id]);
+    const hunter = resolveBabyWolf(pending,s.players[1].id);
+    expect(hunter.phase).toBe("EVENEMENT_MORT");
+    expect(hunter.hunterPending).toBe(s.players[1].id);
+    expect(resolveHunter(hunter,s.players[3].id).night).toBe(2);
+  });
+  it("ignition cannot be used twice", () => {
+    const s = game(["pyromaniac", "loup-garou", "alien", "simple-villageois"]);
+    s.players[0].matchUsed = true; s.players[3].doused = true;
+    expect(submitStep(at(s,"pyromaniac"),{ignite:true}).players[3].alive).toBe(true);
   });
 });

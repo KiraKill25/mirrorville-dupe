@@ -335,14 +335,14 @@ export function buildNightSteps(s: GameState): Step[] {
     });
   };
 
+  push("loup-rouge", "Loup Rouge", nk("redWolfFreezePrompt"), "one");
+
   if (first) {
     push("voleur", "Le Voleur", "Vole le rôle d'un joueur : il devient Simple Villageois.", "one");
     push("cupidon", "Cupidon", "Désigne les deux amoureux.", "two");
     push("mime", "Mime", "Choisis le joueur dont tu copies le rôle.", "one");
     push("enfant-sauvage", "Enfant Sauvage", "Choisis ton modèle.", "one");
   }
-
-  push("loup-rouge", "Loup Rouge", nk("redWolfFreezePrompt"), "one");
 
   if (!first)
     push(
@@ -390,7 +390,7 @@ export function buildNightSteps(s: GameState): Step[] {
     if (newWolf && powerAvailable(s, newWolf)) {
       steps.push({
         key: `${s.night}-new-wolf-pack`,
-        roleId: newWolf.roleId === "bébé-loup" ? "bébé-loup" : "loup-rouge",
+        roleId: effectiveRoleId(newWolf),
         title: "",
         prompt: nk("newWolfPackPrompt"),
         mode: "wolves",
@@ -530,7 +530,7 @@ export function buildNightSteps(s: GameState): Step[] {
 
   const pyroMode = (s.initialPlayerCount ?? s.players.length) <= 10 ? "one" : "two";
   const pyro = hasRole(s, "pyromaniac");
-  if (pyro && !pyro.matchUsed) push("pyromaniac", "Pyromane", "", pyroMode, true);
+  if (pyro) push("pyromaniac", "Pyromane", "", pyroMode, true);
   push("alien", "Alien", "", "alien", true);
 
   const piperMode = (s.initialPlayerCount ?? s.players.length) <= 10 ? "one" : "two";
@@ -662,8 +662,8 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
         break;
       }
       case "pyromaniac": {
-        if (actor.matchUsed) return state;
         if (payload.ignite) {
+          if (actor.matchUsed) return state;
           actor.matchUsed = true;
           const victims = s.players.filter((p) => p.alive && p.doused);
           s.reveal = nk("pyroIgnited", { names: victims.map((p) => p.name).join(", ") });
@@ -932,7 +932,7 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
             p.alive &&
             effectiveRoleId(p) === "loup-matriarche" &&
             !p.disabledNightAbility &&
-            !p.powersDisabled,
+            !p.powersDisabled && powerAvailable(s, p),
         );
         if (payload.disagreement && matriarch) {
           s.round.wolvesDisagreed = true;
@@ -1187,6 +1187,8 @@ function advanceNight(s: GameState): GameState {
     s.phase = "EVENEMENT_MORT";
     return s;
   }
+  const checked = checkVictory(s);
+  if (checked.phase === "FIN") return checked;
   return s.stepIndex >= s.steps.length ? resolveNight(s) : s;
 }
 
@@ -1448,7 +1450,7 @@ function resolveNight(state: GameState): GameState {
   s.players
     .filter((p) => p.alive && p.mutedForDay)
     .forEach((p) => rep(s, nk("repMuted", { name: p.name })));
-  if (deaths.length === 0) rep(s, nk("repNoDeaths"));
+  if (!s.events.some((e) => e.round === s.night && e.phase === "NIGHT" && e.type === "KILL")) rep(s, nk("repNoDeaths"));
 
   if (s.dawnSummary.length === 0) s.dawnSummary.push(nk("nobodyDied"));
 
