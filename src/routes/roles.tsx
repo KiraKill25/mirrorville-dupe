@@ -5,9 +5,9 @@ import { NarratorCard } from "@/components/NarratorCard";
 import { TopBar } from "@/components/TopBar";
 import { useI18n } from "@/lib/i18n";
 
-const TITLE = "Les 24 rôles — Nightfall Oracle";
+const TITLE = "Grimoire des rôles — Nightfall Oracle";
 const DESC =
-  "Découvre les 24 rôles du village : portraits mystiques, description et pouvoir de chaque carte.";
+  "Découvre tous les rôles du village : portraits mystiques, description et pouvoir de chaque carte.";
 
 export const Route = createFileRoute("/roles")({
   head: () => ({

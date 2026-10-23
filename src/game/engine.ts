@@ -323,7 +323,7 @@ export function buildNightSteps(s: GameState): Step[] {
   ) => {
     const actor = hasRole(s, roleId);
     if (!actor) return;
-    if (actor.powersDisabled) return;
+    if (!powerAvailable(s, actor)) return;
     steps.push({
       key: `${s.night}-${roleId}`,
       roleId,
@@ -996,6 +996,7 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
         }
         if (payload.yes && !infectionBlocked && s.round.attackedId && !actor.abilityUsed) {
           const victim = s.players.find((p) => p.id === s.round.attackedId);
+          if (!victim?.alive) return state;
           victim.originalRoleId = victim.roleId;
           victim.isConvertedToWolf = true;
           victim.retainsOriginalPowers = true;
@@ -1280,8 +1281,8 @@ function resolveNight(state: GameState): GameState {
   if (!s.events) s.events = [];
 
   if (s.round.attackedId) {
-    const victim = s.players.find((p) => p.id === s.round.attackedId)!;
-    const hunterAlive = s.players.some((p) => p.alive && effectiveRoleId(p) === "chasseur");
+    const victim = s.players.find((p) => p.id === s.round.attackedId);
+    const hunterAlive = s.players.some((p) => p.alive && effectiveRoleId(p) === "chasseur" && powerAvailable(s, p));
     if (
       victim &&
       effectiveRoleId(victim) === "chaperon-rouge" &&
@@ -1535,8 +1536,6 @@ export function foxReveal(state: GameState, foxId: string): GameState {
   killPlayer(s, foxId, "SUICIDE_REVEAL");
   s.jokerId = confidant.id;
   s.log.push(nk("logFoxReveal", { name: fox.name, confidant: confidant.name }));
-  s.hunterPending = undefined;
-  s.captainSuccessionPending = undefined;
   return checkVictory(s);
 }
 
@@ -1554,8 +1553,6 @@ export function confidantReveal(state: GameState, confidantId: string): GameStat
   killPlayer(s, confidantId, "SUICIDE_REVEAL");
   s.jokerId = fox.id;
   s.log.push(nk("logConfidantReveal", { name: confidant.name, fox: fox.name }));
-  s.hunterPending = undefined;
-  s.captainSuccessionPending = undefined;
   return checkVictory(s);
 }
 
@@ -1657,7 +1654,7 @@ export function eliminateTied(state: GameState, ids: string[], talkativeSpoke = 
     const p = s.players.find((x) => x.id === id);
     if (!p || !p.alive || p.immuneToDayVote) return;
     killPlayer(s, id, "VILLAGE_VOTE");
-    s.lastEliminated!.push({
+    s.lastEliminated?.push({
       id: p.id,
       name: p.name,
       roleId: p.originalRoleId ?? effectiveRoleId(p),
@@ -1819,7 +1816,7 @@ export function checkVictory(state: GameState): GameState {
 export function canWitchHeal(s: GameState): boolean {
   if (!s.round.attackedId) return false;
   const victim = s.players.find((p) => p.id === s.round.attackedId);
-  if (victim && effectiveRoleId(victim) === "ancien" && victim.lives > 1) {
+  if (victim && effectiveRoleId(victim) === "ancien" && victim.lives > 1 && powerAvailable(s, victim)) {
     return false;
   }
   return true;

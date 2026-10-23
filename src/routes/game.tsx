@@ -816,7 +816,12 @@ function NightPanel({
     );
   }
 
-  const actor = state.players.find((p) => p.id === step.actorId)!;
+  const actor = state.players.find((p) => p.id === step.actorId);
+  if (!actor || !actor.alive || actor.powersDisabled || actor.hasLostPower || actor.frozenNight === state.night || actor.disabledNightAbility) {
+    return <NarratorCard text={narrate("⟦nightPowerUnavailable⟧" + JSON.stringify({name: actor?.name ?? ""}))}>
+      <button type="button" onClick={() => onChange(submitStep(state, {}))} className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground">{t("continue")}</button>
+    </NarratorCard>;
+  }
   let candidates = state.players.filter((p) => p.alive);
   if (step.roleId === "loup-blanc")
     candidates = step.soloKill

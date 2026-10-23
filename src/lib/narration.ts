@@ -1320,7 +1320,8 @@ export function resolveNarration(text: string, lang: Lang): string {
       out += localRoleName(lang, String(vars.id ?? ""));
     } else {
       const extra: Record<string, string> = NEW_ROLE_LOCALES[lang].events;
-      const tpl = extra[key] ?? NARRATION[lang]?.[key] ?? NARRATION.fr[key] ?? "";
+      const ui: Record<string, string> = NEW_ROLE_LOCALES[lang].ui;
+      const tpl = extra[key] ?? ui[key] ?? NARRATION[lang]?.[key] ?? NARRATION.fr[key] ?? "";
       out += tpl.replace(/\{(\w+)\}/g, (m, v: string) =>
         v in vars ? resolveNarration(String(vars[v]), lang) : m,
       );
