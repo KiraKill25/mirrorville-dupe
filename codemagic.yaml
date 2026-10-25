@@ -19,7 +19,7 @@ workflows:
 
       - name: Generate fresh Android native project
         script: |
-          npx cap add android
+          if [ ! -d "android" ]; then npx cap add android; fi
           npx cap sync android
 
       - name: Generate native Android icons from public folder

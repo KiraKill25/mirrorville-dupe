@@ -22,7 +22,11 @@ export function isMuted(): boolean {
 
 export function initAudioPrefs() {
   if (typeof window === "undefined") return;
-  muted = localStorage.getItem(MUTE_KEY) === "1";
+  try {
+    muted = localStorage.getItem(MUTE_KEY) === "1";
+  } catch {
+    muted = false;
+  }
   installMediaGuard();
   applyMasterMute();
   listeners.forEach((l) => l(muted));
