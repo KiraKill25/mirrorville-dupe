@@ -74,7 +74,6 @@ export function roleEmoji(id: string): string {
 }
 
 export function roleVideo(id: string): string | undefined {
-  if (id in NEW_ROLE_IMAGES) return undefined;
   return `/videos/roles/${id}.mp4`;
 }
 
