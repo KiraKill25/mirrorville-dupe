@@ -64,7 +64,8 @@ const fr: GuideCopy = {
         "Touchez l'étoile ⭐ pour récompenser un bluff ou une déduction brillante.",
       ],
       tip: "Annoncez les victimes sans émotion : impartial, impitoyable, précis comme une lame.",
-      chant: "« Le soleil se lève sur une terre souillée de sang. Réveillez-vous et contemplez vos pertes. »",
+      chant:
+        "« Le soleil se lève sur une terre souillée de sang. Réveillez-vous et contemplez vos pertes. »",
     },
     {
       title: "Le Bûcher & les Derniers Souffles",
@@ -92,7 +93,12 @@ const fr: GuideCopy = {
 };
 
 const en: GuideCopy = {
-  labels: { mech: "App mechanics", tip: "Atmosphere secret", chant: "Ritual line", chapter: "Chapter" },
+  labels: {
+    mech: "App mechanics",
+    tip: "Atmosphere secret",
+    chant: "Ritual line",
+    chapter: "Chapter",
+  },
   chapters: [
     {
       title: "The Sanctuary & the Calling of Souls",
@@ -164,7 +170,12 @@ const en: GuideCopy = {
 };
 
 const es: GuideCopy = {
-  labels: { mech: "Mecánica de la app", tip: "Secreto de ambiente", chant: "Frase ritual", chapter: "Capítulo" },
+  labels: {
+    mech: "Mecánica de la app",
+    tip: "Secreto de ambiente",
+    chant: "Frase ritual",
+    chapter: "Capítulo",
+  },
   chapters: [
     {
       title: "El Santuario y la Llamada de las Almas",
@@ -197,7 +208,8 @@ const es: GuideCopy = {
         "Alien: adivina un rol exacto; tres fallos y desaparece.",
       ],
       tip: "Habla mientras rodeas el círculo para tapar ruidos y susurra hacia rincones al azar.",
-      chant: "«Cerrad los ojos... Que solo los llamados por el destino se atrevan a enfrentar la noche.»",
+      chant:
+        "«Cerrad los ojos... Que solo los llamados por el destino se atrevan a enfrentar la noche.»",
     },
     {
       title: "El Alba y el Tribunal del Debate",
@@ -208,7 +220,8 @@ const es: GuideCopy = {
         "Toca la estrella ⭐ para premiar un gran farol o una deducción brillante.",
       ],
       tip: "Anuncia a las víctimas sin emoción: imparcial, implacable, preciso como una hoja.",
-      chant: "«El sol sale sobre una tierra manchada de sangre. Despertad y contemplad vuestras pérdidas.»",
+      chant:
+        "«El sol sale sobre una tierra manchada de sangre. Despertad y contemplad vuestras pérdidas.»",
     },
     {
       title: "La Hoguera y los Últimos Alientos",
@@ -236,7 +249,12 @@ const es: GuideCopy = {
 };
 
 const pt: GuideCopy = {
-  labels: { mech: "Mecânica do app", tip: "Segredo de ambiente", chant: "Frase ritual", chapter: "Capítulo" },
+  labels: {
+    mech: "Mecânica do app",
+    tip: "Segredo de ambiente",
+    chant: "Frase ritual",
+    chapter: "Capítulo",
+  },
   chapters: [
     {
       title: "O Santuário e o Chamado das Almas",
@@ -307,7 +325,12 @@ const pt: GuideCopy = {
 };
 
 const de: GuideCopy = {
-  labels: { mech: "App-Mechanik", tip: "Atmosphäre-Geheimnis", chant: "Ritualsatz", chapter: "Kapitel" },
+  labels: {
+    mech: "App-Mechanik",
+    tip: "Atmosphäre-Geheimnis",
+    chant: "Ritualsatz",
+    chapter: "Kapitel",
+  },
   chapters: [
     {
       title: "Das Heiligtum & der Ruf der Seelen",
@@ -379,7 +402,12 @@ const de: GuideCopy = {
 };
 
 const ru: GuideCopy = {
-  labels: { mech: "Механика приложения", tip: "Секрет атмосферы", chant: "Ритуальная фраза", chapter: "Глава" },
+  labels: {
+    mech: "Механика приложения",
+    tip: "Секрет атмосферы",
+    chant: "Ритуальная фраза",
+    chapter: "Глава",
+  },
   chapters: [
     {
       title: "Святилище и Зов Душ",
@@ -455,7 +483,11 @@ const zh: GuideCopy = {
     {
       title: "圣所与灵魂召唤",
       spirit: "法官不是玩家，而是这场噩梦的导演。他手握手机，掌控节奏。",
-      mech: ["添加玩家，设置发言计时并组建狼群。", "确认座位轮盘与真实座位一致。", "被选中的法官不会拿到身份牌。"],
+      mech: [
+        "添加玩家，设置发言计时并组建狼群。",
+        "确认座位轮盘与真实座位一致。",
+        "被选中的法官不会拿到身份牌。",
+      ],
       tip: "围成闭合的圆，调暗灯光，桌上只留一部手机：你的。",
       chant: "“今夜，穆拉德村最后一次在纯真中入睡……”",
     },
@@ -480,7 +512,11 @@ const zh: GuideCopy = {
     {
       title: "黎明与辩论法庭",
       spirit: "残酷的苏醒与思想的交锋。",
-      mech: ["宣读夜间报告：死亡、救援、汽油的气味。", "队长选择方向，轮盘为每人分配发言时间。", "点击星星 ⭐ 奖励精彩的伪装或推理。"],
+      mech: [
+        "宣读夜间报告：死亡、救援、汽油的气味。",
+        "队长选择方向，轮盘为每人分配发言时间。",
+        "点击星星 ⭐ 奖励精彩的伪装或推理。",
+      ],
       tip: "宣布死者时不带感情：公正、冷酷、如刀锋般精准。",
       chant: "“太阳升起在血染的大地上。醒来吧，看看你们的损失。”",
     },
@@ -567,10 +603,7 @@ const ar: GuideCopy = {
     {
       title: "الذروة وألقاب المجد",
       spirit: "الخاتمة الملحمية، حين تسقط الأقنعة أخيرًا.",
-      mech: [
-        "تكشف الشاشة النهائية كل البطاقات ودقة التصويت.",
-        "النجوم وشارات الشرف تتوّج الأفضل.",
-      ],
+      mech: ["تكشف الشاشة النهائية كل البطاقات ودقة التصويت.", "النجوم وشارات الشرف تتوّج الأفضل."],
       tip: "دع الطاولة تناقش خياناتها فورًا؛ هكذا تولد الأساطير.",
       chant: "«لقد قالت القرية كلمتها. فليروِ الناجون هذه الليلة إلى الأبد.»",
     },
