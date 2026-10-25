@@ -335,7 +335,7 @@ export function buildNightSteps(s: GameState): Step[] {
     });
   };
 
-  push("loup-rouge", "Loup Rouge", nk("redWolfFreezePrompt"), "one");
+  if (!first) push("loup-rouge", "Loup Rouge", nk("redWolfFreezePrompt"), "one");
 
   if (first) {
     push("voleur", "Le Voleur", "Vole le rôle d'un joueur : il devient Simple Villageois.", "one");
@@ -531,7 +531,7 @@ export function buildNightSteps(s: GameState): Step[] {
   const pyroMode = (s.initialPlayerCount ?? s.players.length) <= 10 ? "one" : "two";
   const pyro = hasRole(s, "pyromaniac");
   if (pyro) push("pyromaniac", "Pyromane", "", pyroMode, true);
-  push("alien", "Alien", "", "alien", true);
+  if (!first) push("alien", "Alien", "", "alien", true);
 
   const piperMode = (s.initialPlayerCount ?? s.players.length) <= 10 ? "one" : "two";
   const piperPrompt = piperMode === "one" ? "Enchante un joueur." : "Enchante deux joueurs.";
@@ -996,6 +996,11 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
       if (payload.yes && !infectionBlocked && s.round.attackedId && !actor.abilityUsed) {
         const victim = s.players.find((p) => p.id === s.round.attackedId);
         if (!victim?.alive) return state;
+        if (effectiveRoleId(victim) === "alien") {
+          s.reveal = nk("alienImmuneWolves");
+          s.log.push(s.reveal);
+          break;
+        }
         victim.originalRoleId = victim.roleId;
         victim.isConvertedToWolf = true;
         victim.retainsOriginalPowers = true;
@@ -1322,6 +1327,16 @@ function resolveNight(state: GameState): GameState {
     }
     s.round.attackedId = undefined;
     s.round.whiteWolfKillId = undefined;
+  }
+
+  // L'Alien est immunisé contre les loups : leur tir est perdu pour la nuit.
+  for (const key of ["attackedId", "whiteWolfKillId"] as const) {
+    const victim = s.players.find((p) => p.id === s.round[key]);
+    if (victim && effectiveRoleId(victim) === "alien") {
+      s.round[key] = undefined;
+      s.dawnSummary.push(nk("alienImmuneWolves"));
+      rep(s, nk("alienImmuneWolves"));
+    }
   }
 
   if (s.round.attackedId && s.round.attackedId === s.round.protectedId) {
