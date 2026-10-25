@@ -2,9 +2,9 @@ workflows:
   android-apk:
     name: Android APK (Mourad's Ville Omega)
     max_build_duration: 60
-    instance_type: linux
+    instance_type: linux_x2
     environment:
-      java: 21
+      java: 17
       node: 22
       vars:
         JAVA_TOOL_OPTIONS: "-Xmx4g"
@@ -15,7 +15,8 @@ workflows:
           npm install @capacitor/android @capacitor/keyboard @capacitor/assets
 
       - name: Build web assets
-        script: npm run build:mobile || npm run build
+        script: |
+          npm run build:mobile || npm run build
 
       - name: Generate fresh Android native project
         script: |
@@ -25,17 +26,20 @@ workflows:
       - name: Generate native Android icons from public folder
         script: |
           mkdir -p assets
-          cp public/icon.png assets/logo.png
-          cp public/icon.png assets/icon-only.png
-          npx @capacitor/assets generate --android
+          if [ -f "public/icon.png" ]; then
+            cp public/icon.png assets/logo.png
+            cp public/icon.png assets/icon-only.png
+            npx @capacitor/assets generate --android
+          fi
 
       - name: Set Android SDK location
-        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
       - name: Build APK
         script: |
           cd android
-          chmod +x ./gradlew
+          chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
     artifacts:
       - android/app/build/outputs/apk/**/*.apk
@@ -44,5 +48,5 @@ workflows:
         recipients:
           - kirakill25@users.noreply.github.com
         notify:
-          success: true
-          failure: true
+          success: "true"
+          failure: "true"
