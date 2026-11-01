@@ -1,4 +1,4 @@
-import { ROLES, roleImage, roleVideo } from "@/data/roles";
+import { ROLES, roleImage } from "@/data/roles";
 
 let started = false;
 
@@ -19,24 +19,5 @@ export function preloadRoleMedia(roleIds?: string[]) {
     }
   }
 
-  // Vidéos : en veille, via <link rel="prefetch"> pour ne pas bloquer le rendu.
-  const prefetchVideos = () => {
-    for (const id of ids) {
-      const src = roleVideo(id);
-      if (!src) continue;
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.as = "video";
-      link.href = src;
-      document.head.appendChild(link);
-    }
-  };
-
-  const idle = (
-    window as unknown as {
-      requestIdleCallback?: (cb: () => void) => number;
-    }
-  ).requestIdleCallback;
-  if (idle) idle(prefetchVideos);
-  else window.setTimeout(prefetchVideos, 1200);
+  // Vidéos : chargées à la demande uniquement (évite de saturer la WebView Android).
 }
