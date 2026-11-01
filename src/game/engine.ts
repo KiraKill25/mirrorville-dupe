@@ -752,6 +752,12 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
       if (target) {
         actor.roleModelId = target.id;
         s.reveal = nk("wildModel", { name: target.name });
+        // Idole déjà loup : l'Enfant Sauvage rejoint immédiatement la meute.
+        if (target.team === "WEREWOLVES" || target.isConvertedToWolf === true) {
+          actor.team = "WEREWOLVES";
+          s.reveal = nk("wildAwaken", { name: actor.name });
+          s.log.push(nk("wildAwaken", { name: actor.name }));
+        }
       }
       break;
     }
