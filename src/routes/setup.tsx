@@ -272,19 +272,27 @@ function SetupPage() {
             <h2 className="text-sm font-bold">{t("debateTimer")}</h2>
             <p className="text-xs text-muted-foreground">{t("debateTimerDesc")}</p>
           </div>
-          <input
-            type="checkbox"
-            aria-label={t("debateTimerToggle")}
-            checked={settings.isDebateTimerEnabled}
-            onChange={(event) =>
-              setSettings((s) => ({
-                ...s,
-                isDebateTimerEnabled: event.target.checked,
-              }))
-            }
+          <label
+            className="relative inline-flex h-9 w-16 shrink-0 cursor-pointer items-center"
             style={{ touchAction: "manipulation" }}
-            className="size-7 shrink-0 accent-primary"
-          />
+          >
+            <input
+              type="checkbox"
+              aria-label={t("debateTimerToggle")}
+              checked={settings.isDebateTimerEnabled}
+              onChange={(event) =>
+                setSettings((s) => ({
+                  ...s,
+                  isDebateTimerEnabled: event.target.checked,
+                }))
+              }
+              className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+            />
+            <span className="absolute inset-0 rounded-full border border-border bg-muted transition-colors duration-200 peer-checked:border-primary peer-checked:bg-primary/25 peer-checked:shadow-[0_0_14px_var(--primary)]" />
+            <span className="absolute left-1 top-1 flex size-7 items-center justify-center rounded-full bg-muted-foreground text-xs transition-transform duration-200 peer-checked:translate-x-7 peer-checked:bg-primary peer-checked:text-primary-foreground">
+              ⏳
+            </span>
+          </label>
         </div>
 
         <div hidden={!settings.isDebateTimerEnabled} className="space-y-3">

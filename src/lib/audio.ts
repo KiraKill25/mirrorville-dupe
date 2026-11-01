@@ -107,10 +107,6 @@ function installMediaGuard() {
   };
 
   // 3. Les médias ajoutés après coup sont couverts immédiatement.
-  const obs = new MutationObserver(() => {
-    if (muted) applyMasterMute();
-  });
-  obs.observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener(
     "play",
     (e) => {
