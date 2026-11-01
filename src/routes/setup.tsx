@@ -288,7 +288,7 @@ function SetupPage() {
               }
               className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
             />
-            <span className="absolute inset-0 rounded-full border border-border bg-muted transition-colors duration-200 peer-checked:border-primary peer-checked:bg-primary/25 peer-checked:shadow-[0_0_14px_hsl(var(--primary)/0.55)]" />
+            <span className="absolute inset-0 rounded-full border border-border bg-muted transition-colors duration-200 peer-checked:border-primary peer-checked:bg-primary/25 peer-checked:shadow-[0_0_14px_var(--primary)]" />
             <span className="absolute left-1 top-1 flex size-7 items-center justify-center rounded-full bg-muted-foreground text-xs transition-transform duration-200 peer-checked:translate-x-7 peer-checked:bg-primary peer-checked:text-primary-foreground">
               ⏳
             </span>
