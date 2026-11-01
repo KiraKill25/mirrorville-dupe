@@ -1,7 +1,3 @@
-import alienAsset from "@/assets/new-roles/alien.png.asset.json";
-import pyroAsset from "@/assets/new-roles/pyromaniac.png.asset.json";
-import babyAsset from "@/assets/new-roles/bebe-loup.png.asset.json";
-import redAsset from "@/assets/new-roles/loup-rouge.png.asset.json";
 import { NEW_ROLE_LOCALES } from "@/lib/locales/new-roles";
 
 export type Team = "VILLAGEOIS" | "WEREWOLVES" | "SOLO" | "LOVERS" | "DYNAMIC";
@@ -20,16 +16,9 @@ export interface RoleDef {
   videoUrl?: string;
 }
 
-const NEW_ROLE_IMAGES: Record<string, string> = {
-  alien: alienAsset.url,
-  pyromaniac: pyroAsset.url,
-  "bébé-loup": babyAsset.url,
-  "loup-rouge": redAsset.url,
-};
-
-/** Existing bundled portraits and supplied CDN portraits share one resolver. */
+/** Every role portrait is bundled locally in public/images/roles for offline use. */
 export function roleImage(id: string): string {
-  return NEW_ROLE_IMAGES[id] ?? `/images/roles/${id}.png`;
+  return `/images/roles/${id}.png`;
 }
 
 const ROLE_EMOJIS: Record<string, string> = {
