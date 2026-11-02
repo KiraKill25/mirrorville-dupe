@@ -117,7 +117,6 @@ const PlayerRow = memo(function PlayerRow({
         autoCorrect="off"
         spellCheck={false}
         enterKeyHint="done"
-        style={{ touchAction: "manipulation" }}
         onChange={(e) => setValue(e.target.value)}
         onBlur={() => onCommit(id, value)}
         placeholder={placeholder}
@@ -154,7 +153,7 @@ function SetupPage() {
       if (!el) return;
       el.style.pointerEvents = "auto";
       el.style.overflow = "";
-      el.style.touchAction = "manipulation";
+      el.style.touchAction = "";
       el.removeAttribute("inert");
       el.removeAttribute("aria-hidden");
     };
@@ -218,7 +217,6 @@ function SetupPage() {
   return (
     <main
       data-setup-screen
-      style={{ pointerEvents: "auto", touchAction: "manipulation" }}
       className="pointer-events-auto relative z-10 mx-auto min-h-screen w-full max-w-lg box-border overflow-x-hidden overflow-y-auto bg-background px-4 py-4 pb-28"
     >
       {mountError ? (
@@ -272,27 +270,30 @@ function SetupPage() {
             <h2 className="text-sm font-bold">{t("debateTimer")}</h2>
             <p className="text-xs text-muted-foreground">{t("debateTimerDesc")}</p>
           </div>
-          <label
-            className="relative inline-flex h-9 w-16 shrink-0 cursor-pointer items-center"
-            style={{ touchAction: "manipulation" }}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={settings.isDebateTimerEnabled}
+            aria-label={t("debateTimerToggle")}
+            onClick={() =>
+              setSettings((s) => ({ ...s, isDebateTimerEnabled: !s.isDebateTimerEnabled }))
+            }
+            className={`relative h-9 w-16 shrink-0 rounded-full border transition-colors duration-200 ${
+              settings.isDebateTimerEnabled
+                ? "border-primary bg-primary/25 shadow-[0_0_14px_var(--primary)]"
+                : "border-border bg-muted"
+            }`}
           >
-            <input
-              type="checkbox"
-              aria-label={t("debateTimerToggle")}
-              checked={settings.isDebateTimerEnabled}
-              onChange={(event) =>
-                setSettings((s) => ({
-                  ...s,
-                  isDebateTimerEnabled: event.target.checked,
-                }))
-              }
-              className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-            />
-            <span className="absolute inset-0 rounded-full border border-border bg-muted transition-colors duration-200 peer-checked:border-primary peer-checked:bg-primary/25 peer-checked:shadow-[0_0_14px_var(--primary)]" />
-            <span className="absolute left-1 top-1 flex size-7 items-center justify-center rounded-full bg-muted-foreground text-xs transition-transform duration-200 peer-checked:translate-x-7 peer-checked:bg-primary peer-checked:text-primary-foreground">
+            <span
+              className={`absolute left-1 top-1 flex size-7 items-center justify-center rounded-full text-xs transition-transform duration-200 ${
+                settings.isDebateTimerEnabled
+                  ? "translate-x-7 bg-primary text-primary-foreground"
+                  : "bg-muted-foreground"
+              }`}
+            >
               ⏳
             </span>
-          </label>
+          </button>
         </div>
 
         <div hidden={!settings.isDebateTimerEnabled} className="space-y-3">
@@ -323,7 +324,6 @@ function SetupPage() {
               autoComplete="off"
               min={5}
               max={600}
-              style={{ touchAction: "manipulation" }}
               aria-label={t("custom")}
               value={customTime}
               onChange={(e) => setCustomTime(e.target.value)}
