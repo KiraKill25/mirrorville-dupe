@@ -31,6 +31,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  // Mobile (APK): React is mounted inside #root, so rendering <html>/<body>
+  // creates a cyclic fiber tree that freezes the app on any input event.
+  if ((globalThis as { __MOBILE_SPA__?: boolean }).__MOBILE_SPA__) {
+    return <>{children}</>;
+  }
   return (
     <html lang="en" style={{ backgroundColor: "#000000" }}>
       <head>
