@@ -8,6 +8,9 @@ import { RouterProvider } from "@tanstack/react-router";
 import { getRouter } from "./router";
 import "./styles.css";
 
+// Signale au RootShell qu'on monte dans #root : ne pas rendre <html>/<body>.
+(globalThis as { __MOBILE_SPA__?: boolean }).__MOBILE_SPA__ = true;
+
 const router = getRouter();
 
 /**
