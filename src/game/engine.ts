@@ -47,7 +47,11 @@ export const DEATH_LABEL: Record<DeathCause, string> = {
 export interface GameEvent {
   round: number;
   phase: "NIGHT" | "DAY";
-  type: "KILL" | "CONTAMINATION" | "RESCUE";
+  type: "KILL" | "CONTAMINATION" | "RESCUE" | "ACTION";
+  /** Action tactique (bilan uniquement) : gel du Loup Rouge, essence du Pyromane. */
+  action?: "FREEZE" | "DOUSE";
+  /** Joueur à l'origine de l'action. */
+  actorId?: string;
   /** Joueur concerné. */
   name: string;
   roleId?: string;
@@ -649,7 +653,18 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
     case "loup-rouge": {
       if (!target?.alive || target.id === actor.id)
         return payload.targetId ? state : advanceNight(s);
-      if (hasPower(target)) target.frozenNight = s.night;
+      if (hasPower(target)) {
+        target.frozenNight = s.night;
+        pushEvent(s, {
+          round: s.night,
+          phase: "NIGHT",
+          type: "ACTION",
+          action: "FREEZE",
+          actorId: actor.id,
+          name: target.name,
+          roleId: target.originalRoleId ?? effectiveRoleId(target),
+        });
+      }
       s.reveal = nk(hasPower(target) ? "redWolfFrozen" : "redWolfWasted", { name: target.name });
       s.log.push(s.reveal);
       rep(s, s.reveal);
@@ -678,6 +693,15 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
         const targets = s.players.filter((p) => ids.includes(p.id));
         targets.forEach((p) => {
           p.doused = true;
+          pushEvent(s, {
+            round: s.night,
+            phase: "NIGHT",
+            type: "ACTION",
+            action: "DOUSE",
+            actorId: actor.id,
+            name: p.name,
+            roleId: p.originalRoleId ?? effectiveRoleId(p),
+          });
         });
         if (targets.length) {
           s.reveal = nk("pyroDoused", { names: targets.map((p) => p.name).join(", ") });
