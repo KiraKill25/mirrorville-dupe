@@ -344,13 +344,6 @@ export function buildNightSteps(s: GameState): Step[] {
     push("enfant-sauvage", "Enfant Sauvage", "Choisis ton modèle.", "one");
   }
 
-  if (!first)
-    push(
-      "geolier",
-      "Geôlier",
-      "Qui séquestres-tu cette nuit ? (désactive son droit de vote demain)",
-      "one",
-    );
   if (!first) push("voyante", "Voyante", "Quel joueur veux-tu sonder ?", "one");
 
   {
@@ -537,7 +530,6 @@ export function buildNightSteps(s: GameState): Step[] {
   const piperPrompt = piperMode === "one" ? "Enchante un joueur." : "Enchante deux joueurs.";
   push("joueur-de-flute", "Joueur de Flûte", piperPrompt, piperMode, true);
 
-  if (!first) push("corbeau", "Corbeau", "Sur qui déposes-tu la plume noire ?", "one", true);
   push("tavernier", "Tavernier", "À qui offers-tu un verre ?", "one", true);
 
   if (s.night === 2 || s.night === 3) {
@@ -1448,13 +1440,6 @@ function resolveNight(state: GameState): GameState {
       d.canVote = false;
     }
   }
-  if (s.round.ravenTargetId) {
-    const r = s.players.find((p) => p.id === s.round.ravenTargetId);
-    if (r) {
-      const initCount = s.initialPlayerCount ?? s.players.length;
-      r.baseVotes = initCount <= 10 ? 1 : 2;
-    }
-  }
 
   const deaths = s.players.filter((p) => !p.alive && aliveBefore.has(p.id));
   deaths.forEach((p) =>
@@ -1519,6 +1504,51 @@ function resolveDeathAction(state: GameState, targetId: string, baby: boolean): 
   const checked = checkVictory(s);
   if (checked.phase === "FIN") return checked;
   return nextNight ? startNight(checked) : checked;
+}
+
+/** Rôles qui agissent après le débat et avant le vote (à partir du jour 2). */
+export function preVoteActor(s: GameState, roleId: "geolier" | "corbeau"): Player | undefined {
+  if (s.day < 2) return undefined;
+  return s.players.find(
+    (p) =>
+      p.alive &&
+      effectiveRoleId(p) === roleId &&
+      !p.powersDisabled &&
+      !p.hasLostPower &&
+      !p.disabledNightAbility,
+  );
+}
+
+/** Nombre de voix du Corbeau : 2 si le village de départ comptait plus de 10 joueurs. */
+export function ravenVoteCount(s: GameState): number {
+  return (s.initialPlayerCount ?? s.players.length) <= 10 ? 1 : 2;
+}
+
+/** Geôlier (avant le vote) : la cible perd son droit de vote pour ce vote. */
+export function applyJailor(state: GameState, targetId?: string): GameState {
+  const s = clone(state);
+  const target = targetId ? s.players.find((p) => p.id === targetId && p.alive) : undefined;
+  if (!target) return s;
+  if (target.id === s.round.previousJailedId) return state;
+  s.round.jailedId = target.id;
+  target.canVote = false;
+  s.log.push(nk("jailLocked", { name: target.name }));
+  return s;
+}
+
+/** Corbeau (avant le vote) : chaque cible reçoit 1 voix ; une même cible peut recevoir les 2. */
+export function applyRaven(state: GameState, targetIds: string[]): GameState {
+  const s = clone(state);
+  const max = ravenVoteCount(s);
+  targetIds.slice(0, max).forEach((id) => {
+    const t = s.players.find((p) => p.id === id && p.alive);
+    if (t) {
+      t.baseVotes = (t.baseVotes ?? 0) + 1;
+      s.round.ravenTargetId = t.id;
+      s.log.push(nk("ravenVotes", { name: t.name }));
+    }
+  });
+  return s;
 }
 
 export function goToVote(state: GameState): GameState {
