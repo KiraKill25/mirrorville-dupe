@@ -64,6 +64,10 @@ import {
   effectiveRoleId,
   foxReveal,
   goToVote,
+  preVoteActor,
+  ravenVoteCount,
+  applyJailor,
+  applyRaven,
   resolveBabyWolf,
   resolveHunter,
   skipVote,
@@ -102,6 +106,7 @@ function GamePage() {
     null,
   );
   const [debateDoneDay, setDebateDoneDay] = useState(0);
+  const [preVoteOpen, setPreVoteOpen] = useState(false);
   const [direction, setDirection] = useState<RotationDirection>("clockwise");
   const [voteDirection, setVoteDirection] = useState<RotationDirection>("clockwise");
   const [captainVotesFirst, setCaptainVotesFirst] = useState(true);
@@ -388,7 +393,21 @@ function GamePage() {
           onProceed={() => {
             setVoteAnnounce(false);
             setDebateDoneDay(state.day);
-            updateState(goToVote(state));
+            if (preVoteActor(state, "geolier") || preVoteActor(state, "corbeau")) {
+              setPreVoteOpen(true);
+            } else {
+              updateState(goToVote(state));
+            }
+          }}
+        />
+      )}
+
+      {preVoteOpen && (
+        <PreVotePanel
+          state={state}
+          onDone={(next) => {
+            setPreVoteOpen(false);
+            updateState(goToVote(next));
           }}
         />
       )}
@@ -1674,6 +1693,93 @@ function HunterPanel({ state, onDone }: { state: GameState; onDone: (s: GameStat
       >
         {t("hunterFireConfirm")}
       </button>
+    </div>
+  );
+}
+
+const PRE_VOTE_TEXT: Record<string, Record<string, string>> = {
+  fr: { title: "Avant le vote", jail: "Geôlier : qui prives-tu de vote ?", raven: "Corbeau : désigne {n} joueur(s) (tu peux répartir tes voix)", skip: "Passer", confirm: "Valider et voter" },
+  en: { title: "Before the vote", jail: "Jailor: who loses their vote?", raven: "Raven: pick {n} player(s) (you may split your votes)", skip: "Skip", confirm: "Confirm and vote" },
+  ar: { title: "قبل التصويت", jail: "السجّان: من تحرمه من التصويت؟", raven: "الغراب: اختر {n} لاعب/لاعبين (يمكنك تقسيم أصواتك)", skip: "تخطي", confirm: "تأكيد والتصويت" },
+  es: { title: "Antes del voto", jail: "Carcelero: ¿quién pierde su voto?", raven: "Cuervo: elige {n} jugador(es) (puedes repartir tus votos)", skip: "Saltar", confirm: "Confirmar y votar" },
+  pt: { title: "Antes da votação", jail: "Carcereiro: quem perde o voto?", raven: "Corvo: escolha {n} jogador(es) (pode dividir seus votos)", skip: "Pular", confirm: "Confirmar e votar" },
+  ru: { title: "Перед голосованием", jail: "Тюремщик: кто лишается голоса?", raven: "Ворон: выберите {n} игрока(ов) (можно разделить голоса)", skip: "Пропустить", confirm: "Подтвердить и голосовать" },
+  zh: { title: "投票之前", jail: "狱卒：谁失去投票权？", raven: "乌鸦：选择 {n} 名玩家（可分配票数）", skip: "跳过", confirm: "确认并投票" },
+  de: { title: "Vor der Abstimmung", jail: "Kerkermeister: Wer verliert seine Stimme?", raven: "Rabe: wähle {n} Spieler (du kannst deine Stimmen aufteilen)", skip: "Überspringen", confirm: "Bestätigen und abstimmen" },
+};
+
+function PreVotePanel({ state, onDone }: { state: GameState; onDone: (s: GameState) => void }) {
+  const { lang } = useI18n();
+  const tx = PRE_VOTE_TEXT[lang] ?? PRE_VOTE_TEXT.fr;
+  const jailor = preVoteActor(state, "geolier");
+  const raven = preVoteActor(state, "corbeau");
+  const ravenMax = ravenVoteCount(state);
+  const [jailId, setJailId] = useState<string | null>(null);
+  const [ravenIds, setRavenIds] = useState<string[]>([]);
+  const alive = state.players.filter((p) => p.alive);
+  const toggleRaven = (id: string) =>
+    setRavenIds((cur) =>
+      cur.includes(id)
+        ? cur.filter((x) => x !== id)
+        : ravenMax === 1
+          ? [id]
+          : cur.length < ravenMax
+            ? [...cur, id]
+            : [cur[1], id],
+    );
+  const confirm = () => {
+    let next = state;
+    if (jailor && jailId) next = applyJailor(next, jailId);
+    if (raven && ravenIds.length) next = applyRaven(next, ravenIds);
+    onDone(next);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/90 p-4">
+      <div className="surface-card neon-ring mx-auto w-full max-w-md space-y-5 rounded-3xl p-5">
+        <h2 className="text-center font-horror text-2xl font-black text-primary">{tx.title}</h2>
+        {jailor && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <img src={roleImage("geolier")} alt="" className="size-9 rounded-xl object-cover" />
+              <p className="text-sm font-bold">{tx.jail}</p>
+            </div>
+            <PlayerPicker
+              players={alive.filter((p) => p.id !== state.round.previousJailedId)}
+              selected={jailId ? [jailId] : []}
+              onToggle={(id) => setJailId((c) => (c === id ? null : id))}
+              accent="arcane"
+            />
+          </div>
+        )}
+        {raven && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <img src={roleImage("corbeau")} alt="" className="size-9 rounded-xl object-cover" />
+              <p className="text-sm font-bold">{tx.raven.replace("{n}", String(ravenMax))}</p>
+            </div>
+            <PlayerPicker
+              players={alive}
+              selected={ravenIds}
+              onToggle={toggleRaven}
+              accent="crimson"
+            />
+          </div>
+        )}
+        <div className="flex gap-2">
+          <button
+            onClick={() => onDone(state)}
+            className="flex-1 rounded-full border border-border py-3 text-xs font-semibold text-muted-foreground"
+          >
+            {tx.skip}
+          </button>
+          <button
+            onClick={confirm}
+            className="flex-1 rounded-full bg-primary py-3 font-bold text-primary-foreground transition active:scale-95"
+          >
+            {tx.confirm}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

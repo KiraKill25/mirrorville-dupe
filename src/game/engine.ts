@@ -1532,7 +1532,6 @@ export function applyJailor(state: GameState, targetId?: string): GameState {
   if (target.id === s.round.previousJailedId) return state;
   s.round.jailedId = target.id;
   target.canVote = false;
-  s.log.push(nk("jailLocked", { name: target.name }));
   return s;
 }
 
@@ -1545,7 +1544,6 @@ export function applyRaven(state: GameState, targetIds: string[]): GameState {
     if (t) {
       t.baseVotes = (t.baseVotes ?? 0) + 1;
       s.round.ravenTargetId = t.id;
-      s.log.push(nk("ravenVotes", { name: t.name }));
     }
   });
   return s;
