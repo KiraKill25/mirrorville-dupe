@@ -1535,14 +1535,16 @@ export function applyJailor(state: GameState, targetId?: string): GameState {
   return s;
 }
 
-/** Corbeau (avant le vote) : chaque cible reçoit 1 voix ; une même cible peut recevoir les 2. */
+/** Corbeau (avant le vote) : 2 cibles = 1 voix chacune ; 1 seule cible = toutes ses voix. */
 export function applyRaven(state: GameState, targetIds: string[]): GameState {
   const s = clone(state);
   const max = ravenVoteCount(s);
-  targetIds.slice(0, max).forEach((id) => {
+  const ids = [...new Set(targetIds)].slice(0, max);
+  const each = ids.length === 1 ? max : 1;
+  ids.forEach((id) => {
     const t = s.players.find((p) => p.id === id && p.alive);
     if (t) {
-      t.baseVotes = (t.baseVotes ?? 0) + 1;
+      t.baseVotes = (t.baseVotes ?? 0) + each;
       s.round.ravenTargetId = t.id;
     }
   });
