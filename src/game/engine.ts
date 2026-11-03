@@ -99,6 +99,8 @@ export interface Player {
   stars: number;
   /** Pénalités de votes accumulées. */
   penaltyVotes?: number;
+  /** Total cumulé des sanctions de débat sur toute la partie (bilan). */
+  totalPenalties?: number;
   /** Renard : confident désigné lors de la dernière nuit d'information. */
   confidantId?: string;
   frozenNight?: number;
@@ -1906,6 +1908,7 @@ export function addDebatePenalty(state: GameState, playerId: string): GameState 
   const p = s.players.find((x) => x.id === playerId);
   if (p) {
     p.penaltyVotes = (p.penaltyVotes ?? 0) + 1;
+    p.totalPenalties = (p.totalPenalties ?? 0) + 1;
   }
   return s;
 }

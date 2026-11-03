@@ -136,7 +136,13 @@ function GamePage() {
       updateState({
         ...state,
         players: state.players.map((x) =>
-          x.id === playerId ? { ...x, penaltyVotes: Math.max(0, (x.penaltyVotes ?? 0) - 1) } : x,
+          x.id === playerId
+            ? {
+                ...x,
+                penaltyVotes: Math.max(0, (x.penaltyVotes ?? 0) - 1),
+                totalPenalties: Math.max(0, (x.totalPenalties ?? 0) - 1),
+              }
+            : x,
         ),
       });
       toast.info(t("penaltyRemovedToast", { name: p.name }));
