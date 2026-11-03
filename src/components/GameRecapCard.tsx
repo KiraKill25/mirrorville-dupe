@@ -155,7 +155,7 @@ export function GameRecapCard({
       : "accent";
 
   // Frise : évènements du moteur regroupés par tour.
-  const events: GameEvent[] = state.events ?? [];
+  const events: GameEvent[] = (state.events ?? []).filter((e) => e.type !== "ACTION");
   const rounds = [...new Set(events.map((e) => e.round))].sort((a, b) => a - b);
 
   const allEliminated = voteHistory.flatMap((r) => r.eliminated);
