@@ -14,3 +14,4 @@
 - Uploaded new-role portraits resolve through CDN pointer imports in roleImage; every role video lives in public/videos/roles/{id}.mp4 so the APK plays them offline.
 
 - Engine rule tests use a separate Vitest configuration with the same source alias, keeping the app runtime plugins out of unit tests.
+- End-of-game scoring lives in the pure module src/game/evaluation.ts (tested), and both the recap MVP and the evaluation screen read from it so rankings never disagree.
