@@ -6,6 +6,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MuteButton } from "@/components/MuteButton";
 import { RecapWolfEmblem } from "@/components/RecapWolfEmblem";
 import { EvaluationSection } from "@/components/EvaluationSection";
+import { buildScorecards } from "@/game/evaluation";
 
 import { useI18n, type TranslationKey } from "@/lib/i18n";
 import { useNarrate } from "@/hooks/use-narrate";
@@ -136,7 +137,10 @@ export function GameRecapCard({
   const wolves = state.winnerTeam === "WOLVES";
   const survivors = state.players.filter((p) => p.alive).length;
   const duration = state.day ?? 1;
-  const { player: mvp, score: mvpScore } = computeMvp(state.players, state.winnerTeam);
+  const topCard = buildScorecards(state, voteHistory)[0];
+  const { player: mvp, score: mvpScore } = topCard
+    ? { player: topCard.player, score: topCard.score }
+    : computeMvp(state.players, state.winnerTeam);
 
   const victoryKey: TranslationKey = wolves
     ? state.players.some((p) => p.isConvertedToWolf)
