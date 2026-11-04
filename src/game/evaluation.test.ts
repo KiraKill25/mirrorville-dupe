@@ -11,7 +11,11 @@ describe("Evaluation", () => {
     const s = game(["simple-villageois", "pyromaniac", "loup-garou"]);
     expect(isEnemy(s.players[0], s.players[1])).toBe(true);
     const cards = buildScorecards(s, [
-      { day: 1, ballots: [{ voterId: s.players[0].id, targets: [s.players[1].id] }], eliminated: [] },
+      {
+        day: 1,
+        ballots: [{ voterId: s.players[0].id, targets: [s.players[1].id] }],
+        eliminated: [],
+      },
     ]);
     expect(card(cards, s.players[0].id).accuracy).toBe(100);
   });
@@ -35,7 +39,10 @@ describe("Evaluation", () => {
   });
 
   it("gives the winning team 15 points", () => {
-    const s = { ...game(["simple-villageois", "loup-garou", "voyante"]), winnerTeam: "VILLAGE" as const };
+    const s = {
+      ...game(["simple-villageois", "loup-garou", "voyante"]),
+      winnerTeam: "VILLAGE" as const,
+    };
     const v = card(buildScorecards(s, []), s.players[0].id);
     const w = card(buildScorecards(s, []), s.players[1].id);
     expect(v.won).toBe(true);
