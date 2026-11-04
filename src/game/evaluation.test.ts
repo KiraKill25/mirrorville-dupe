@@ -23,11 +23,11 @@ describe("Evaluation", () => {
   it("removes 6 points per debate sanction, counted across the whole game", () => {
     const s0 = game(["simple-villageois", "loup-garou", "voyante"]);
     const id = s0.players[0].id;
-    const before = card(buildScorecards(s0, []), id).score;
+    const before = card(buildScorecards(s0, []), id).pillars.debate;
     const s2 = addDebatePenalty(addDebatePenalty(s0, id), id);
     const after = card(buildScorecards(s2, []), id);
     expect(after.penalties).toBe(2);
-    expect(before - after.score).toBe(12);
+    expect(before - after.pillars.debate).toBe(12);
   });
 
   it("adds 8 points per GM star", () => {
