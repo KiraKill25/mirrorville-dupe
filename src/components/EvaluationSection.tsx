@@ -22,13 +22,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { effectiveRoleId, type GameState } from "@/game/engine";
-import {
-  buildScorecards,
-  campRating,
-  isWolf,
-  type Camp,
-  type Scorecard,
-} from "@/game/evaluation";
+import { buildScorecards, campRating, isWolf, type Camp, type Scorecard } from "@/game/evaluation";
 import { EVAL_LOCALES, type EvalKey } from "@/lib/locales/evaluation";
 import type { VoteRecord } from "@/components/GameRecapCard";
 
@@ -116,21 +110,161 @@ export function EvaluationSection({
     return low < 50 ? list.filter((c) => c.accuracy === low) : [];
   };
   const badges: BadgeDef[] = [
-    { id: "mm", label: t("badgeMastermind"), desc: t("badgeMastermindDesc"), icon: Award, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.score) },
-    { id: "eye", label: t("badgeEagleEye"), desc: t("badgeEagleEyeDesc"), icon: Eye, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.accuracy, 50, voted) },
-    { id: "oscar", label: t("badgeOscar"), desc: t("badgeOscarDesc"), icon: Drama, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.deception, 1, (c) => c.camp !== "VILLAGE") },
-    { id: "guard", label: t("badgeGuardian"), desc: t("badgeGuardianDesc"), icon: Shield, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.rescues) },
-    { id: "ice", label: t("badgeIceCold"), desc: t("badgeIceColdDesc"), icon: Target, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.clutch) },
-    { id: "orator", label: e("orator"), desc: e("oratorDesc"), icon: Mic, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.stars, 1, (c) => c.penalties === 0) },
-    { id: "rap", label: e("rapSheet"), desc: e("rapSheetDesc"), icon: Gavel, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.penalties, 2) },
-    { id: "fire", label: e("inferno"), desc: e("infernoDesc"), icon: Flame, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.enemyKills, 2, (c) => (c.player.originalRoleId ?? effectiveRoleId(c.player)) === "pyromaniac") },
-    { id: "grip", label: e("iceGrip"), desc: e("iceGripDesc"), icon: Snowflake, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.freezes) },
-    { id: "justice", label: e("justice"), desc: e("justiceDesc"), icon: Crosshair, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.enemyKills, 1, (c) => c.friendlyKills === 0 && c.camp === "VILLAGE") },
-    { id: "martyr", label: e("martyr"), desc: e("martyrDesc"), icon: HeartHandshake, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.goodVotes, 2, (c) => c.won && !c.player.alive && c.accuracy >= 60) },
-    { id: "follow", label: t("badgeBandwagoner"), desc: t("badgeBandwagonerDesc"), icon: Users, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.followerCount, 2, (c) => c.leaderCount === 0) },
-    { id: "blind", label: t("badgeBlindSniper"), desc: t("badgeBlindSniperDesc"), icon: Crosshair, tone: "text-muted-foreground border-border", holders: worst() },
-    { id: "starW", label: t("badgeStarWolf"), desc: t("badgeStarWolfDesc"), icon: Star, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.stars, 1, (c) => isWolf(c.player)) },
-    { id: "sui", label: t("badgeSuicidal"), desc: t("badgeSuicidalDesc"), icon: Skull, tone: "text-destructive border-destructive/50", holders: cards.filter((c) => c.suicided) },
+    {
+      id: "mm",
+      label: t("badgeMastermind"),
+      desc: t("badgeMastermindDesc"),
+      icon: Award,
+      tone: "text-gold border-gold/50",
+      holders: best(cards, (c) => c.score),
+    },
+    {
+      id: "eye",
+      label: t("badgeEagleEye"),
+      desc: t("badgeEagleEyeDesc"),
+      icon: Eye,
+      tone: "text-primary border-primary/50",
+      holders: best(cards, (c) => c.accuracy, 50, voted),
+    },
+    {
+      id: "oscar",
+      label: t("badgeOscar"),
+      desc: t("badgeOscarDesc"),
+      icon: Drama,
+      tone: "text-destructive border-destructive/50",
+      holders: best(
+        cards,
+        (c) => c.deception,
+        1,
+        (c) => c.camp !== "VILLAGE",
+      ),
+    },
+    {
+      id: "guard",
+      label: t("badgeGuardian"),
+      desc: t("badgeGuardianDesc"),
+      icon: Shield,
+      tone: "text-primary border-primary/50",
+      holders: best(cards, (c) => c.rescues),
+    },
+    {
+      id: "ice",
+      label: t("badgeIceCold"),
+      desc: t("badgeIceColdDesc"),
+      icon: Target,
+      tone: "text-primary border-primary/50",
+      holders: best(cards, (c) => c.clutch),
+    },
+    {
+      id: "orator",
+      label: e("orator"),
+      desc: e("oratorDesc"),
+      icon: Mic,
+      tone: "text-gold border-gold/50",
+      holders: best(
+        cards,
+        (c) => c.stars,
+        1,
+        (c) => c.penalties === 0,
+      ),
+    },
+    {
+      id: "rap",
+      label: e("rapSheet"),
+      desc: e("rapSheetDesc"),
+      icon: Gavel,
+      tone: "text-destructive border-destructive/50",
+      holders: best(cards, (c) => c.penalties, 2),
+    },
+    {
+      id: "fire",
+      label: e("inferno"),
+      desc: e("infernoDesc"),
+      icon: Flame,
+      tone: "text-accent border-accent/50",
+      holders: best(
+        cards,
+        (c) => c.enemyKills,
+        2,
+        (c) => (c.player.originalRoleId ?? effectiveRoleId(c.player)) === "pyromaniac",
+      ),
+    },
+    {
+      id: "grip",
+      label: e("iceGrip"),
+      desc: e("iceGripDesc"),
+      icon: Snowflake,
+      tone: "text-primary border-primary/50",
+      holders: best(cards, (c) => c.freezes),
+    },
+    {
+      id: "justice",
+      label: e("justice"),
+      desc: e("justiceDesc"),
+      icon: Crosshair,
+      tone: "text-gold border-gold/50",
+      holders: best(
+        cards,
+        (c) => c.enemyKills,
+        1,
+        (c) => c.friendlyKills === 0 && c.camp === "VILLAGE",
+      ),
+    },
+    {
+      id: "martyr",
+      label: e("martyr"),
+      desc: e("martyrDesc"),
+      icon: HeartHandshake,
+      tone: "text-accent border-accent/50",
+      holders: best(
+        cards,
+        (c) => c.goodVotes,
+        2,
+        (c) => c.won && !c.player.alive && c.accuracy >= 60,
+      ),
+    },
+    {
+      id: "follow",
+      label: t("badgeBandwagoner"),
+      desc: t("badgeBandwagonerDesc"),
+      icon: Users,
+      tone: "text-accent border-accent/50",
+      holders: best(
+        cards,
+        (c) => c.followerCount,
+        2,
+        (c) => c.leaderCount === 0,
+      ),
+    },
+    {
+      id: "blind",
+      label: t("badgeBlindSniper"),
+      desc: t("badgeBlindSniperDesc"),
+      icon: Crosshair,
+      tone: "text-muted-foreground border-border",
+      holders: worst(),
+    },
+    {
+      id: "starW",
+      label: t("badgeStarWolf"),
+      desc: t("badgeStarWolfDesc"),
+      icon: Star,
+      tone: "text-destructive border-destructive/50",
+      holders: best(
+        cards,
+        (c) => c.stars,
+        1,
+        (c) => isWolf(c.player),
+      ),
+    },
+    {
+      id: "sui",
+      label: t("badgeSuicidal"),
+      desc: t("badgeSuicidalDesc"),
+      icon: Skull,
+      tone: "text-destructive border-destructive/50",
+      holders: cards.filter((c) => c.suicided),
+    },
   ].filter((b) => b.holders.length > 0);
 
   const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean) as Scorecard[];
@@ -162,7 +296,9 @@ export function EvaluationSection({
               transition={{ ...spring, delay: 0.35 + i * 0.1 }}
               className="flex w-1/3 min-w-0 flex-col items-center gap-1"
             >
-              <span className={`rounded-full border px-2 text-[10px] font-black ${GRADE_TONE[c.grade]}`}>
+              <span
+                className={`rounded-full border px-2 text-[10px] font-black ${GRADE_TONE[c.grade]}`}
+              >
                 {c.grade}
               </span>
               <p className="w-full truncate text-center text-xs font-black">
@@ -195,7 +331,9 @@ export function EvaluationSection({
 
       {/* Affrontement des camps */}
       <div className="space-y-2">
-        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("evalFactions")}</p>
+        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
+          {t("evalFactions")}
+        </p>
         <p className="text-xs font-bold text-foreground">{verdict}</p>
         {camps.map((c) => (
           <div key={c.camp} className="space-y-1">
@@ -217,7 +355,9 @@ export function EvaluationSection({
 
       {badges.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("badgesTitle")}</p>
+          <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
+            {t("badgesTitle")}
+          </p>
           <div className="grid gap-2 sm:grid-cols-2">
             {badges.map((b, i) => {
               const Icon = b.icon;
@@ -246,7 +386,9 @@ export function EvaluationSection({
 
       {/* Fiches détaillées */}
       <div className="space-y-2">
-        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("evalScorecards")}</p>
+        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
+          {t("evalScorecards")}
+        </p>
         <ul className="space-y-2">
           {cards.map((c, i) => {
             const isOpen = open === c.player.id;
@@ -287,11 +429,15 @@ export function EvaluationSection({
                       )}
                     </span>
                     <span className="flex items-center gap-2">
-                      <span className={`rounded-full border px-1.5 text-[10px] font-black ${GRADE_TONE[c.grade]}`}>
+                      <span
+                        className={`rounded-full border px-1.5 text-[10px] font-black ${GRADE_TONE[c.grade]}`}
+                      >
                         {c.grade}
                       </span>
                       <b className="tabular-nums">{c.score}</b>
-                      <ChevronDown className={`size-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                      <ChevronDown
+                        className={`size-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      />
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
@@ -319,7 +465,9 @@ export function EvaluationSection({
                     <div className="grid grid-cols-4 gap-1 text-center">
                       {pillars.map((p) => (
                         <div key={p.k} className="rounded-xl bg-input/40 p-1.5">
-                          <p className={`text-sm font-black tabular-nums ${p.v < 0 ? "text-destructive" : "text-foreground"}`}>
+                          <p
+                            className={`text-sm font-black tabular-nums ${p.v < 0 ? "text-destructive" : "text-foreground"}`}
+                          >
                             {p.v}
                           </p>
                           <p className="truncate text-[9px] text-muted-foreground">{e(p.k)}</p>
@@ -348,13 +496,18 @@ export function EvaluationSection({
                         </span>
                       )}
                       {stats.map((s) => (
-                        <span key={s.k} className="rounded-full bg-input px-2 py-0.5 text-muted-foreground">
+                        <span
+                          key={s.k}
+                          className="rounded-full bg-input px-2 py-0.5 text-muted-foreground"
+                        >
                           {e(s.k)} ×{s.v}
                         </span>
                       ))}
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{e("ballots")}</p>
+                      <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
+                        {e("ballots")}
+                      </p>
                       {c.ballots.length === 0 ? (
                         <p className="text-[11px] text-muted-foreground">{e("noBallots")}</p>
                       ) : (
@@ -364,7 +517,8 @@ export function EvaluationSection({
                               key={idx}
                               className={`rounded-full px-2 py-0.5 text-[10px] ${b.good ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}
                             >
-                              {e("day", { n: b.day })} → {nameOf(b.targetId)} ({b.good ? e("good") : e("bad")})
+                              {e("day", { n: b.day })} → {nameOf(b.targetId)} (
+                              {b.good ? e("good") : e("bad")})
                             </li>
                           ))}
                         </ul>
