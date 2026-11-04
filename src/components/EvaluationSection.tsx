@@ -1,175 +1,50 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Crown,
-  Target,
-  Trophy,
-  TrendingDown,
   Award,
-  Eye,
-  Drama,
-  Shield,
-  Snowflake,
-  Skull,
-  Users,
+  ChevronDown,
   Crosshair,
+  Crown,
+  Drama,
+  Eye,
+  Flame,
+  Gavel,
+  HeartHandshake,
+  Mic,
+  Shield,
+  Skull,
+  Snowflake,
   Star,
+  Target,
+  TrendingDown,
+  Trophy,
+  Users,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { effectiveRoleId, type GameState, type Player } from "@/game/engine";
+import { effectiveRoleId, type GameState } from "@/game/engine";
+import {
+  buildScorecards,
+  campRating,
+  isWolf,
+  type Camp,
+  type Scorecard,
+} from "@/game/evaluation";
+import { EVAL_LOCALES, type EvalKey } from "@/lib/locales/evaluation";
 import type { VoteRecord } from "@/components/GameRecapCard";
+
+export { buildScorecards, type Scorecard } from "@/game/evaluation";
 
 const spring = { type: "spring" as const, stiffness: 220, damping: 24 };
 
-export interface Scorecard {
-  player: Player;
-  /** Points de vote posés sur des joueurs du camp adverse / total posé. */
-  accuracy: number;
-  votePoints: number;
-  /** Efficacité du rôle (nuits utiles : sauvetages, kills réussis, survie). */
-  roleEfficiency: number;
-  /** A initié le premier vote sur la cible finalement éliminée. */
-  leaderCount: number;
-  followerCount: number;
-  /** Villageois éliminés au vote sur lesquels ce loup a voté. */
-  deception: number;
-  /** Votes justes posés alors que 4 joueurs ou moins étaient en vie. */
-  clutch: number;
-  /** Sauvetages provoqués par le rôle d'origine. */
-  rescues: number;
-  /** Éliminé pour suicide / révélation d'identité. */
-  suicided: boolean;
-  /** Étoiles attribuées par le meneur pendant les débats. */
-  stars: number;
-  score: number;
-}
-
-const isWolf = (p: Player) => p.team === "WEREWOLVES" || !!p.isConvertedToWolf;
-
-/**
- * Évaluation post-partie 100 % basée sur les journaux enregistrés :
- * bulletins de vote (dont votes doubles / séparés du capitaine) et évènements de nuit.
- */
-export function buildScorecards(state: GameState, voteHistory: VoteRecord[]): Scorecard[] {
-  const wolfIds = new Set(state.players.filter(isWolf).map((p) => p.id));
-  const events = state.events ?? [];
-  const totalPlayers = state.players.length;
-
-  return state.players
-    .map((p) => {
-      let good = 0;
-      let total = 0;
-      let leaderCount = 0;
-      let followerCount = 0;
-      let deception = 0;
-      let clutch = 0;
-      let roundIndex = 0;
-
-      for (const round of voteHistory) {
-        roundIndex += 1;
-        /* Nombre de joueurs encore en vie à ce tour (approximation par la frise des votes). */
-        const aliveAtRound =
-          totalPlayers -
-          voteHistory.slice(0, roundIndex - 1).reduce((n, r) => n + r.eliminated.length, 0);
-        const ballots = round.ballots ?? [];
-        const mine = ballots.filter((b) => b.voterId === p.id);
-        for (const b of mine) {
-          for (const tid of b.targets) {
-            total += 1;
-            const targetIsWolf = wolfIds.has(tid);
-            const useful = wolfIds.has(p.id) ? !targetIsWolf : targetIsWolf;
-            if (useful) good += 1;
-            if (useful && aliveAtRound <= 4) clutch += 1;
-          }
-        }
-        /* Tromperie : un loup pousse un villageois qui finit éliminé. */
-        if (wolfIds.has(p.id)) {
-          for (const e of round.eliminated) {
-            if (wolfIds.has(e.id)) continue;
-            if (mine.some((b) => b.targets.includes(e.id))) deception += 1;
-          }
-        }
-        // Meneur : premier bulletin posé sur le joueur finalement éliminé.
-        const elimIds = round.eliminated.map((e) => e.id);
-        const pushers = ballots.filter((b) => b.targets.some((tid) => elimIds.includes(tid)));
-        if (pushers.length > 0) {
-          if (pushers[0].voterId === p.id) leaderCount += 1;
-          else if (pushers.some((b) => b.voterId === p.id)) followerCount += 1;
-        }
-      }
-
-      // Efficacité du rôle depuis la frise : sauvetages provoqués, survie, capitanat.
-      const rid = p.originalRoleId ?? effectiveRoleId(p);
-      const rescues = events.filter((e) => e.type === "RESCUE" && e.bySavior === rid).length;
-      const kills = events.filter(
-        (e) => e.type === "KILL" && e.cause === "WITCH_POISON" && wolfIds.has(p.id) === false,
-      ).length;
-      const suicided = events.some(
-        (e) => e.type === "KILL" && e.cause === "SUICIDE_REVEAL" && e.name === p.name,
-      );
-      let roleEfficiency = rescues * 30 + Math.min(kills, 2) * 15;
-      if (p.alive) roleEfficiency += 25;
-      if (p.isCaptain) roleEfficiency += 10;
-      roleEfficiency = Math.min(100, roleEfficiency);
-
-      const accuracy = total > 0 ? Math.round((good / total) * 100) : 0;
-      const stars = p.stars ?? 0;
-      const score = Math.round(
-        accuracy * 0.5 +
-          roleEfficiency * 0.4 +
-          leaderCount * 6 +
-          followerCount * 2 +
-          deception * 5 +
-          clutch * 8 +
-          stars * 10 -
-          (suicided ? 30 : 0) +
-          (p.alive ? 8 : 0),
-      );
-
-      return {
-        player: p,
-        accuracy,
-        votePoints: total,
-        roleEfficiency,
-        leaderCount,
-        followerCount,
-        deception,
-        clutch,
-        rescues,
-        suicided,
-        stars,
-        score,
-      };
-    })
-    .sort((a, b) => b.score - a.score);
-}
-
-/** Note de camp : moyenne des scores individuels du camp. */
-function factionRating(cards: Scorecard[], pick: (p: Player) => boolean) {
-  const list = cards.filter((c) => pick(c.player));
-  if (!list.length) return null;
-  return Math.round(list.reduce((s, c) => s + c.score, 0) / list.length);
-}
-
 type BadgeDef = {
   id: string;
-  key:
-    | "badgeMastermind"
-    | "badgeEagleEye"
-    | "badgeOscar"
-    | "badgeGuardian"
-    | "badgeBandwagoner"
-    | "badgeBlindSniper"
-    | "badgeIceCold"
-    | "badgeStarTown"
-    | "badgeStarWolf"
-    | "badgeSuicidal";
-  descKey: string;
+  label: string;
+  desc: string;
   icon: typeof Award;
   tone: string;
   holders: Scorecard[];
 };
 
-/** Meilleur porteur selon une métrique, uniquement si la valeur est significative. */
 function best(
   cards: Scorecard[],
   value: (c: Scorecard) => number,
@@ -182,119 +57,19 @@ function best(
   return list.filter((c) => value(c) === top);
 }
 
-/** Blasons attribués uniquement à partir des données enregistrées. */
-export function buildBadges(cards: Scorecard[]): BadgeDef[] {
-  const voted = (c: Scorecard) => c.votePoints > 0;
-  const worstAccuracy = () => {
-    const list = cards.filter(voted);
-    if (!list.length) return [];
-    const low = Math.min(...list.map((c) => c.accuracy));
-    return low < 50 ? list.filter((c) => c.accuracy === low) : [];
-  };
-  const defs: BadgeDef[] = [
-    {
-      id: "mastermind",
-      key: "badgeMastermind",
-      descKey: "badgeMastermindDesc",
-      icon: Award,
-      tone: "text-gold border-gold/50",
-      holders: best(cards, (c) => c.score, 1),
-    },
-    {
-      id: "eagleEye",
-      key: "badgeEagleEye",
-      descKey: "badgeEagleEyeDesc",
-      icon: Eye,
-      tone: "text-primary border-primary/50",
-      holders: best(cards, (c) => c.accuracy, 50, voted),
-    },
-    {
-      id: "oscar",
-      key: "badgeOscar",
-      descKey: "badgeOscarDesc",
-      icon: Drama,
-      tone: "text-destructive border-destructive/50",
-      holders: best(
-        cards,
-        (c) => c.deception,
-        1,
-        (c) => isWolf(c.player),
-      ),
-    },
-    {
-      id: "guardian",
-      key: "badgeGuardian",
-      descKey: "badgeGuardianDesc",
-      icon: Shield,
-      tone: "text-emerald-300 border-emerald-400/50",
-      holders: best(cards, (c) => c.rescues, 1),
-    },
-    {
-      id: "iceCold",
-      key: "badgeIceCold",
-      descKey: "badgeIceColdDesc",
-      icon: Snowflake,
-      tone: "text-sky-300 border-sky-400/50",
-      holders: best(cards, (c) => c.clutch, 1),
-    },
-    {
-      id: "bandwagoner",
-      key: "badgeBandwagoner",
-      descKey: "badgeBandwagonerDesc",
-      icon: Users,
-      tone: "text-accent border-accent/50",
-      holders: best(
-        cards,
-        (c) => c.followerCount,
-        2,
-        (c) => c.leaderCount === 0,
-      ),
-    },
-    {
-      id: "blindSniper",
-      key: "badgeBlindSniper",
-      descKey: "badgeBlindSniperDesc",
-      icon: Crosshair,
-      tone: "text-muted-foreground border-border",
-      holders: worstAccuracy(),
-    },
-    {
-      id: "starTown",
-      key: "badgeStarTown",
-      descKey: "badgeStarTownDesc",
-      icon: Star,
-      tone: "text-gold border-gold/50",
-      holders: best(
-        cards,
-        (c) => c.stars,
-        1,
-        (c) => !isWolf(c.player),
-      ),
-    },
-    {
-      id: "starWolf",
-      key: "badgeStarWolf",
-      descKey: "badgeStarWolfDesc",
-      icon: Star,
-      tone: "text-destructive border-destructive/50",
-      holders: best(
-        cards,
-        (c) => c.stars,
-        1,
-        (c) => isWolf(c.player),
-      ),
-    },
-    {
-      id: "suicidal",
-      key: "badgeSuicidal",
-      descKey: "badgeSuicidalDesc",
-      icon: Skull,
-      tone: "text-destructive border-destructive/50",
-      holders: cards.filter((c) => c.suicided),
-    },
-  ];
-  return defs.filter((d) => d.holders.length > 0);
-}
+const GRADE_TONE: Record<Scorecard["grade"], string> = {
+  S: "text-gold border-gold/60 bg-gold/10",
+  A: "text-primary border-primary/60 bg-primary/10",
+  B: "text-accent border-accent/60 bg-accent/10",
+  C: "text-muted-foreground border-border bg-input/40",
+  D: "text-destructive border-destructive/50 bg-destructive/10",
+};
+
+const CAMP_BAR: Record<Camp, string> = {
+  WOLVES: "bg-destructive",
+  VILLAGE: "bg-primary",
+  SOLO: "bg-accent",
+};
 
 export function EvaluationSection({
   state,
@@ -303,94 +78,137 @@ export function EvaluationSection({
   state: GameState;
   voteHistory: VoteRecord[];
 }) {
-  const { t, roleName } = useI18n();
+  const { t, roleName, lang } = useI18n();
+  const L = EVAL_LOCALES[lang as keyof typeof EVAL_LOCALES] ?? EVAL_LOCALES.fr;
+  const e = (k: EvalKey, vars?: Record<string, string | number>) =>
+    Object.entries(vars ?? {}).reduce((s, [k2, v]) => s.replace(`{${k2}}`, String(v)), L[k]);
+  const [open, setOpen] = useState<string | null>(null);
+
   const cards = buildScorecards(state, voteHistory);
   if (cards.length === 0) return null;
-
-  const mvp = cards[0];
+  const nameOf = (id: string) => state.players.find((p) => p.id === id)?.name ?? "?";
   const lvp = cards[cards.length - 1];
-  const factions = [
-    {
-      label: t("factionWolves"),
-      value: factionRating(cards, isWolf),
-      bar: "bg-destructive",
-    },
-    {
-      label: t("factionVillage"),
-      value: factionRating(cards, (p) => !isWolf(p) && p.team === "VILLAGEOIS"),
-      bar: "bg-primary",
-    },
-    {
-      label: t("factionSolo"),
-      value: factionRating(cards, (p) => p.team === "SOLO" || p.team === "LOVERS"),
-      bar: "bg-accent",
-    },
-  ].filter((f) => f.value !== null);
+  const podium = cards.slice(0, 3);
+
+  const camps = (
+    [
+      { camp: "WOLVES" as const, label: t("factionWolves") },
+      { camp: "VILLAGE" as const, label: t("factionVillage") },
+      { camp: "SOLO" as const, label: t("factionSolo") },
+    ] as const
+  )
+    .map((c) => ({ ...c, value: campRating(cards, c.camp) }))
+    .filter((c) => c.value !== null);
+  const maxCamp = Math.max(1, ...camps.map((c) => c.value ?? 0));
+  const verdict =
+    state.winnerTeam === "WOLVES"
+      ? e("verdictWolves")
+      : state.winnerTeam === "VILLAGE"
+        ? e("verdictVillage")
+        : e("verdictSolo");
 
   const hasBallots = voteHistory.some((r) => (r.ballots ?? []).length > 0);
-  const badges = buildBadges(cards);
+  const voted = (c: Scorecard) => c.votePoints > 0;
+  const worst = () => {
+    const list = cards.filter(voted);
+    if (!list.length) return [];
+    const low = Math.min(...list.map((c) => c.accuracy));
+    return low < 50 ? list.filter((c) => c.accuracy === low) : [];
+  };
+  const badges: BadgeDef[] = [
+    { id: "mm", label: t("badgeMastermind"), desc: t("badgeMastermindDesc"), icon: Award, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.score) },
+    { id: "eye", label: t("badgeEagleEye"), desc: t("badgeEagleEyeDesc"), icon: Eye, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.accuracy, 50, voted) },
+    { id: "oscar", label: t("badgeOscar"), desc: t("badgeOscarDesc"), icon: Drama, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.deception, 1, (c) => c.camp !== "VILLAGE") },
+    { id: "guard", label: t("badgeGuardian"), desc: t("badgeGuardianDesc"), icon: Shield, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.rescues) },
+    { id: "ice", label: t("badgeIceCold"), desc: t("badgeIceColdDesc"), icon: Target, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.clutch) },
+    { id: "orator", label: e("orator"), desc: e("oratorDesc"), icon: Mic, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.stars, 1, (c) => c.penalties === 0) },
+    { id: "rap", label: e("rapSheet"), desc: e("rapSheetDesc"), icon: Gavel, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.penalties, 2) },
+    { id: "fire", label: e("inferno"), desc: e("infernoDesc"), icon: Flame, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.enemyKills, 2, (c) => (c.player.originalRoleId ?? effectiveRoleId(c.player)) === "pyromaniac") },
+    { id: "grip", label: e("iceGrip"), desc: e("iceGripDesc"), icon: Snowflake, tone: "text-primary border-primary/50", holders: best(cards, (c) => c.freezes) },
+    { id: "justice", label: e("justice"), desc: e("justiceDesc"), icon: Crosshair, tone: "text-gold border-gold/50", holders: best(cards, (c) => c.enemyKills, 1, (c) => c.friendlyKills === 0 && c.camp === "VILLAGE") },
+    { id: "martyr", label: e("martyr"), desc: e("martyrDesc"), icon: HeartHandshake, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.goodVotes, 2, (c) => c.won && !c.player.alive && c.accuracy >= 60) },
+    { id: "follow", label: t("badgeBandwagoner"), desc: t("badgeBandwagonerDesc"), icon: Users, tone: "text-accent border-accent/50", holders: best(cards, (c) => c.followerCount, 2, (c) => c.leaderCount === 0) },
+    { id: "blind", label: t("badgeBlindSniper"), desc: t("badgeBlindSniperDesc"), icon: Crosshair, tone: "text-muted-foreground border-border", holders: worst() },
+    { id: "starW", label: t("badgeStarWolf"), desc: t("badgeStarWolfDesc"), icon: Star, tone: "text-destructive border-destructive/50", holders: best(cards, (c) => c.stars, 1, (c) => isWolf(c.player)) },
+    { id: "sui", label: t("badgeSuicidal"), desc: t("badgeSuicidalDesc"), icon: Skull, tone: "text-destructive border-destructive/50", holders: cards.filter((c) => c.suicided) },
+  ].filter((b) => b.holders.length > 0);
+
+  const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean) as Scorecard[];
+  const height = (c: Scorecard) => (c === podium[0] ? "h-24" : c === podium[1] ? "h-16" : "h-12");
+  const medal = (c: Scorecard) =>
+    c === podium[0] ? "text-gold" : c === podium[1] ? "text-foreground" : "text-accent";
 
   return (
     <motion.section
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...spring, delay: 0.28 }}
-      className="surface-card space-y-4 rounded-3xl p-4"
+      className="surface-card space-y-5 rounded-3xl p-4"
     >
       <p className="text-[11px] tracking-[0.3em] text-primary uppercase">{t("evalTitle")}</p>
-
       {!hasBallots && <p className="text-xs text-muted-foreground">{t("evalNoData")}</p>}
 
-      <div className="grid gap-2">
-        {[
-          { card: mvp, key: "evalMvp" as const, icon: Trophy, tone: "text-gold" },
-          { card: lvp, key: "evalLvp" as const, icon: TrendingDown, tone: "text-destructive" },
-        ].map(({ card, key, icon: Icon, tone }) => (
-          <div
-            key={key}
-            className="flex items-center justify-between gap-2 rounded-2xl border border-border p-3"
-          >
-            <div className="min-w-0">
-              <p
-                className={`flex items-center gap-1 text-[10px] tracking-widest uppercase ${tone}`}
+      {/* Podium */}
+      <div className="space-y-2">
+        <p className="flex items-center gap-1 text-[10px] tracking-widest text-gold uppercase">
+          <Trophy className="size-3" /> {e("podium")}
+        </p>
+        <div className="flex items-end justify-center gap-2">
+          {podiumOrder.map((c, i) => (
+            <motion.div
+              key={c.player.id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: 0.35 + i * 0.1 }}
+              className="flex w-1/3 min-w-0 flex-col items-center gap-1"
+            >
+              <span className={`rounded-full border px-2 text-[10px] font-black ${GRADE_TONE[c.grade]}`}>
+                {c.grade}
+              </span>
+              <p className="w-full truncate text-center text-xs font-black">
+                {c.player.name}
+                {c.player.isCaptain && <Crown className="ms-1 inline size-3 text-accent" />}
+              </p>
+              <p className="w-full truncate text-center text-[10px] text-muted-foreground">
+                {roleName(c.player.originalRoleId ?? effectiveRoleId(c.player))}
+              </p>
+              <div
+                className={`flex w-full flex-col items-center justify-center rounded-t-2xl border border-border bg-input/40 ${height(c)}`}
               >
-                <Icon className="size-3" />
-                {t(key)}
-              </p>
-              <p className="truncate text-sm font-black">
-                {card.player.name}
-                {card.player.isCaptain && <Crown className="ms-1 inline size-3 text-accent" />}
-              </p>
-              <p className="truncate text-[11px] text-muted-foreground">
-                {roleName(card.player.originalRoleId ?? effectiveRoleId(card.player))}
-              </p>
-            </div>
-            <div className="text-end">
-              <p className={`text-xl font-black ${tone}`}>{card.score}</p>
-              <p className="text-[10px] text-muted-foreground">
-                {t("evalAccuracy")} {card.accuracy}%
-              </p>
-            </div>
+                <span className={`text-lg font-black tabular-nums ${medal(c)}`}>{c.score}</span>
+                <span className="text-[10px] text-muted-foreground">#{cards.indexOf(c) + 1}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        {cards.length > 3 && (
+          <div className="flex items-center justify-between rounded-2xl border border-destructive/40 p-2 text-xs">
+            <span className="flex items-center gap-1 text-destructive">
+              <TrendingDown className="size-3" /> {t("evalLvp")}
+            </span>
+            <span className="truncate font-bold">
+              {lvp.player.name} · {lvp.score}
+            </span>
           </div>
-        ))}
+        )}
       </div>
 
+      {/* Affrontement des camps */}
       <div className="space-y-2">
-        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
-          {t("evalFactions")}
-        </p>
-        {factions.map((f) => (
-          <div key={f.label} className="space-y-1">
+        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("evalFactions")}</p>
+        <p className="text-xs font-bold text-foreground">{verdict}</p>
+        {camps.map((c) => (
+          <div key={c.camp} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{f.label}</span>
-              <span className="font-bold text-foreground">{f.value}</span>
+              <span className="text-muted-foreground">{c.label}</span>
+              <span className="font-bold text-foreground tabular-nums">{c.value}</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-input">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: `${Math.min(100, f.value ?? 0)}%` }}
+                animate={{ width: `${Math.round(((c.value ?? 0) / maxCamp) * 100)}%` }}
                 transition={{ duration: 0.9, delay: 0.3 }}
-                className={`h-full rounded-full ${f.bar}`}
+                className={`h-full rounded-full ${CAMP_BAR[c.camp]}`}
               />
             </div>
           </div>
@@ -399,9 +217,7 @@ export function EvaluationSection({
 
       {badges.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
-            {t("badgesTitle")}
-          </p>
+          <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("badgesTitle")}</p>
           <div className="grid gap-2 sm:grid-cols-2">
             {badges.map((b, i) => {
               const Icon = b.icon;
@@ -410,19 +226,17 @@ export function EvaluationSection({
                   key={b.id}
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ ...spring, delay: 0.3 + i * 0.05 }}
+                  transition={{ ...spring, delay: 0.3 + i * 0.04 }}
                   className={`space-y-1 rounded-2xl border bg-input/30 p-3 ${b.tone}`}
                 >
                   <p className="flex items-center gap-1.5 text-[10px] font-black tracking-widest uppercase">
                     <Icon className="size-3.5" />
-                    {t(b.key)}
+                    {b.label}
                   </p>
                   <p className="truncate text-sm font-black text-foreground">
                     {b.holders.map((h) => h.player.name).join(", ")}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {t(b.descKey as "badgeMastermindDesc")}
-                  </p>
+                  <p className="text-[10px] text-muted-foreground">{b.desc}</p>
                 </motion.div>
               );
             })}
@@ -430,70 +244,137 @@ export function EvaluationSection({
         </div>
       )}
 
+      {/* Fiches détaillées */}
       <div className="space-y-2">
-        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">
-          {t("evalScorecards")}
-        </p>
+        <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t("evalScorecards")}</p>
         <ul className="space-y-2">
-          {cards.map((c, i) => (
-            <li
-              key={c.player.id}
-              className="space-y-1 rounded-2xl border border-border p-3 text-xs"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] font-black text-primary tabular-nums">
-                    {i + 1}
-                  </span>
-                  <span className="truncate font-bold">{c.player.name}</span>
-                  {c.player.isCaptain && <Crown className="size-3 text-accent" />}
-                </span>
-                <b className="tabular-nums">{c.score}</b>
-              </div>
-              <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
-                <span className="rounded-full bg-input px-2 py-0.5">
-                  <Target className="me-1 inline size-2.5" />
-                  {t("evalAccuracy")} {c.accuracy}%
-                </span>
-                <span className="rounded-full bg-input px-2 py-0.5">
-                  {t("evalRoleEff")} {c.roleEfficiency}%
-                </span>
-                <span className="rounded-full bg-input px-2 py-0.5">
-                  {t("evalVotesCast", { n: c.votePoints })}
-                </span>
-                {c.leaderCount > 0 && (
-                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-primary">
-                    {t("evalLeader")} ×{c.leaderCount}
-                  </span>
+          {cards.map((c, i) => {
+            const isOpen = open === c.player.id;
+            const pillars = [
+              { k: "pillarRole" as const, v: c.pillars.role },
+              { k: "pillarVotes" as const, v: c.pillars.votes },
+              { k: "pillarDebate" as const, v: c.pillars.debate },
+              { k: "pillarStatus" as const, v: c.pillars.status },
+            ];
+            const stats = [
+              { k: "rescues" as const, v: c.rescues },
+              { k: "kills" as const, v: c.enemyKills },
+              { k: "packKills" as const, v: c.packKills },
+              { k: "friendly" as const, v: c.friendlyKills },
+              { k: "freezes" as const, v: c.freezes },
+              { k: "douses" as const, v: c.douses },
+              { k: "penalties" as const, v: c.penalties },
+            ].filter((s) => s.v > 0);
+            return (
+              <li key={c.player.id} className="rounded-2xl border border-border text-xs">
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : c.player.id)}
+                  aria-expanded={isOpen}
+                  className="w-full space-y-1 p-3 text-start"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] font-black text-primary tabular-nums">
+                        {i + 1}
+                      </span>
+                      <span className="truncate font-bold">{c.player.name}</span>
+                      {c.player.isCaptain && <Crown className="size-3 text-accent" />}
+                      {c.won && (
+                        <span className="rounded-full bg-gold/15 px-1.5 text-[9px] font-black text-gold uppercase">
+                          {e("winner")}
+                        </span>
+                      )}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <span className={`rounded-full border px-1.5 text-[10px] font-black ${GRADE_TONE[c.grade]}`}>
+                        {c.grade}
+                      </span>
+                      <b className="tabular-nums">{c.score}</b>
+                      <ChevronDown className={`size-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
+                    <span className="rounded-full bg-input px-2 py-0.5">
+                      {roleName(c.player.originalRoleId ?? effectiveRoleId(c.player))}
+                    </span>
+                    <span className="rounded-full bg-input px-2 py-0.5">
+                      <Target className="me-1 inline size-2.5" />
+                      {t("evalAccuracy")} {c.accuracy}%
+                    </span>
+                    {c.stars > 0 && (
+                      <span className="rounded-full bg-gold/15 px-2 py-0.5 text-gold">
+                        {t("starsEarned", { n: c.stars })}
+                      </span>
+                    )}
+                    {c.penalties > 0 && (
+                      <span className="rounded-full bg-destructive/15 px-2 py-0.5 text-destructive">
+                        ⚠️ {c.penalties}
+                      </span>
+                    )}
+                  </div>
+                </button>
+                {isOpen && (
+                  <div className="space-y-3 border-t border-border p-3">
+                    <div className="grid grid-cols-4 gap-1 text-center">
+                      {pillars.map((p) => (
+                        <div key={p.k} className="rounded-xl bg-input/40 p-1.5">
+                          <p className={`text-sm font-black tabular-nums ${p.v < 0 ? "text-destructive" : "text-foreground"}`}>
+                            {p.v}
+                          </p>
+                          <p className="truncate text-[9px] text-muted-foreground">{e(p.k)}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-1 text-[10px]">
+                      {c.leaderCount > 0 && (
+                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-primary">
+                          {t("evalLeader")} ×{c.leaderCount}
+                        </span>
+                      )}
+                      {c.followerCount > 0 && (
+                        <span className="rounded-full bg-accent/15 px-2 py-0.5 text-accent">
+                          {t("evalFollower")} ×{c.followerCount}
+                        </span>
+                      )}
+                      {c.deception > 0 && (
+                        <span className="rounded-full bg-destructive/15 px-2 py-0.5 text-destructive">
+                          {t("evalDeception")} ×{c.deception}
+                        </span>
+                      )}
+                      {c.clutch > 0 && (
+                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-primary">
+                          {t("evalClutch")} ×{c.clutch}
+                        </span>
+                      )}
+                      {stats.map((s) => (
+                        <span key={s.k} className="rounded-full bg-input px-2 py-0.5 text-muted-foreground">
+                          {e(s.k)} ×{s.v}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{e("ballots")}</p>
+                      {c.ballots.length === 0 ? (
+                        <p className="text-[11px] text-muted-foreground">{e("noBallots")}</p>
+                      ) : (
+                        <ul className="flex flex-wrap gap-1">
+                          {c.ballots.map((b, idx) => (
+                            <li
+                              key={idx}
+                              className={`rounded-full px-2 py-0.5 text-[10px] ${b.good ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}
+                            >
+                              {e("day", { n: b.day })} → {nameOf(b.targetId)} ({b.good ? e("good") : e("bad")})
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
                 )}
-                {c.followerCount > 0 && (
-                  <span className="rounded-full bg-accent/15 px-2 py-0.5 text-accent">
-                    {t("evalFollower")} ×{c.followerCount}
-                  </span>
-                )}
-                {c.deception > 0 && (
-                  <span className="rounded-full bg-destructive/15 px-2 py-0.5 text-destructive">
-                    {t("evalDeception")} ×{c.deception}
-                  </span>
-                )}
-                {c.clutch > 0 && (
-                  <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-sky-300">
-                    {t("evalClutch")} ×{c.clutch}
-                  </span>
-                )}
-                {c.stars > 0 && (
-                  <span className="rounded-full bg-gold/15 px-2 py-0.5 text-gold">
-                    {t("starsEarned", { n: c.stars })}
-                  </span>
-                )}
-                {c.suicided && (
-                  <span className="rounded-full bg-destructive/20 px-2 py-0.5 text-destructive">
-                    {t("badgeSuicidal")}
-                  </span>
-                )}
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </motion.section>
