@@ -733,6 +733,17 @@ export function submitStep(state: GameState, payload: StepPayload): GameState {
       }
       s.log.push(s.reveal);
       rep(s, s.reveal);
+      // L'Alien peut enchaîner plusieurs devinettes la même nuit tant qu'il vit.
+      if (actor.alive) {
+        if (s.babyWolfPending?.length || s.hunterPending) {
+          s.deathResumePhase = s.phase;
+          s.phase = "EVENEMENT_MORT";
+          return s;
+        }
+        const checked = checkVictory(s);
+        if (checked.phase === "FIN") return checked;
+        return s;
+      }
       break;
     }
     case "marionnettiste": {
@@ -1274,6 +1285,8 @@ function killPlayer(s: GameState, id: string, cause: DeathCause) {
     }
   }
 
+  const byAlien = cause === "ALIEN";
+
   if (
     effectiveRoleId(p) === "ancien" &&
     powerAvailable(s, p) &&
@@ -1299,11 +1312,11 @@ function killPlayer(s: GameState, id: string, cause: DeathCause) {
     if (other) killPlayer(s, other.id, "HEARTBREAK");
   }
 
-  if (effectiveRoleId(p) === "bébé-loup" && !p.revengeUsed && powerAvailable(s, p)) {
+  if (!byAlien && effectiveRoleId(p) === "bébé-loup" && !p.revengeUsed && powerAvailable(s, p)) {
     s.babyWolfPending = [...(s.babyWolfPending ?? []), p.id];
   }
 
-  if (effectiveRoleId(p) === "chasseur" && powerAvailable(s, p)) {
+  if (!byAlien && effectiveRoleId(p) === "chasseur" && powerAvailable(s, p)) {
     s.hunterPending = p.id;
   }
 }

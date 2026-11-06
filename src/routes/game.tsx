@@ -1107,7 +1107,11 @@ function NightPanel({
             <div className="flex gap-2">
               <Button
                 disabled={sel.length !== 1 || !guessRole}
-                onClick={() => send({ targetId: sel[0], guessedRoleId: guessRole })}
+                onClick={() => {
+                  send({ targetId: sel[0], guessedRoleId: guessRole });
+                  setSel([]);
+                  setGuessRole("");
+                }}
                 className="flex-1 rounded-full bg-primary py-3 font-bold text-primary-foreground disabled:opacity-40"
               >
                 {t("validate")}

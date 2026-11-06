@@ -129,11 +129,14 @@ export function VoteWheel({
     (p) => !p.immuneToDayVote && (!inTieBreak || tieSubset.includes(p.id)),
   );
 
+  // Revote après égalité : les voix du Corbeau sont retirées (le Geôlier reste actif).
+  const isRevoteRound = revoteRound > 0 || inTieBreak;
+
   /** Décompte vivant : voix de base + points de pénalité de débat + points des bulletins. */
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
     for (const p of alive)
-      c[p.id] = (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
+      c[p.id] = (isRevoteRound ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
     for (const targets of Object.values(votes)) {
       for (const targetId of targets) {
         if (targetId === ABSTAIN) continue;
@@ -141,7 +144,7 @@ export function VoteWheel({
       }
     }
     return c;
-  }, [votes, alive, inTieBreak, tieSubset]);
+  }, [votes, alive, isRevoteRound]);
 
   const currentVoter = voters[idx];
   const isCaptainTurn = !!currentVoter && currentVoter.id === state.villageCaptainId;
@@ -162,7 +165,7 @@ export function VoteWheel({
     const updatedCounts: Record<string, number> = {};
     for (const p of alive) {
       updatedCounts[p.id] =
-        (inTieBreak && !tieSubset.includes(p.id) ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
+        (isRevoteRound ? 0 : p.baseVotes) + (p.penaltyVotes ?? 0);
     }
     for (const tList of Object.values(nextVotes)) {
       for (const tId of tList) {
