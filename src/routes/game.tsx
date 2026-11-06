@@ -853,7 +853,7 @@ function NightPanel({
   }, [step?.key]);
 
   useEffect(() => {
-    if (!step) return;
+    if (!step) return undefined;
     const WOLF_ROLES = [
       "loup-garou",
       "loup-noir",
