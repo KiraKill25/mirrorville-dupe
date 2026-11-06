@@ -175,3 +175,31 @@ describe("new role rules", () => {
     expect(out.players.every((p) => p.alive)).toBe(true);
   });
 });
+
+describe("alien rules v2", () => {
+  it("can chain guesses in one night; correct guesses keep chances", () => {
+    const s = game2(["alien", "voyante", "sorciere", "loup-garou", "simple-villageois"]);
+    const a = submitStep(at(s, "alien"), { targetId: s.players[1].id, guessedRoleId: "voyante" });
+    expect(a.players[1].alive).toBe(false);
+    expect(a.players[0].alienErrors ?? 0).toBe(0);
+    expect(a.steps[a.stepIndex].roleId).toBe("alien");
+    const b = submitStep(a, { targetId: s.players[4].id, guessedRoleId: "voyante" });
+    expect(b.players[0].alienErrors).toBe(1);
+    expect(b.steps[b.stepIndex].roleId).toBe("alien");
+  });
+  it("hunter killed by alien gets no shot", () => {
+    const s = game2(["alien", "chasseur", "loup-garou", "simple-villageois", "simple-villageois"]);
+    const out = submitStep(at(s, "alien"), { targetId: s.players[1].id, guessedRoleId: "chasseur" });
+    expect(out.hunterPending).toBeUndefined();
+  });
+  it("baby wolf killed by alien gets no revenge", () => {
+    const s = game2(["alien", "bébé-loup", "loup-garou", "simple-villageois", "simple-villageois"]);
+    const out = submitStep(at(s, "alien"), { targetId: s.players[1].id, guessedRoleId: "bébé-loup" });
+    expect(out.babyWolfPending ?? []).toEqual([]);
+  });
+  it("elder killed by alien keeps village powers", () => {
+    const s = game2(["alien", "ancien", "voyante", "loup-garou", "simple-villageois"]);
+    const out = submitStep(at(s, "alien"), { targetId: s.players[1].id, guessedRoleId: "ancien" });
+    expect(out.players[2].powersDisabled ?? false).toBe(false);
+  });
+});
