@@ -44,7 +44,7 @@ import { useI18n } from "@/lib/i18n";
 import { useNarrate } from "@/hooks/use-narrate";
 import { nk } from "@/lib/narration";
 import { NightReportCard } from "@/components/NightReportCard";
-import { clearBgm, playCheer, playWolfHowl, startBgm } from "@/lib/audio";
+import { clearBgm, playCheer, playWolfHowl, speakRole, startBgm } from "@/lib/audio";
 import {
   clearGame,
   loadGame,
