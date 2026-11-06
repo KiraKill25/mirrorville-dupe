@@ -874,6 +874,7 @@ function NightPanel({
       }, 1200);
       return () => window.clearTimeout(id);
     }
+    return undefined;
   }, [step?.key]);
 
   if (!step) {
