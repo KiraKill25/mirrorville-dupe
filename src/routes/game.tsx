@@ -835,6 +835,16 @@ function NightPanel({
       "bébé-loup",
     ];
     if (WOLF_ROLES.includes(step.roleId)) playWolfHowl();
+    if (step.mode === "wolves") {
+      const id = window.setTimeout(() => {
+        try {
+          speakRole(WOLF_CALL[lang] ?? WOLF_CALL.fr, SPEECH_LANG[lang] ?? "fr-FR");
+        } catch (e) {
+          console.error(e);
+        }
+      }, 1200);
+      return () => window.clearTimeout(id);
+    }
   }, [step?.key]);
 
   if (!step) {
@@ -1723,6 +1733,10 @@ function HunterPanel({ state, onDone }: { state: GameState; onDone: (s: GameStat
     </div>
   );
 }
+
+const SPEECH_LANG: Record<string, string> = {
+  fr: "fr-FR", en: "en-US", ar: "ar-SA", es: "es-ES", pt: "pt-PT", ru: "ru-RU", zh: "zh-CN", de: "de-DE",
+};
 
 const WOLF_CALL: Record<string, string> = {
   fr: "Les Loups-Garous se réveillent, se reconnaissent en silence et désignent ensemble leur victime !",
