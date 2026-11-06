@@ -44,7 +44,7 @@ import { useI18n } from "@/lib/i18n";
 import { useNarrate } from "@/hooks/use-narrate";
 import { nk } from "@/lib/narration";
 import { NightReportCard } from "@/components/NightReportCard";
-import { clearBgm, playCheer, playWolfHowl, startBgm } from "@/lib/audio";
+import { clearBgm, playCheer, playWolfHowl, speakRole, startBgm } from "@/lib/audio";
 import {
   clearGame,
   loadGame,
@@ -232,8 +232,16 @@ function GamePage() {
     !state.captainSuccessionPending &&
     state.phase !== "EVENEMENT_MORT";
 
+  // Le rapport de nuit passe avant la succession du Capitaine mort pendant la nuit.
   const needsNightReport =
-    !isNight && state.phase === "AUBE" && reportDay !== state.day && overlayFree;
+    !isNight &&
+    state.phase === "AUBE" &&
+    reportDay !== state.day &&
+    !state.reveal &&
+    !transition &&
+    !victims;
+  const successionWaitsForReport =
+    !!state.captainSuccessionPending && state.phase === "AUBE" && reportDay !== state.day;
   const needsDebateSetup =
     !isNight &&
     state.phase === "AUBE" &&
@@ -424,7 +432,7 @@ function GamePage() {
         ) : (
           <HunterPanel state={state} onDone={updateState} />
         )
-      ) : state.captainSuccessionPending ? (
+      ) : state.captainSuccessionPending && !successionWaitsForReport ? (
         <CaptainSuccessionPanel state={state} onDone={setState} />
       ) : state.phase === "AUBE" ? (
         <DawnPanel
@@ -493,12 +501,14 @@ function GamePage() {
         )}
       </section>
 
-      <section className="surface-card rounded-2xl p-4">
-        <h2 className="mb-2 text-xs font-bold tracking-widest text-primary uppercase">
-          {t("village", { n: state.players.filter((p) => p.alive).length })}
-        </h2>
-        <RoleList players={state.players} revealAll />
-      </section>
+      {!(isNight && currentStep(state)) && (
+        <section className="surface-card rounded-2xl p-4">
+          <h2 className="mb-2 text-xs font-bold tracking-widest text-primary uppercase">
+            {t("village", { n: state.players.filter((p) => p.alive).length })}
+          </h2>
+          <RoleList players={state.players} revealAll />
+        </section>
+      )}
     </main>
   );
 }
@@ -736,10 +746,13 @@ function PlayerPicker({
   marks?: Record<string, React.ReactNode>;
   disabledIds?: string[];
 }) {
-  const { t } = useI18n();
+  const { t, roleName } = useI18n();
   return (
     <div className="grid grid-cols-2 gap-2">
       {players.map((p) => {
+        const rid = p.originalRoleId ?? effectiveRoleId(p);
+        const wolfSide = p.team === "WEREWOLVES" || p.isConvertedToWolf;
+        const solo = ROLE_BY_ID[rid]?.team === "SOLO";
         const off = disabledIds?.includes(p.id) ?? false;
         return (
           <button
@@ -758,9 +771,33 @@ function PlayerPicker({
                 <Crown className="size-3.5" />
               </span>
             )}
-            <span className="flex items-center justify-center gap-1.5">
+            <span className="flex flex-wrap items-center justify-center gap-1 font-semibold">
               {p.name}
               {marks?.[p.id]}
+              {p.isConvertedToWolf && (
+                <span className="rounded bg-destructive/20 px-1 text-[9px] font-bold text-destructive uppercase">
+                  {t("wolfTag")}
+                </span>
+              )}
+              {p.doused && <span aria-label={t("fuelStatus")}>🔥</span>}
+              {p.frozenNight && <span aria-label={t("frozenStatus")}>❄️</span>}
+              {effectiveRoleId(p) === "alien" && (
+                <span className="rounded bg-accent/20 px-1 text-[9px] font-bold text-accent">
+                  {3 - (p.alienErrors ?? 0)}/3
+                </span>
+              )}
+              {(p.penaltyVotes ?? 0) > 0 && (
+                <span className="rounded bg-amber-500/20 px-1 text-[9px] font-bold text-amber-500">
+                  +{p.penaltyVotes}
+                </span>
+              )}
+            </span>
+            <span className="mt-0.5 flex items-center justify-center gap-1 text-[11px] text-muted-foreground">
+              <span
+                className={`size-1.5 rounded-full ${wolfSide ? "bg-destructive" : solo ? "bg-accent" : "bg-primary"}`}
+              />
+              {roleName(rid)}
+              {p.isConvertedToWolf && t("converted")}
             </span>
           </button>
         );
@@ -780,7 +817,7 @@ function NightPanel({
   onUndo?: () => void;
   canUndo?: boolean;
 }) {
-  const { t, prompt, roleName } = useI18n();
+  const { t, prompt, roleName, lang } = useI18n();
   const narrate = useNarrate();
   const step = currentStep(state);
   const [sel, setSel] = useState<string[]>([]);
@@ -816,7 +853,7 @@ function NightPanel({
   }, [step?.key]);
 
   useEffect(() => {
-    if (!step) return;
+    if (!step) return undefined;
     const WOLF_ROLES = [
       "loup-garou",
       "loup-noir",
@@ -827,6 +864,17 @@ function NightPanel({
       "bébé-loup",
     ];
     if (WOLF_ROLES.includes(step.roleId)) playWolfHowl();
+    if (step.mode === "wolves") {
+      const id = window.setTimeout(() => {
+        try {
+          speakRole(WOLF_CALL[lang] ?? WOLF_CALL.fr, SPEECH_LANG[lang] ?? "fr-FR");
+        } catch (e) {
+          console.error(e);
+        }
+      }, 1200);
+      return () => window.clearTimeout(id);
+    }
+    return undefined;
   }, [step?.key]);
 
   if (!step) {
@@ -936,6 +984,9 @@ function NightPanel({
       ? `${prompt(step.roleId)} ${t("pyroLimit", { n: step.mode === "two" ? 2 : 1 })}`
       : prompt(step.roleId) || narrate(step.prompt);
   const stepTitle = `${roleName(step.roleId)}${step.soloKill ? t("soloPackSuffix") : ""}`;
+  // Appel collectif de la meute : illustration de groupe + annonce rituelle.
+  const isPackCall = step.mode === "wolves";
+  const wolfCall = WOLF_CALL[lang] ?? WOLF_CALL.fr;
 
   const renardVague: string[] = [];
   if (step.mode === "renard") {
@@ -975,7 +1026,7 @@ function NightPanel({
     <div className="surface-card animate-rise-in neon-ring overflow-hidden rounded-3xl">
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
-          src={roleImage(step.roleId)}
+          src={isPackCall ? "/images/wolf-pack.jpg" : roleImage(step.roleId)}
           alt={t("stepWakeAlt", { role: stepTitle })}
           width={640}
           height={640}
@@ -985,9 +1036,15 @@ function NightPanel({
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
         <p className="absolute bottom-3 left-4 text-lg font-black text-primary">{stepTitle}</p>
         <div className="absolute right-3 bottom-3 flex items-center gap-2">
-          <SpeakButton text={stepTitle} />
+          <SpeakButton text={isPackCall ? wolfCall : stepTitle} />
         </div>
       </div>
+
+      {isPackCall && (
+        <div className="mx-5 mt-4 rounded-2xl border border-primary/40 bg-primary/10 p-3 text-center">
+          <p className="text-sm font-bold text-primary">🐺 {wolfCall}</p>
+        </div>
+      )}
 
       <div className="space-y-4 p-5">
         <div className="space-y-1 rounded-2xl border border-primary/30 bg-primary/5 p-3">
@@ -1706,6 +1763,21 @@ function HunterPanel({ state, onDone }: { state: GameState; onDone: (s: GameStat
     </div>
   );
 }
+
+const SPEECH_LANG: Record<string, string> = {
+  fr: "fr-FR", en: "en-US", ar: "ar-SA", es: "es-ES", pt: "pt-PT", ru: "ru-RU", zh: "zh-CN", de: "de-DE",
+};
+
+const WOLF_CALL: Record<string, string> = {
+  fr: "Les Loups-Garous se réveillent, se reconnaissent en silence et désignent ensemble leur victime !",
+  en: "Werewolves, awaken, recognise each other in silence and choose your victim together!",
+  ar: "تستيقظ الذئاب، تتعرف على بعضها في صمت وتختار ضحيتها معاً!",
+  es: "¡Los Hombres Lobo despiertan, se reconocen en silencio y eligen juntos a su víctima!",
+  pt: "Os Lobisomens despertam, reconhecem-se em silêncio e escolhem juntos a sua vítima!",
+  ru: "Оборотни просыпаются, молча узнают друг друга и вместе выбирают жертву!",
+  zh: "狼人们醒来，默默相认，一起选择今晚的猎物！",
+  de: "Die Werwölfe erwachen, erkennen sich schweigend und wählen gemeinsam ihr Opfer!",
+};
 
 const PRE_VOTE_TEXT: Record<string, Record<string, string>> = {
   fr: { title: "Avant le vote", jail: "Geôlier : qui prives-tu de vote ?", raven: "Corbeau : désigne {n} joueur(s) (tu peux répartir tes voix)", skip: "Passer", confirm: "Valider et voter" },
