@@ -744,10 +744,13 @@ function PlayerPicker({
   marks?: Record<string, React.ReactNode>;
   disabledIds?: string[];
 }) {
-  const { t } = useI18n();
+  const { t, roleName } = useI18n();
   return (
     <div className="grid grid-cols-2 gap-2">
       {players.map((p) => {
+        const rid = p.originalRoleId ?? effectiveRoleId(p);
+        const wolfSide = p.team === "WEREWOLVES" || p.isConvertedToWolf;
+        const solo = ROLE_BY_ID[rid]?.team === "SOLO";
         const off = disabledIds?.includes(p.id) ?? false;
         return (
           <button
@@ -766,9 +769,33 @@ function PlayerPicker({
                 <Crown className="size-3.5" />
               </span>
             )}
-            <span className="flex items-center justify-center gap-1.5">
+            <span className="flex flex-wrap items-center justify-center gap-1 font-semibold">
               {p.name}
               {marks?.[p.id]}
+              {p.isConvertedToWolf && (
+                <span className="rounded bg-destructive/20 px-1 text-[9px] font-bold text-destructive uppercase">
+                  {t("wolfTag")}
+                </span>
+              )}
+              {p.doused && <span aria-label={t("fuelStatus")}>🔥</span>}
+              {p.frozenNight && <span aria-label={t("frozenStatus")}>❄️</span>}
+              {effectiveRoleId(p) === "alien" && (
+                <span className="rounded bg-accent/20 px-1 text-[9px] font-bold text-accent">
+                  {3 - (p.alienErrors ?? 0)}/3
+                </span>
+              )}
+              {(p.penaltyVotes ?? 0) > 0 && (
+                <span className="rounded bg-amber-500/20 px-1 text-[9px] font-bold text-amber-500">
+                  +{p.penaltyVotes}
+                </span>
+              )}
+            </span>
+            <span className="mt-0.5 flex items-center justify-center gap-1 text-[11px] text-muted-foreground">
+              <span
+                className={`size-1.5 rounded-full ${wolfSide ? "bg-destructive" : solo ? "bg-accent" : "bg-primary"}`}
+              />
+              {roleName(rid)}
+              {p.isConvertedToWolf && t("converted")}
             </span>
           </button>
         );
