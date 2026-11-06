@@ -232,8 +232,16 @@ function GamePage() {
     !state.captainSuccessionPending &&
     state.phase !== "EVENEMENT_MORT";
 
+  // Le rapport de nuit passe avant la succession du Capitaine mort pendant la nuit.
   const needsNightReport =
-    !isNight && state.phase === "AUBE" && reportDay !== state.day && overlayFree;
+    !isNight &&
+    state.phase === "AUBE" &&
+    reportDay !== state.day &&
+    !state.reveal &&
+    !transition &&
+    !victims;
+  const successionWaitsForReport =
+    !!state.captainSuccessionPending && state.phase === "AUBE" && reportDay !== state.day;
   const needsDebateSetup =
     !isNight &&
     state.phase === "AUBE" &&
@@ -424,7 +432,7 @@ function GamePage() {
         ) : (
           <HunterPanel state={state} onDone={updateState} />
         )
-      ) : state.captainSuccessionPending ? (
+      ) : state.captainSuccessionPending && !successionWaitsForReport ? (
         <CaptainSuccessionPanel state={state} onDone={setState} />
       ) : state.phase === "AUBE" ? (
         <DawnPanel
