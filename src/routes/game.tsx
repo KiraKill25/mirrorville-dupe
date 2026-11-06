@@ -501,12 +501,14 @@ function GamePage() {
         )}
       </section>
 
-      <section className="surface-card rounded-2xl p-4">
-        <h2 className="mb-2 text-xs font-bold tracking-widest text-primary uppercase">
-          {t("village", { n: state.players.filter((p) => p.alive).length })}
-        </h2>
-        <RoleList players={state.players} revealAll />
-      </section>
+      {!(isNight && currentStep(state)) && (
+        <section className="surface-card rounded-2xl p-4">
+          <h2 className="mb-2 text-xs font-bold tracking-widest text-primary uppercase">
+            {t("village", { n: state.players.filter((p) => p.alive).length })}
+          </h2>
+          <RoleList players={state.players} revealAll />
+        </section>
+      )}
     </main>
   );
 }
