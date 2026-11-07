@@ -7,7 +7,7 @@ import { NarratorCard } from "@/components/NarratorCard";
 import { clearGame, loadSetup, saveSetup, type SetupData } from "@/lib/session";
 import { useBackHandler } from "@/lib/back-navigation";
 
-export const DEALT_KEY = "mvno-dealt";
+const DEALT_KEY = "mvno-dealt";
 
 const TITLE = "Distribution des rôles — Nightfall Oracle";
 const DESC =
