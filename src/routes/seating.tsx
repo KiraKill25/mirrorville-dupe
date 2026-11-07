@@ -96,7 +96,16 @@ function SeatingPage() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col gap-4 box-border overflow-x-hidden overflow-y-auto px-4 py-4">
-      <TopBar />
+      <TopBar
+        left={
+          <button
+            onClick={() => navigate({ to: "/distribution" })}
+            className="text-sm text-muted-foreground"
+          >
+            {t("back")}
+          </button>
+        }
+      />
       <header className="space-y-1 text-center">
         <h1 className="neon-text text-2xl font-black">{t("seatingTitle")}</h1>
         <p className="text-xs text-muted-foreground">{t("seatingHint")}</p>

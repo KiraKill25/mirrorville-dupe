@@ -5,6 +5,9 @@ import { TopBar } from "@/components/TopBar";
 import { useI18n } from "@/lib/i18n";
 import { NarratorCard } from "@/components/NarratorCard";
 import { clearGame, loadSetup, saveSetup, type SetupData } from "@/lib/session";
+import { useBackHandler } from "@/lib/back-navigation";
+
+const DEALT_KEY = "mvno-dealt";
 
 const TITLE = "Distribution des rôles — Nightfall Oracle";
 const DESC =
@@ -50,6 +53,13 @@ function DistributionPage() {
       navigate({ to: "/setup" });
       return;
     }
+    // Retour depuis le plan de table : on garde la distribution déjà faite.
+    if (sessionStorage.getItem(DEALT_KEY)) {
+      setSetup(s);
+      setCaptain(s.villageCaptainId);
+      setIndex(s.players.length);
+      return;
+    }
     const roles = shuffle(s.players.map((p) => p.roleId));
     const players = shuffle(s.players.map((p, i) => ({ name: p.name, roleId: roles[i] })));
     const next = { players };
@@ -63,6 +73,23 @@ function DistributionPage() {
   const done = !!setup && index >= setup.players.length;
   const captainCandidates = (setup?.players ?? []).filter((p) => p.roleId !== "general");
 
+  const goBack = () => {
+    if (!setup) return navigate({ to: "/composition" });
+    if (revealed) return setRevealed(false);
+    if (index > 0) {
+      setIndex((i) => i - 1);
+      setRevealed(false);
+      return;
+    }
+    navigate({ to: "/composition" });
+  };
+  useBackHandler(() => (goBack(), true));
+  const backBtn = (
+    <button onClick={goBack} className="text-sm text-muted-foreground">
+      {t("back")}
+    </button>
+  );
+
   // Reset animation key when a new role is revealed
   const handleReveal = () => {
     setRevealed(true);
@@ -74,7 +101,7 @@ function DistributionPage() {
   if (done)
     return (
       <main className="mx-auto min-h-screen w-full max-w-lg space-y-5 box-border overflow-x-hidden overflow-y-auto px-4 py-8">
-        <TopBar />
+        <TopBar left={backBtn} />
         <h1 className="neon-text text-center text-2xl font-black">{t("handoverTitle")}</h1>
         <div className="animate-float-soft">
           <NarratorCard title={t("narratorTitle")} text={t("handoverText")}>
@@ -120,6 +147,7 @@ function DistributionPage() {
             <button
               onClick={() => {
                 saveSetup({ ...setup!, villageCaptainId: captain });
+                sessionStorage.setItem(DEALT_KEY, "1");
                 navigate({ to: "/seating" });
               }}
               className="neon-ring animate-pulse-glow w-full rounded-full bg-primary py-4 font-bold text-primary-foreground"
@@ -133,7 +161,7 @@ function DistributionPage() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-lg space-y-5 box-border overflow-x-hidden overflow-y-auto px-4 py-4">
-      <TopBar />
+      <TopBar left={backBtn} />
       <p className="text-center text-xs tracking-[0.3em] text-muted-foreground uppercase">
         {t("playerXofY", { i: index + 1, n: setup.players.length })}
       </p>

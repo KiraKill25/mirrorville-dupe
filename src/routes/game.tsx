@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useBackHandler } from "@/lib/back-navigation";
 import {
   AlertTriangle,
   ArrowRight,
@@ -206,6 +207,20 @@ function GamePage() {
 
   useEffect(() => () => clearBgm(), []);
 
+  // Retour Android : ferme d'abord la fenêtre ouverte, sinon annule la dernière étape.
+  useBackHandler(() => {
+    if (guideModalOpen) return setGuideModalOpen(false), true;
+    if (suicideOpen) return setSuicideOpen(false), true;
+    if (preVoteOpen) return setPreVoteOpen(false), true;
+    if (voteAnnounce) return setVoteAnnounce(false), true;
+    if (stateHistory.length > 0) return undo(), true;
+    if (window.confirm(t("quit") + " ?")) {
+      clearGame();
+      navigate({ to: "/" });
+    }
+    return true;
+  });
+
   if (!state) return <main className="p-8 text-muted-foreground">{t("loading")}</main>;
 
   if (state.phase === "FIN")
@@ -278,7 +293,7 @@ function GamePage() {
               className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1.5 text-xs font-semibold text-muted-foreground transition active:scale-95"
             >
               <RotateCcw className="size-3.5" />
-              <span className="hidden sm:inline">{t("undoLabel")}</span>
+              <span>{t("undoLabel")}</span>
             </button>
           )}
           {!isNight && (

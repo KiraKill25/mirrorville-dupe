@@ -64,6 +64,7 @@ function CompositionPage() {
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     clearGame();
+    sessionStorage.removeItem("mvno-dealt");
     saveSetup({
       players: names.map((name, i) => ({ name, roleId: pool[i] })),
       gameMaster: gm ?? undefined,
