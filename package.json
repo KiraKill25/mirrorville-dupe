@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
+    "@capacitor/app": "^8",
     "@capacitor/assets": "^3.0.5",
     "@capacitor/core": "^8.5.1",
     "@capacitor/keyboard": "^8",
